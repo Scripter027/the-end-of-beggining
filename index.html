@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>The End of Beginnings</title>
     <style>
         html, body {
@@ -11,6 +12,7 @@
             height: 100%;
             background-color: #000000 !important;
             overflow: hidden;
+            box-sizing: border-box;
         }
 
         body {
@@ -21,6 +23,7 @@
             align-items: center;
             text-align: center;
             transition: color 1s ease;
+            padding: 15px;
         }
 
         body.error-alert {
@@ -45,44 +48,82 @@
             transition: none !important;
         }
 
-        body.error-alert .lang-menu, body.error-alert .timer-link {
+        body.error-alert .custom-lang-btn, 
+        body.error-alert .custom-lang-dropdown,
+        body.error-alert .timer-link {
             border-color: #ff0000 !important;
             color: #ff0000 !important;
             transition: none !important;
         }
 
+        body.error-alert .custom-lang-option:hover {
+            background: rgba(255, 0, 0, 0.2) !important;
+        }
+
         .box {
             border: 2px solid #00ff00;
-            padding: 40px;
-            display: inline-block;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             border-radius: 10px;
             background-color: #050505;
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
             transition: all 1s ease; 
             max-width: 500px;
             width: 100%;
+            max-height: 75vh;
             box-sizing: border-box;
+            overflow-y: auto;
         }
 
-        .lang-menu {
+        .custom-lang-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
+            z-index: 9999;
+            font-family: monospace;
+        }
+
+        .custom-lang-btn {
             background: #000;
             border: 1px solid #00ff00;
             color: #00ff00;
-            padding: 8px 12px;
-            font-family: monospace;
+            padding: 8px 15px;
             font-size: 14px;
-            z-index: 9999;
-            outline: none;
             cursor: pointer;
+            outline: none;
             transition: all 1s ease;
         }
 
-        .lang-menu option {
+        .custom-lang-dropdown {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            margin-bottom: 5px;
             background: #000;
+            border: 1px solid #00ff00;
+            width: 100%;
+            min-width: 110px;
+            box-sizing: border-box;
+            transition: all 1s ease;
+        }
+
+        .custom-lang-dropdown.active {
+            display: block;
+        }
+
+        .custom-lang-option {
+            padding: 8px 12px;
             color: #00ff00;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .custom-lang-option:hover {
+            background: rgba(0, 255, 0, 0.2);
         }
 
         .timer-link {
@@ -95,10 +136,11 @@
             padding: 8px 15px;
             text-decoration: none;
             font-family: monospace;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             z-index: 9999;
             transition: border 1s ease, color 1s ease, background 0.2s;
+            box-sizing: border-box;
         }
 
         .timer-link:hover {
@@ -110,6 +152,8 @@
             display: flex;
             justify-content: center;
             gap: 10px;
+            width: 100%;
+            margin-top: auto;
         }
 
         input {
@@ -118,38 +162,44 @@
             color: #00ff00;
             padding: 10px;
             font-family: monospace;
-            font-size: 18px;
+            font-size: 16px;
             outline: none;
             transition: all 1s ease;
             width: 100%;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            border-radius: 0;
         }
 
         button.submit-btn {
             background: #00ff00;
             color: #000;
-            padding: 10px 20px;
+            padding: 10px 15px;
             font-weight: bold;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             transition: background-color 1s ease;
+            box-sizing: border-box;
         }
 
         button.submit-btn:hover {
             background: #00cc00;
         }
-
         #text, #archiveText {
             font-size: 20px;
             line-height: 1.4;
             white-space: pre-line;
             text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
             animation: tv-text-jump 1.6s steps(1) infinite;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         #text {
             margin-bottom: 25px;
-            min-height: 50px;
+            min-height: 60px;
             text-align: center;
         }
 
@@ -166,25 +216,66 @@
 
         @keyframes tv-text-jump {
             0% { transform: translate(0, 0); }
-            5% { transform: translate(-1.5px, 0.5px); }
+            5% { transform: translate(-0.5px, 0.5px); }
             8% { transform: translate(0, 0); }
-            30% { transform: translate(1px, -1px); }
+            30% { transform: translate(0.5px, -0.5px); }
             33% { transform: translate(0, 0); }
-            65% { transform: translate(-0.5px, -1px); }
+            65% { transform: translate(-0.5px, -0.5px); }
             68% { transform: translate(0, 0); }
-            85% { transform: translate(1.5px, 1px); }
+            85% { transform: translate(0.5px, 0.5px); }
             88% { transform: translate(0, 0); }
         }
 
         @keyframes tv-text-jump-heavy {
             0% { transform: translate(0, 0); }
-            10% { transform: translate(-3px, 1.5px); }
-            20% { transform: translate(2px, -2px); }
+            10% { transform: translate(-1.5px, 0.5px); }
+            20% { transform: translate(1px, -1px); }
             30% { transform: translate(0, 0); }
-            50% { transform: translate(-2px, -1px); }
-            60% { transform: translate(3px, 2px); }
+            50% { transform: translate(-1px, -0.5px); }
+            60% { transform: translate(1.5px, 0.5px); }
             70% { transform: translate(0, 0); }
-            90% { transform: translate(-1.5px, 2px); }
+            90% { transform: translate(-0.5px, 1px); }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                align-items: center;
+                padding: 10px;
+            }
+            .box {
+                padding: 20px 15px;
+                max-height: 65vh;
+            }
+            #text, #archiveText {
+                font-size: 15px;
+                line-height: 1.4;
+            }
+            #text {
+                margin-bottom: 15px;
+                min-height: auto;
+            }
+            input {
+                font-size: 14px;
+                padding: 8px;
+            }
+            button.submit-btn {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+            .timer-link {
+                left: 10px;
+                bottom: 10px;
+                font-size: 12px;
+                padding: 5px 8px;
+            }
+            .custom-lang-container {
+                right: 10px;
+                bottom: 10px;
+            }
+            .custom-lang-btn {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
         }
     </style>
 </head>
@@ -204,10 +295,13 @@
 
     <a href="javascript:void(0)" class="timer-link" id="countdownTimer" onclick="toggleScreens()">00d 00h 00m 00s</a>
 
-    <select class="lang-menu" id="langSelect" onchange="changeLanguage(this.value)">
-        <option value="ru">Русский</option>
-        <option value="en">English</option>
-    </select>
+    <div class="custom-lang-container">
+        <button class="custom-lang-btn" id="langBtn" onclick="toggleLangDropdown()">Русский</button>
+        <div class="custom-lang-dropdown" id="langDropdown">
+            <div class="custom-lang-option" onclick="selectLanguage('ru')">Русский</div>
+            <div class="custom-lang-option" onclick="selectLanguage('en')">English</div>
+        </div>
+    </div>
 
     <script>
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
@@ -215,8 +309,8 @@
         var currentScreen = "game"; 
 
         var interfaceUi = {
-            ru: { btn: "ВВОД", placeholder: "Ваш ответ..." },
-            en: { btn: "ENTER", placeholder: "Your answer..." }
+            ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
+            en: { btn: "ENTER", placeholder: "Your answer...", menu: "English" }
         };
 
         var currentLang = "ru";
@@ -290,8 +384,8 @@
             },
             {
                 passwords: ["новая эра", "new era"],
-                ru: "https://t.me/+DgXdw2zvilgwYzdi",
-                en: "https://t.me/+DgXdw2zvilgwYzdi"
+                ru: "https://t.me",
+                en: "https://t.me"
             },
             {
                 passwords: ["бурмалда", "burmalda"],
@@ -314,20 +408,30 @@
                 en: "..."
             },
             {
-                passwords: ["VA*фWn%ЧIi+AdЬУ>PФ$ЛHХЯ'xw1%Йкl_;5чIGpТыОИ]?еje#", "VA*фWn%ЧIi+AdЬУ>PФ$ЛHХЯ'xw1%Йкl_;5чIGpТыОИ]?еje#"],
+                passwords: ["va*фwn%чи+adьу>рф$лнхя'xw1%йкl_;5чigpтыои]?еje#", "va*фwn%чи+adьу>рф$лнхя'xw1%йкl_;5чigpтыои]?еje#"],
                 ru: "Наконец-то ты нашел пароль. Это было сложно, знаю, но теперь я расскажу тебе тайну. Команда Keeper Entertainment действительно закончила эру Майнкрафта, но вот настоящая игровая эра только начинает свое существование.",
                 en: "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
             }
         ];
+        function toggleLangDropdown() {
+            document.getElementById("langDropdown").classList.toggle("active");
+        }
+
+        function selectLanguage(langCode) {
+            document.getElementById("langDropdown").classList.remove("active");
+            changeLanguage(langCode);
+        }
 
         function updateDisplay() {
             var screen = document.getElementById("text");
             var archiveScreenText = document.getElementById("archiveText");
             var inputField = document.getElementById("userAnswer");
             var submitBtn = document.getElementById("submitBtn");
+            var langBtn = document.getElementById("langBtn");
 
             if (submitBtn) { submitBtn.innerText = interfaceUi[currentLang].btn; }
             if (inputField) { inputField.placeholder = interfaceUi[currentLang].placeholder; }
+            if (langBtn) { langBtn.innerText = interfaceUi[currentLang].menu; }
 
             if (screen) {
                 if (currentText === "") {
@@ -404,12 +508,21 @@
 
             if (currentScreen === "game") {
                 gameEl.style.display = "none";
-                archiveEl.style.display = "inline-block";
+                archiveEl.style.display = "flex";
                 currentScreen = "archive";
             } else {
                 archiveEl.style.display = "none";
-                gameEl.style.display = "inline-block";
+                gameEl.style.display = "flex";
                 currentScreen = "game";
+            }
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.custom-lang-btn')) {
+                var dropdown = document.getElementById("langDropdown");
+                if (dropdown && dropdown.classList.contains('active')) {
+                    dropdown.classList.remove('active');
+                }
             }
         }
 
