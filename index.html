@@ -62,7 +62,7 @@
 
         .box {
             border: 2px solid #00ff00;
-            padding: 30px 20px;
+            padding: 35px 25px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -125,7 +125,6 @@
         .custom-lang-option:hover {
             background: rgba(0, 255, 0, 0.2);
         }
-
         .timer-link {
             position: fixed;
             bottom: 20px;
@@ -150,42 +149,50 @@
 
         .input-container {
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             width: 100%;
             margin-top: auto;
+            box-sizing: border-box;
         }
 
         input {
             background: #111;
             border: 1px solid #00ff00;
             color: #00ff00;
-            padding: 10px;
+            padding: 12px;
             font-family: monospace;
             font-size: 16px;
             outline: none;
             transition: all 1s ease;
             width: 100%;
+            max-width: 400px;
             box-sizing: border-box;
             -webkit-appearance: none;
             border-radius: 0;
+            text-align: center;
         }
 
         button.submit-btn {
             background: #00ff00;
             color: #000;
-            padding: 10px 15px;
+            padding: 12px;
             font-weight: bold;
             border: none;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 16px;
             transition: background-color 1s ease;
+            width: 100%;
+            max-width: 400px;
             box-sizing: border-box;
         }
 
         button.submit-btn:hover {
             background: #00cc00;
         }
+
         #text, #archiveText {
             font-size: 20px;
             line-height: 1.4;
@@ -243,7 +250,7 @@
                 padding: 10px;
             }
             .box {
-                padding: 20px 15px;
+                padding: 25px 20px;
                 max-height: 65vh;
             }
             #text, #archiveText {
@@ -251,16 +258,13 @@
                 line-height: 1.4;
             }
             #text {
-                margin-bottom: 15px;
+                margin-bottom: 20px;
                 min-height: auto;
             }
-            input {
+            input, button.submit-btn {
                 font-size: 14px;
-                padding: 8px;
-            }
-            button.submit-btn {
-                font-size: 13px;
-                padding: 8px 12px;
+                padding: 10px;
+                max-width: 100%;
             }
             .timer-link {
                 left: 10px;
@@ -384,8 +388,8 @@
             },
             {
                 passwords: ["новая эра", "new era"],
-                ru: "https://t.me",
-                en: "https://t.me"
+                ru: "https://t.me/+DgXdw2zvilgwYzdi",
+                en: "https://t.me/+DgXdw2zvilgwYzdi"
             },
             {
                 passwords: ["бурмалда", "burmalda"],
