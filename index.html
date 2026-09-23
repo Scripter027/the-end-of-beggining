@@ -313,7 +313,7 @@
         var currentScreen = "game"; 
 
         var interfaceUi = {
-            ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
+            ru: { btn: "\u0412\u0412\u041e\u0414", placeholder: "\u0412\u0430\u0448 \u043e\u0442\u0432\u0435\u0442...", menu: "\u0420\u0443\u0441\u0441\u043a\u0438\u0439" },
             en: { btn: "ENTER", placeholder: "Your answer...", menu: "English" }
         };
 
@@ -321,99 +321,69 @@
         var currentText = "";
 
         var startTexts = {
-            ru: "Введите Пароль",
+            ru: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u041f\u0430\u0440\u043e\u043b\u044c",
             en: "Enter Password"
         };
 
         var wrongTexts = {
-            ru: "НЕВЕРНО",
+            ru: "\u041d\u0415\u0412\u0415\u0420\u041d\u041e",
             en: "WRONG"
         };
 
         var archiveTexts = {
-            ru: "СТАТУС: ДОСТУП РАЗРЕШЕН // АРХИВ №027\n\n[ЗАПИСЬ ЗАБЛОКИРОВАНА]\n\nВы успешно проникли в базу данных. Система безопасности временно отключена, однако файлы логов зашифрованы главным счетчиком времени.\n\nВернитесь к терминалу через таймер в углу экрана, если готовы продолжить поиски.",
+            ru: "\u0421\u0422\u0410\u0422\u0423\u0421: \u0414\u041e\u0421\u0422\u0423\u041f \u0420\u0410\u0417\u0420\u0415\u0428\u0415\u041d // \u0410\u0420\u0425\u0418\u0412 \u2116027\n\n[\u0417\u0410\u041f\u0418\u0421\u042c \u0417\u0410\u0411\u041b\u041e\u041a\u0418\u0420\u041e\u0412\u0410\u041d\u0410]\n\n\u0412\u044b \u0443\u0441\u043f\u0435\u0448\u043d\u043e \u043f\u0440\u043e\u043d\u0438\u043a\u043b\u0438 \u0432 \u0431\u0430\u0437\u0443 \u0434\u0430\u043d\u043d\u044b\u0445. \u0421\u0438\u0441\u0442\u0435\u043c\u0430 \u0431\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u0438 \u0432\u0440\u0435\u043c\u0435\u043d\u043d\u043e \u043e\u0442\u043a\u043b\u044e\u0447\u0435\u043d\u0430, \u043e\u0434\u043d\u0430\u043a\u043e \u0444\u0430\u0439\u043b\u044b \u043b\u043e\u0433\u043e\u0432 \u0437\u0430\u0448\u0438\u0444\u0440\u043e\u0432\u0430\u043d\u044b \u0433\u043b\u0430\u0432\u043d\u044b\u043c \u0441\u0447\u0435\u0442\u0447\u0438\u043a\u043e\u043c \u0432\u0440\u0435\u043c\u0435\u043d\u0438.\n\n\u0412\u0435\u0440\u043d\u0438\u0442\u0435\u0441\u044c \u0432\u0440\u0443\u0447\u043d\u0443\u044e \u043a \u0442\u0435\u0440\u043c\u0438\u043d\u0430\u043b\u0443 \u0447\u0435\u0440\u0435\u0437 \u0442\u0430\u0439\u043c\u0435\u0440, \u0435\u0441\u043b\u0438 \u0433\u043e\u0442\u043e\u0432\u044b \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c \u043f\u043e\u0438\u0441\u043a\u0438.",
             en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
         };
 
         var gameLevels = [
             {
-                passwords: ["что это за место", "what is this place"],
-                ru: "Не важно, важно то, что ты здесь забыл! А что именно ты тут забыл - без понятия.",
-                en: "It doesn't matter, what matters is that you're here! And what exactly you're here forgot – I have no idea."
-            },
-            {
-                passwords: ["что это за место?", "what is this place?"],
-                ru: "Не важно, важно то, что ты здесь забыл! А что именно ты тут забыл - без понятия.",
-                en: "It doesn't matter, what matters is that you're here! And what exactly you're here forgot – I have no idea."
-            },
-            {
-                passwords: ["где я", "where am i"],
-                ru: "Не важно, важно то, что ты здесь забыл! А что именно ты тут забыл - без понятия.",
-                en: "It doesn't matter, what matters is that you're here! And what exactly you're here forgot – I have no idea."
-            },
-            {
-                passwords: ["где я?", "where am i?"],
-                ru: "Не важно, важно то, что ты здесь забыл! А что именно ты тут забыл - без понятия.",
-                en: "It doesn't matter, what matters is that you're here! And what exactly you're here forgot – I have no idea."
-            },
-            {
-                passwords: ["пароль", "password"],
-                ru: "Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?",
+                passwords: ["\u0070\u0061\u0073\u0073\u0077\u006f\u0072\u0064", "\u043f\u0430\u0440\u043e\u043b\u044c"],
+                ru: "\u0422\u0430\u043a\u0438\u0445 \u0433\u043b\u0443\u043f\u044b\u0445 \u043c\u044b \u0435\u0449\u0435 \u043d\u0435 \u0432\u0441\u0442\u0440\u0435\u0447\u0430\u043b\u0438\u002e \u0422\u044b \u043f\u0440\u0430\u0432\u0434\u0430 \u0434\u0443\u043c\u0430\u0435\u044b\u044c\u002c \u0447\u0442\u043e \u044d\u0442\u043e\u0442 \u0441\u0435\u043a\u0440\u0435\u0442 \u043c\u043e\u0436\u043d\u043e \u0443\u0437\u043d\u0430\u0442\u044c\u002c \u0432\u0441\u0435\u0433\u043e \u043b\u0438\u0448\u044c \u043d\u0430\u043f\u0438\u0441\u0430\u0432 \u002a\u041f\u0430\u0440\u043e\u043b\u044c\u002a\u003f",
                 en: "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?"
             },
             {
-                passwords: ["кто ты", "who are you"],
-                ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
+                passwords: ["\u0077\u0068\u006f\u0020\u0061\u0072\u0065\u0020\u0079\u006f\u0075", "\u043a\u0442\u043e\u0020\u0442\u044b", "\u0077\u0068\u006f\u0020\u0061\u0072\u0065\u0020\u0079\u006f\u0075\u003f", "\u043a\u0442\u043e\u0020\u0442\u044b\u003f"],
+                ru: "\u0422\u0435\u0440\u043c\u0438\u043d\u0430\u043b\u002c \u043e\u0442\u0432\u0435\u0447\u0430\u044e\u0449\u0438\u0439 \u043d\u0430 \u0442\u0432\u043e\u0438 \u0433\u043b\u0443\u043f\u044b\u0435 \u0432\u043e\u043f\u0440\u043e\u0441\u0441\u044b\u002c \u0432 \u043d\u0430\u0434\u0435\u0436\u0434\u0435 \u043d\u0430 \u0442\u043e\u002c \u0447\u0442\u043e \u0442\u044b \u043d\u0430\u0439\u0434\u0435\u0448\u044c \u043f\u0430\u0440\u043e\u043b\u044c\u0021",
                 en: "A terminal that answers your stupid questions, in the hope that you'll find password!"
             },
             {
-                passwords: ["кто ты?", "who are you?"],
-                ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
-                en: "A terminal that answers your stupid questions, in the hope that you'll find password!"
-            },
-            {
-                passwords: ["а какой пароль", "what is the password"],
-                ru: "Ты мне скажи.",
+                passwords: ["\u0077\u0068\u0061\u0074\u0020\u0069\u0073\u0020\u0074\u0068\u0065\u0020\u0070\u0061\u0073\u0073\u0077\u006f\u0072\u0064", "\u0430\u0020\u043a\u0430\u043a\u043e\u0439\u0020\u043f\u0430\u0440\u043e\u043b\u044c", "\u0077\u0068\u0061\u0074\u0020\u0069\u0073\u0020\u0074\u0068\u0065\u0020\u0070\u0061\u0073\u0073\u0077\u006f\u0072\u0064\u003f", "\u0430\u0020\u043a\u0430\u043a\u043e\u0439\u0020\u043f\u0430\u0440\u043e\u043b\u044c\u003f"],
+                ru: "\u0422\u044b \u043c\u043d\u0435 \u0441\u043a\u0430\u0436\u0438\u002e",
                 en: "You tell me."
             },
             {
-                passwords: ["а какой пароль?", "what is the password?"],
-                ru: "Ты мне скажи.",
-                en: "You tell me."
-            },
-            {
-                passwords: ["keeper entertainment", "keeper entertainment"],
-                ru: "Новая Эра Грядет.",
+                passwords: ["\u006b\u0065\u0065\u0070\u0065\u0072\u0020\u0065\u006e\u0074\u0065\u0072\u0074\u0061\u0069\u006e\u006d\u0065\u006e\u0074"],
+                ru: "\u041d\u043e\u0432\u0430\u044f\u042d\u0440\u0430\u0413\u0440\u044f\u0434\u0435\u0442\u002e",
                 en: "A New Era is Coming."
             },
             {
-                passwords: ["новая эра", "new era"],
-                ru: "https://t.me/+DgXdw2zvilgwYzdi",
-                en: "https://t.me/+DgXdw2zvilgwYzdi"
+                passwords: ["\u006e\u0065\u0077\u0020\u0065\u0072\u0061", "\u043d\u043e\u0432\u0430\u044f\u0020\u044d\u0440\u0430"],
+                ru: "\u0068\u0074\u0074\u0070\u0073\u003a\u002f\u002f\u0074\u002e\u006d\u0065\u002f\u002b\u0044\u0067\u0058\u0064\u0077\u0032\u007a\u0076\u0069\u006c\u0067\u0077\u0059\u007a\u0064\u0069",
+                en: "\u0068\u0074\u0074\u0070\u0073\u003a\u002f\u002f\u0074\u002e\u006d\u0065\u002f\u002b\u0044\u0067\u0058\u0064\u0077\u0032\u007a\u0076\u0069\u006c\u0067\u0077\u0059\u007a\u0064\u0069"
             },
             {
-                passwords: ["бурмалда", "burmalda"],
-                ru: "Не ну ты бурмалдец конечно, что шаришь за молодежные мемчики, но это не пароль!",
+                passwords: ["\u0062\u0075\u0072\u006d\u0061\u006c\u0064\u0061", "\u0431\u0443\u0440\u043c\u0430\u043b\u0434\u0430"],
+                ru: "\u041d\u0435 \u043d\u0443 \u0442\u044b \u0431\u0443\u0440\u043c\u0430\u043b\u0434\u0435\u0446 \u043a\u043e\u043d\u0435\u0447\u043d\u043e\u002c \u0447\u0442\u043e \u0448\u0430\u0440\u0438\u0448\u044c \u0437\u0430 \u043c\u043e\u043b\u043e\u0434\u0435\u0436\u043d\u044b\u0435 \u043c\u0435\u043c\u0447\u0438\u043a\u0438\u002c \u043d\u043e \u044d\u0442\u043e \u043d\u0435 \u043f\u0430\u0440\u043e\u043b\u044c\u0021",
                 en: "Ne ny ti burmaldec conechno, chto sharish za molodezhnie memchiki, no eto ne parol!"
             },
             {
-                passwords: ["67", "67"],
-                ru: "Да найди ты пароль и не страдай фигней! На край попробуй что то спросить! Может отвечу.",
+                passwords: ["\u0036\u0037"],
+                ru: "\u0414\u0430 \u043d\u0430\u0439\u0434\u0438 \u0442\u044b \u043f\u0430\u0440\u043e\u043b\u044c \u0438 \u043d\u0435 \u0441\u0442\u0440\u0430\u0434\u0430\u0439 \u0444\u0438\u0433\u043d\u0435\u0439\u0021 \u041d\u0430 \u043a\u0440\u0430\u0439 \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439 \u0447\u0442\u043e \u0442\u043e \u0441\u043f\u0440\u043e\u0441\u0438\u0442\u044c\u0021 \u041c\u043e\u0436\u0435\u0445\u044c \u043e\u0442\u0432\u0435\u0447\u0443\u002e",
                 en: "Just find the password and stop messing around! At least try asking something! Maybe I'll answer."
             },
             {
-                passwords: ["tkom4", "tkom4"],
-                ru: "...",
+                passwords: ["\u0074\u006b\u006f\u006d\u0034", "\u0074\u0068\u0065\u0020\u006b\u0069\u006e\u0067\u0020\u006f\u0066\u0020\u006d\u006f\u006e\u0073\u0074\u0065\u0072\u0073\u0020\u0034"],
+                ru: "\u002e\u002e\u002e",
                 en: "..."
             },
             {
-                passwords: ["the king of monsters 4", "the king of monsters 4"],
-                ru: "...",
-                en: "..."
+                passwords: ["\u0077\u0068\u0065\u0072\u0065\u0020\u0061\u006d\u0020\u0069", "\u0433\u0434\u0435\u0020\u044f", "\u0077\u0068\u0065\u0072\u0065\u0020\u0061\u006d\u0020\u0069\u003f", "\u0433\u0434\u0435\u0020\u044f\u003f"],
+                ru: "\u041d\u0435 \u0432\u0430\u0436\u043d\u043e\u002c \u0432\u0430\u0436\u043d\u043e \u0442\u043e\u002c \u0447\u0442\u043e \u0442\u044b \u0437\u0434\u0435\u0441\u044c \u0437\u0430\u0431\u044b\u043b\u0021 \u0410 \u0447\u0442\u043e \u0438\u043c\u0435\u043d\u043d\u043e \u0442\u044b \u0442\u0443\u0440 \u0437\u0430\u0431\u044b\u043b \u002d \u0431\u0435\u0437 \u043f\u043e\u043d\u044f\u0442\u0438\u044f\u002e",
+                en: "It doesn't matter, what matters is that you're here! And what exactly you're here forgot – I have no idea."
             },
             {
-                passwords: ["va*фwn%чи+adьу>рф$лнхя'xw1%йкl_;5чigpтыои]?еje#", "va*фwn%чи+adьу>рф$лнхя'xw1%йкl_;5чigpтыои]?еje#"],
-                ru: "Наконец-то ты нашел пароль. Это было сложно, знаю, но теперь я расскажу тебе тайну. Команда Keeper Entertainment действительно закончила эру Майнкрафта, но вот настоящая игровая эра только начинает свое существование.",
+                passwords: ["\u0076\u0061\u002a\u0444\u0077\u006e\u0025\u0447\u0438\u002b\u0061\u0064\u044c\u0073\u003e\u0440\u0444\u0024\u043b\u043d\u0445\u044f\u0027\u0078\u0077\u0031\u0025\u0439\u043a\u006c\u005f\u0035\u0447\u0069\u0067\u0070\u0442\u044b\u043e\u0438\u005d\u003f\u0435\u006a\u0065\u0023"],
+                ru: "\u041d\u0430\u0441\u0442\u043e\u044f\u0449\u0430\u044f \u0438\u0433\u0440\u043e\u0432\u0430\u044f \u044d\u0440\u0430 \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430\u0447\u0438\u043d\u0430\u0435\u0442 \u0441\u0432\u043e\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043e\u0432\u0430\u043d\u0438\u0435\u002e \u041a\u043e\u043c\u0430\u043d\u0434\u0430 \u004b\u0065\u0065\u0070\u0065\u0045\u006e\u0074\u0065\u0072\u0074\u0061\u0069\u006e\u006d\u0065\u006e\u0074 \u0437\u0430\u043a\u043e\u043d\u0447\u0438\u043b\u0430 \u044d\u0440\u0443 \u041c\u0430\u043block\u043a\u0440\u0430\u0444\u0442\u0430\u002e",
                 en: "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
             }
         ];
@@ -561,7 +531,7 @@
                         timerElement.innerText = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
                     } else {
                         clearInterval(timerInterval);
-                        timerElement.innerText = currentLang === "ru" ? "[ВРЕМЯ ИСТЕКЛО]" : "[TIME IS UP]";
+                        timerElement.innerText = currentLang === "ru" ? "[\u0412\u0420\u0415\u041c\u042f \u0418\u0421\u0422\u0415\u041a\u041b\u041e]" : "[TIME IS UP]";
                     }
                 }
             }, 1000);
