@@ -13,7 +13,6 @@
             overflow: hidden;
         }
 
-        /* Главный контейнер */
         body {
             color: #00ff00;
             font-family: monospace;
@@ -21,13 +20,12 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            transition: color 1s ease; /* Плавный переход цвета текста */
+            transition: color 1s ease;
         }
 
-        /* КРАСНАЯ ТРЕВОГА ПРИ ОШИБКЕ */
         body.error-alert {
             color: #ff0000 !important;
-            transition: none !important; /* Мгновенное включение красного */
+            transition: none !important;
         }
 
         body.error-alert .box {
@@ -53,7 +51,6 @@
             transition: none !important;
         }
 
-        /* Рамка и элементы интерфейса теперь плавно возвращают цвет за 1 секунду */
         .box {
             border: 2px solid #00ff00;
             padding: 40px;
@@ -85,7 +82,6 @@
             color: #00ff00;
         }
 
-        /* ТАЙМЕР-ССЫЛКА В ЛЕВОМ УГЛУ ЭКРАНА */
         .timer-link {
             position: fixed;
             bottom: 20px;
@@ -139,7 +135,6 @@
             background: #00cc00;
         }
 
-        /* Эффект старого ТВ применен СТРОГО к тексту */
         #text {
             margin-bottom: 25px;
             font-size: 20px;
@@ -151,13 +146,11 @@
             animation: tv-text-glitch 0.4s infinite;
         }
 
-        /* Усиление свечения текста при ошибке */
         body.error-alert #text {
             text-shadow: 0 0 7px rgba(255, 0, 0, 0.7);
             animation: tv-text-glitch-heavy 0.2s infinite;
         }
 
-        /* Подергивание только для текста в обычном режиме */
         @keyframes tv-text-glitch {
             0% { transform: translate(0, 0) skew(0deg); opacity: 0.98; }
             15% { transform: translate(-0.5px, 0.2px) skew(0.1deg); }
@@ -169,7 +162,6 @@
             100% { transform: translate(0, 0) skew(0deg); }
         }
 
-        /* Тяжелое подергивание текста при ошибке */
         @keyframes tv-text-glitch-heavy {
             0% { transform: translate(0, 0) scale(1) skew(0deg); opacity: 0.9; }
             20% { transform: translate(-2px, 0.5px) scale(0.99) skew(-0.4deg); }
@@ -182,27 +174,23 @@
 </head>
 <body>
     <div class="box">
-        <!-- Экран с текстом -->
         <div id="text"></div>
 
-        <!-- Поле ввода и кнопка -->
         <div class="input-container" id="inputContainer">
             <input type="text" id="userAnswer" placeholder="" autocomplete="off">
             <button class="submit-btn" id="submitBtn" onclick="checkCode()">ВВОД</button>
         </div>
     </div>
 
-    <!-- ТАЙМЕР-ССЫЛКА НА ВТОРОЙ САЙТ -->
-    <a href="https://github.io" target="_blank" class="timer-link" id="countdownTimer">00d 00h 00m 00s</a>
+    <a href="https://scripter027.github.io/the-archive-027/" target="_blank" class="timer-link" id="countdownTimer">00d 00h 00m 00s</a>
 
-    <!-- Выбор языка (Строго 2 варианта) -->
     <select class="lang-menu" id="langSelect" onchange="changeLanguage(this.value)">
         <option value="ru">Русский</option>
         <option value="en">English</option>
     </select>
     <script>
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
-        var alertTimeout = null; // Переменная для хранения таймера сброса ошибки
+        var alertTimeout = null;
 
         var interfaceUi = {
             ru: { btn: "ВВОД", placeholder: "Ваш ответ..." },
@@ -305,7 +293,6 @@
             var input = inputField.value.toLowerCase().trim();
             var found = false;
 
-            // Сбрасываем предыдущие таймеры, если игрок вводит коды один за другим
             if (alertTimeout) {
                 clearTimeout(alertTimeout);
             }
@@ -323,7 +310,6 @@
                 currentText = wrongTexts[currentLang];
                 document.body.classList.add("error-alert");
 
-                // Через 5 секунд (5000 мс) плавно убираем красный цвет и возвращаем зеленый
                 alertTimeout = setTimeout(function() {
                     document.body.classList.remove("error-alert");
                 }, 5000);
