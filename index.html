@@ -1,4 +1,11 @@
-html, body {
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>The End of Beginnings</title>
+
+    <style>
+        html, body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -178,7 +185,13 @@ body.error-alert #text {
     70% { transform: translate(0, 0); }
     90% { transform: translate(-3px, 5px); }
 }
-<div class="box" id="gameScreen">
+
+    </style>
+
+</head>
+<body>
+
+    <div class="box" id="gameScreen">
     <div id="text"></div>
     <div class="input-container" id="inputContainer">
         <input type="text" id="userAnswer" placeholder="" autocomplete="off">
@@ -196,7 +209,10 @@ body.error-alert #text {
     <option value="ru">Русский</option>
     <option value="en">English</option>
 </select>
-var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
+
+
+    <script>
+        var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
 var alertTimeout = null;
 var currentScreen = "game"; 
 
@@ -392,3 +408,8 @@ window.onload = function () {
 
     updateDisplay();
 };
+
+    </script>
+
+</body>
+</html>
