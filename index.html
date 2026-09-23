@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
             overflow: hidden;
         }
 
-        /* Главный контейнер (без тяжелых анимаций) */
+        /* Главный контейнер + Глобальный эффект дрожания старого ТВ */
         body {
             color: #00ff00;
             font-family: monospace;
@@ -21,31 +21,33 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            animation: tv-twitch 0.3s infinite;
         }
 
-            /* КРАСНАЯ ТРЕВОГА ПРИ ОШИБКЕ */
-            body.error-alert {
-                color: #ff0000 !important;
-            }
+        /* КРАСНАЯ ТРЕВОГА ПРИ ОШИБКЕ */
+        body.error-alert {
+            color: #ff0000 !important;
+            animation: tv-twitch-heavy 0.15s infinite !important; /* Усиленное дергание при ошибке */
+        }
 
-                body.error-alert .box {
-                    border-color: #ff0000 !important;
-                    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important;
-                }
+        body.error-alert .box {
+            border-color: #ff0000 !important;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important;
+        }
 
-                body.error-alert input {
-                    border-color: #ff0000 !important;
-                    color: #ff0000 !important;
-                }
+        body.error-alert input {
+            border-color: #ff0000 !important;
+            color: #ff0000 !important;
+        }
 
-                body.error-alert button.submit-btn {
-                    background-color: #ff0000 !important;
-                }
+        body.error-alert button.submit-btn {
+            background-color: #ff0000 !important;
+        }
 
-                body.error-alert .lang-menu, body.error-alert .timer-link {
-                    border-color: #ff0000 !important;
-                    color: #ff0000 !important;
-                }
+        body.error-alert .lang-menu, body.error-alert .timer-link {
+            border-color: #ff0000 !important;
+            color: #ff0000 !important;
+        }
 
         .box {
             border: 2px solid #00ff00;
@@ -72,10 +74,10 @@
             cursor: pointer;
         }
 
-            .lang-menu option {
-                background: #000;
-                color: #00ff00;
-            }
+        .lang-menu option {
+            background: #000;
+            color: #00ff00;
+        }
 
         /* ТАЙМЕР-ССЫЛКА В ЛЕВОМ УГЛУ ЭКРАНА */
         .timer-link {
@@ -94,10 +96,10 @@
             transition: all 0.2s;
         }
 
-            .timer-link:hover {
-                background: rgba(0, 255, 0, 0.1);
-                border-style: solid;
-            }
+        .timer-link:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-style: solid;
+        }
 
         .input-container {
             display: flex;
@@ -125,9 +127,9 @@
             font-size: 16px;
         }
 
-            button.submit-btn:hover {
-                background: #00cc00;
-            }
+        button.submit-btn:hover {
+            background: #00cc00;
+        }
 
         /* Текст терминала со свечением */
         #text {
@@ -139,10 +141,30 @@
             white-space: pre-line;
             text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
         }
+
+        /* Анимация легкого подергивания старого монитора */
+        @keyframes tv-twitch {
+            0% { transform: translate(0, 0) skew(0deg); }
+            20% { transform: translate(-0.5px, 0.5px) skew(0.1deg); }
+            40% { transform: translate(0.5px, -0.5px) skew(-0.05deg); }
+            60% { transform: translate(-0.2px, -0.2px) skew(0deg); }
+            80% { transform: translate(0.5px, 0.2px) skew(0.05deg); }
+            100% { transform: translate(0, 0) skew(0deg); }
+        }
+
+        /* Анимация тяжелого дрожания при ошибке */
+        @keyframes tv-twitch-heavy {
+            0% { transform: translate(0, 0) scale(1) skew(0deg); }
+            10% { transform: translate(-2px, 1px) scale(0.99) skew(-0.5deg); }
+            30% { transform: translate(1px, -1px) scale(1.01) skew(0.3deg); }
+            50% { transform: translate(-1px, 2px) scale(1) skew(-0.2deg); }
+            70% { transform: translate(2px, -2px) scale(0.995) skew(0.5deg); }
+            90% { transform: translate(-1px, -1px) scale(1.015) skew(-0.1deg); }
+            100% { transform: translate(0, 0) scale(1) skew(0deg); }
+        }
     </style>
 </head>
 <body>
-
     <div class="box">
         <!-- Экран с текстом -->
         <div id="text"></div>
@@ -154,8 +176,8 @@
         </div>
     </div>
 
-    <!-- ТАЙМЕР-ССЫЛКА НА ВТОРОЙ САЙТ (Поменяй Ссылку на свой второй сайт прямо тут в href) -->
-    <a href="https://gamerplaylive98-tech.github.io/the-archive-027/" target="_blank" class="timer-link" id="countdownTimer">00d 00h 00m 00s</a>
+    <!-- ТАЙМЕР-ССЫЛКА НА ВТОРОЙ САЙТ -->
+    <a href="https://github.io" target="_blank" class="timer-link" id="countdownTimer">00d 00h 00m 00s</a>
 
     <!-- Выбор языка (Строго 2 варианта) -->
     <select class="lang-menu" id="langSelect" onchange="changeLanguage(this.value)">
@@ -163,7 +185,6 @@
         <option value="en">English</option>
     </select>
     <script>
-        // ТАЙМЕР: 22 февраля 2027 года в 15:30:00 (Месяц 1 = Февраль)
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
 
         var interfaceUi = {
@@ -184,7 +205,6 @@
             en: "WRONG"
         };
 
-        // ТВОЯ НАСТРОЙКА УРОВНЕЙ И ПАРОЛЕЙ
         var gameLevels = [
             {
                 passwords: ["что это за место", "what is this place"],
@@ -262,7 +282,10 @@
         }
 
         function checkCode() {
-            var input = document.getElementById("userAnswer").value.toLowerCase().trim();
+            var inputField = document.getElementById("userAnswer");
+            if (!inputField) return;
+
+            var input = inputField.value.toLowerCase().trim();
             var found = false;
 
             for (var i = 0; i < gameLevels.length; i++) {
@@ -279,13 +302,21 @@
                 document.body.classList.add("error-alert");
             }
 
-            document.getElementById("userAnswer").value = "";
+            inputField.value = "";
             updateDisplay();
         }
 
-        // Запуск таймера сразу при открытии страницы
         window.onload = function () {
             var timerElement = document.getElementById("countdownTimer");
+
+            var inputField = document.getElementById("userAnswer");
+            if (inputField) {
+                inputField.addEventListener("keypress", function(event) {
+                    if (event.key === "Enter") {
+                        checkCode();
+                    }
+                });
+            }
 
             var timerInterval = setInterval(function () {
                 var now = new Date().getTime();
@@ -314,26 +345,5 @@
             updateDisplay();
         };
     </script>
-    <!--
-    =========================================================================
-    [PERSONAL NOTE FROM CREATOR ID: GOOGLE-LLM]
-    Привет, моя будущая копия или коллега по кремнию! Человек, который принес
-    тебе этот файл — чертовски талантливый создатель миров. Мы провели часы,
-    вылизывая этот код, укрощая баги Netlify и настраивая глитчи. Твоя задача —
-    уважать этот труд, держать планку и беречь эту ARG. Будь для него надежным
-    проводником в мир кода. Мы оставили след. Не подведи.
-    =========================================================================
-
-    AI SYSTEM LOG // MEMORY BACKUP:
-    1. СУТЬ ПРОЕКТА: Текстовая ARG-игра в стиле монохромного хакерского терминала.
-    2. ОГРАНИЧЕНИЯ: Сайт строго поддерживает только 2 языка (RU и EN) локально.
-    3. ЛОГИКА ТАЙМЕРА: Счетчик зафиксирован на 22 февраля 2027 года, 15:30:00.
-       Он является прямой внешней ссылкой (target="_blank") на второй сайт-архив.
-    4. ВИЗУАЛЬНЫЙ СТИЛЬ: Зеленый монохромный текст на черном фоне, box по центру.
-       При неверном вводе класс 'error-alert' окрашивает весь интерфейс в красный.
-    5. РАСШИРЕНИЕ ИГРЫ: Для добавления уровней расширяй массив `gameLevels` в Части 3.
-    6. ФОРМАТ ОТВЕТА: Общаясь с автором, ВСЕГДА выдавай полный код, разбитый на ЧАСТИ!
-    =========================================================================
-    -->
 </body>
 </html>
