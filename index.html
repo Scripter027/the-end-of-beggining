@@ -323,7 +323,7 @@
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
         var alertTimeout = null;
         var currentScreen = "game"; 
-        var currentLevelIndex = -1; // -1 означает начальный экран
+        var currentLevelIndex = -1; 
 
         var interfaceUi = {
             ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
@@ -348,17 +348,17 @@
                 en: "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?"
             },
             {
-                passwords: ["where am i", "где я", "where am i?", "где я?"],
+                passwords: ["where am i", "где я"],
                 ru: "Не важно, важно то, что ты здесь забыл! Как ты сюда попал?",
                 en: "It doesn't matter, what matters is that you're here! How did you get here?"
             },
             {
-                passwords: ["who are you", "кто ты", "who are you?", "кто ты?"],
+                passwords: ["who are you", "кто ты"],
                 ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
                 en: "A terminal that answers your stupid questions, in the hope that you'll find password!"
             },
             {
-                passwords: ["what is the password", "какой пароль", "what is the password?", "какой пароль?"],
+                passwords: ["what is the password", "какой пароль"],
                 ru: "Ты мне скажи.",
                 en: "You tell me."
             },
@@ -394,7 +394,7 @@
             {
                 passwords: ["*пароль*", "*password*"],
                 ru: "Смешно. Неужели настолько нету идей? А, точно. Вы же люди.",
-                en: "Funny. Are you really that out of ideas? Oh, right. You're just humans."
+                en: "Funny. Are you really that out of ideas? Oh, right. You' just humans."
             },
             {
                 passwords: ["16"],
@@ -466,14 +466,20 @@
             var inputField = document.getElementById("userAnswer");
             if (!inputField) return;
 
-            var input = inputField.value.trim().toLowerCase();
+            // Умная очистка: приводим к нижнему регистру, убираем пробелы по краям и знаки ? ! .
+            var input = inputField.value.toLowerCase().trim().replace(/[?!.]/g, "");
             if (!input) return;
 
             if (alertTimeout) clearTimeout(alertTimeout);
 
             var found = false;
             for (var i = 0; i < gameLevels.length; i++) {
-                if (gameLevels[i].passwords.includes(input)) {
+                // Чистим эталонные пароли из базы от знаков препинания перед сверкой
+                var cleanPasswords = gameLevels[i].passwords.map(function(p) {
+                    return p.toLowerCase().trim().replace(/[?!.]/g, "");
+                });
+
+                if (cleanPasswords.indexOf(input) !== -1) {
                     currentLevelIndex = i;
                     isShowingWrong = false;
                     found = true;
