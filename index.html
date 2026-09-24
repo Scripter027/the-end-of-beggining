@@ -27,24 +27,6 @@
             position: relative;
         }
 
-        /* Зелёная вспышка успеха на 3 секунды */
-        body.success-alert {
-            color: #00ff00 !important;
-            transition: none !important;
-        }
-
-        body.success-alert .box {
-            border-color: #00ff00 !important;
-            box-shadow: 0 0 35px rgba(0, 255, 0, 0.9) !important;
-            background-color: rgba(0, 50, 0, 0.4) !important;
-            transition: none !important;
-        }
-
-        body.success-alert #text {
-            text-shadow: 0 0 15px rgba(0, 255, 0, 0.9) !important;
-        }
-
-        /* Красная вспышка ошибки */
         body.error-alert {
             color: #ff0000 !important;
             transition: none !important;
@@ -96,6 +78,7 @@
             overflow-y: auto;
             margin-top: 40px;
         }
+
         .custom-lang-container {
             position: fixed;
             bottom: 20px;
@@ -232,6 +215,7 @@
             word-break: break-word;
             overflow-wrap: break-word;
         }
+
         #text {
             margin-bottom: 25px;
             min-height: 60px;
@@ -313,7 +297,6 @@
     </style>
 </head>
 <body>
-
     <!-- Экран игры -->
     <div class="box" id="gameScreen">
         <div id="text"></div>
@@ -353,111 +336,116 @@
         var currentLang = "ru";
         var currentText = "";
 
-        var startTexts = {
-            ru: "Введите Пароль",
-            en: "Enter Password"
-        };
+        var startTexts = { ru: "Введите Пароль", en: "Enter Password" };
+        var wrongTexts = { ru: "НЕВЕРНО", en: "WRONG" };
 
-        var wrongTexts = {
-            ru: "НЕВЕРНО",
-            en: "WRONG"
-        };
         var archiveTexts = {
             ru: "СТАТУС: ДОСТУП РАЗРЕШЕН // АРХИВ №027\n\n[ЗАПИСЬ ЗАБЛОКИРОВАНА]\n\nВы успешно проникли в базу данных. Система безопасности временно отключена, однако файлы логов зашифрованы главным счетчиком времени.\n\nВернитесь вручную к терминалу через таймер, если готовы продолжить поиски.",
             en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
         };
 
+        var _k = "Keeper2027";
+        function _d(str) {
+            var out = "";
+            for (var i = 0; i < str.length; i += 2) {
+                var code = parseInt(str.substr(i, 2), 16);
+                out += String.fromCharCode(code ^ _k.charCodeAt((i / 2) % _k.length));
+            }
+            return out;
+        }
+
         var gameLevels = [
             {
-                passwords: ["password", "пароль"],
-                ru: "Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?",
-                en: "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?"
+                passwords: ["5e88427a1ab7a491a9e22bc332298190c21db93d8721a2934731358048202615", "4e49339e9e7b23cf445657ec7765103c8c7f99992d99d14620f32997b6703554"],
+                ru: _d("1964343207034c441c004245084942001d0a5e0b0200445d1d4d121c43550e0c0602444b02410a0e104d161d020d4350174c0b115c1b0c0347100e4c16110a110a4d1d111b1c550e411b0e0d5c074e0d0c4d161d0d0442431b0e00501a1c431b0717011d4d03"),
+                en: _d("1a2a47010408540b010c014713000b46191b171c530c000142461d170243000a12050e470c160b45060410471b1c1c1b501d0a0b0d060e471d0e1b12410712071647030a0d4514101d0c47111a0b125a071d020b0014")
             },
             {
-                passwords: ["who are you", "кто ты", "who are you?", "кто ты?"],
-                ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
-                en: "A terminal that answers your stupid questions, in the hope that you'll find password!"
+                passwords: ["216503b0d778fb8c2491a92a5431668c07802b54bc3a1f81cf8023306db7c6c7", "981295cb2e1e07cbca17fb0af6e133cb6b91d29d4793f773b062ca3ca0d49cf3", "2c4ec4d8f07fb0b9386fc74f1b88e174b1e4f45207908902509171ee2722b406", "380b2a60da1a0e1c07038e8ec43fdfb064c585140e8b28f7318fffc23f669a84"],
+                ru: _d("034444550f0c07440b0c16024e030c0b0a4d1c160a0b4c501c0c16024e020a1d4b064c1b110a0d0a4d111b1b0142"),
+                en: _d("0e33465b1600005403060c4707160b460706030c471b1d45031b04471317170a45021a004707120716")
             },
             {
-                passwords: ["what is the password", "какой пароль", "what is the password?", "какой пароль?"],
-                ru: "Ты мне скажи.",
-                en: "You tell me."
+                passwords: ["e260907e59489ef062d6b38c205763e00db7218685160b86a34cd870c5e31782", "5726e6f1a4e1017efcbdf1445b2bde5eb7e1a90af1015f606db99fa91316b23b", "7509df6389278bf80cfdfda375fbda37517c52ee6c2fe4596b65345d3bc6be44", "0cda9c47012fbda716919a2e633d7b3283296cda9772b7a42bbbc299cb84f67d"],
+                ru: _d("194454460706070b4352011c1d04424b1006094e1c101d0b4350160a041c0b0a5c1b0c0347104e1c1d04424b1006004b11161d020d435008060342551a020d0442"),
+                en: _d("06471612071206130b0b02471e1708450b141117170945110e1f1a030b45131b0c06131c0e471d0e1b124107120716471317170a4512021606471e1700194348")
             },
             {
-                passwords: ["keeper entertainment"],
-                ru: "Новая Эра Грядёт.",
-                en: "A New Era is Coming."
+                passwords: ["405b0bda7e31464c2438cb56cda71a629b101c7dbf9046ba26207bc27d14db48", "9976378ee01f11a84f3da6a7db5eb0db19b5bf6e855909f1bf3fa83c31154c0e", "4e73e230b427d26442657d42cf38a9e70196230b46995696f87b8f972b25c345", "a9eb99d21c33f20f8644f128e4612860d5b6ee0ff45df8171120f2b3fc2834b6"],
+                ru: _d("19524456070a424b07024e"),
+                en: _d("32171747160a060b45070200")
             },
             {
-                passwords: ["new era", "новая эра"],
-                ru: "https://t.me",
-                en: "https://t.me"
+                passwords: ["ba1324da7738d8f0f0322b622c7a6e1a4f006734fb15535df2a3562a1b920bf0"],
+                ru: _d("034650420f06424e2355464243171317424b23"),
+                en: _d("26472c12194727084b130b462917171d030b0d")
             },
             {
-                passwords: ["\x62\x75\x72\x6d\x61\x6c\x64\x61", "\u0431\u0443\u0440\u043c\u0430\u043b\u0434\u0430"],
-                ru: "\u041d\u0435\x20\u043d\u0443\x20\u0442\u044b\x20\u0431\u0443\u0440\u043c\u0430\u043b\u0434\u0435\u0446\x20\u043a\u043e\u043d\u0435\u0447\u043d\u043e\x2c\x20\u0447\u0442\u043e\x20\u0448\u0430\u0440\u0438\u0448\u044c\x20\u0437\u0430\x20\u043e\u043c\u043b\u043e\u0434\u0435\u0436\u043d\u044b\u0435\x20\u043c\u0435\u043c\u0447\u0438\u043a\u0438\x2c\x20\u043d\u043e\x20\u044d\u0442\u043e\x20\u043d\u0435\x20\u043f\u0430\u0440\u043e\u043b\u044c\x21",
-                en: "\x4e\x65\x20\x6e\x79\x20\x74\x69\x20\x62\x75\x72\x6d\x61\x6c\x64\x65\x63\x20\x63\x6f\x6e\x65\x63\x68\x6e\x6f\x2c\x20\x63\x68\x6f\x74\x6f\x20\x73\x68\x61\x72\x69\x73\x68\x20\x7a\x61\x20\x6d\x6f\x6c\x6f\x64\x65\x7a\x68\x6e\x69\x65\x20\x6d\x65\x6d\x63\x68\x69\x6a\x69\x2c\x20\x6e\x6f\x20\x65\x74\x6f\x20\x6e\x65\x20\x73\x61\x72\x6f\x6c\x21"
+                passwords: ["4b29bb80709fdf9ff2654da8be9606997d9196b0bcfa6bc542453664fa4ef9d7", "8a9840d588523c6c1ec5bc0409a80572626e95b07a514d3b64f33165b45155f9"],
+                ru: _d("070316170d53450e415707"),
+                en: _d("070316170d53450e415707")
             },
             {
-                passwords: ["\x36\x37"],
-                ru: "\u0414\u0430\x20\u043d\u0430\u0439\u0434\u0438\x20\u0442\u044b\x20\u043f\u0430\u0440\u043e\u043b\u044c\x20\u0438\x20\u043d\u0435\x20\u0441\u0442\u0440\u0430\u0434\u0430\u0439\x20\u044f\u0438\u0433\u043d\u0435\u0439\x21\x20\u041d\u0430\x20\u043a\u0440\u0430\u0439\x20\u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\x20\u0447\u0442\u043e\x20\u0442\u043e\x20\u0441\u043f\u0440\u043e\u0441\u0438\u0442\u044c\x21\x20\u041c\u043e\u0436\u0435\u0442\x20\u043e\u0442\u0432\u0435\u0447\u0443\x2e",
-                en: "\x4a\x75\x73\x74\x20\x66\x69\x6e\x64\x20\x74\x68\x65\x20\x73\x61\x73\x73\x77\x6f\x72\x64\x20\x61\x6e\x64\x20\x73\x74\x6f\x70\x20\x6d\x65\x73\x73\x69\x6e\x67\x20\x61\x52\x6f\x75\x6e\x64\x21\x20\x41\x74\x20\x6c\x65\x61\x73\x74\x20\x74\x72\x71\x20\x61\x73\x6b\x69\x6e\x67\x20\x73\x6f\x6d\x65\x74\x68\x69\x6e\x67\x21\x20\x4d\x61\x79\x62\x65\x20\x49\x27\x6c\x6c\x20\x61\x6e\x73\x77\x65\x72\x2e"
+                passwords: ["fa38166ee5da88035ba596df2cb85942470129a008b8b32d207aa1b81628d9c5", "8e54737dca963dfd5f662058b76c8c44243b7be39bc348ff9800a747f422204c"],
+                ru: _d("034c4e461b4742450a1c1d44010e42421c000d0a4d040a041c0b0a5c1b0c0347101a1c431b0717011d4d120d0a024250010e4242010c010a4d060a0242500806034255"),
+                en: _d("211d4d141b064c1206134604051b06471b0c06170243000a12050e47011d1745171716071d0e1306041647030a0d130c0c160b45041d450b1c11470912171c1b50")
             },
             {
-                passwords: ["\x74\x6b\x6f\x6d\x34", "\x74\x68\x65\x20\x6b\x69\x6e\x67\x20\x6f\x66\x20\x6d\x6f\x6e\x73\x74\x65\x72\x73\x20\x34"],
-                ru: "\x2e\x2e\x2e",
-                en: "\x2e\x2e\x2e"
+                passwords: ["4523540f003e83f33ca7af763a4369ff225e362da55725db6d18309dfcb009c0"],
+                ru: _d("29484b12070e13024e034444550f0c07440b0c16024e030c4c441c004245084942001d0a5e23434c445c110a110a4d1b061d431c160a0b4c500e16104e051c040042551a020d0442"),
+                en: _d("2a4d01134b111114494d12024713000b46011b171c530c000142461d170243000a12050e470317170a45171d02160b0b460747040b0d1c1647243b0704450e16")
             },
             {
-                passwords: ["\u0441\u0435\u043a\u0440\u0435\u0442", "\x73\x65\x63\x72\x65\x74"],
-                ru: "\u0421\u0435\u043a\u0440\u0435\u0442\x2d\u0442\u043e\x20\u0442\u0443\u0442\x20\u0435\u0441\u0442\u044c\x20\u0438\x20\u044f\x20\u043d\u0430\u0434\u0435\u044e\u0441\u044c\x2c\x20\u0447\u0442\u043e\x20\u0442\u044b\x20\u043d\u0430\u0439\u0434\u0435\u0448\u044c\x20\u0435\u0433\u043e\x20\u043d\u0430\u0439\u0434\u044f\x20\u043f\u0430\u0440\u043e\u043b\u044c\x21",
-                en: "\x54\x68\x65\x72\x65\x20\x69\x73\x20\x61\x20\x73\x65\x63\x72\x65\x74\x20\x68\x65\x72\x65\x2c\x20\x61\x6e\x64\x20\x49\x20\x68\x6f\x70\x65\x20\x79\x6f\x75\x20\x66\x69\x6e\x64\x20\x69\x74\x20\x62\x79\x20\x64\x69\x73\x63\x6f\x76\x65\x72\x69\x6e\x67\x20\x74\x68\x65\x20\x73\x61\x73\x73\x77\x6f\x72\x64\x21"
+                passwords: ["a1fbfda3d8c116497f5dbf577cf3be9a29e4695e1e114175317bf039a04f4a3e", "da945f3dfd2a023da56294be8064b58e747c32bfda6f8516aa3a4f6be5968b6b"],
+                ru: _d("414a43"), en: _d("414a43")
             },
             {
-                passwords: ["\x2a\u043f\u0430\u0440\u043e\u043b\u044c\x2a", "\x2a\x70\x61\x73\x73\x77\x6f\x72\x64\x2a"],
-                ru: "\u0421\u0438\u043c\u0435\u0448\u043d\u043e\x2e\x20\u041d\u0435\u0443\u0436\u0435\u043b\u0438\x20\u043d\u0430\u0441\u0442\u043e\u043b\u044c\x20\u043d\u0435\u0442\u0443\x20\u0438\u0434\u0435\u0439\x3f\x20\u0410\x2c\x20\u0442\u043e\u0447\u043d\u043e\x2e\x20\u0412\u044b\x20\u0436\u0435\x20\u043b\u044e\u0434\u0438\x2e\x20\u0412\x20\u0442\u0430\u043a\u043e\u043c\x20\u0441\u043b\u0443\u0447\u0430\u0435\x20\u043c\u043e\u0433\u0443\x20\u043b\u0438\u0448\u044c\x20\u043f\u043e\u0436\u0435\u043b\u0430\u0442\u044c\x20\u0443\u0434\u0430\u0447\u0438\x2e",
-                en: "\x46\x75\x6e\x6e\x71\x2e\x20\x41\x72\x65\x20\x71\x6f\x75\x20\x72\x65\x61\x6c\x6c\x71\x20\x74\x68\x61\x74\x20\x6f\x75\x74\x20\x6f\x66\x20\x69\x64\x65\x61\x73\x3f\x20\x4f\x68\x2c\x20\x72\x69\x67\x68\x74\x2e\x20\x59\x6f\x75\x27\x72\x65\x20\x6a\x75\x73\x74\x20\x68\x75\x6d\x61\x6e\x73\x2e\x20\x49\x6e\x20\x74\x68\x61\x74\x20\x63\x61\x73\x65\x2c\x20\x49\x20\x63\x61\x6e\x20\x6f\x6e\x6c\x71\x20\x77\x69\x73\x68\x20\x71\x6f\x75\x20\x67\x6f\x6f\x64\x20\x6c\x75\x63\x6b\x2e"
+                passwords: ["6ff59e21703135cb17ec05a06041e2e283733b11915998fdeedbe0259b3af81f", "2bb80242960dbf7b173e44ae1216d531853d93708efb93808da52f6fbfb26410"],
+                ru: _d("2e4c43471b0c0347071c4c441c000d0a4d1c161d0b4350060a041c0b0a5c1b0c0347100e4c16110a110a4d1d1b0d0a0242500a0e104d020d435011161d020d43500806034255"),
+                en: _d("3110471a0747011745131b4703164719171d1c0b46071612071206471317170a450317170a4504471c0e0b460411471e17171d030b0d03471612071206471317170a4512021606")
             },
             {
-                passwords: ["\x31\x36"],
-                ru: "\u041c\u043e\u043b\u043e\u0434\u0435\u0446\x2c\x20\u043d\u0435\u043c\u043d\u043e\u0433\u043e\x20\u043c\u0430\u0442\u0435\u043c\u0430\u0442\u0438\u043a\u0438\x20\u0442\u044b\x20\u0437\u043d\u0430\u0435\u0448\u044c\x21\x20\u041b\u0430\u0434\u043d\u043e\x2c\x20\u0430\x20\u0435\u0441\u043b\u0438\x20\u0442\u0430\x3f\x20\u041d\u0430\u043f\u0438\u0448\u0438\x20\x2a\u043f\u043e\u0431\u0435\u0433\x2a\x2c\x20\u043d\u043e\x20\u0431\u0435\u0437\x20\u0431\u0443\u043a\u0432\x20\u043e\x20\u0438\x20\u0435\x2e",
-                en: "\x57\x65\x6c\x6c\x20\x64\x6f\x6e\x65\x2c\x20\x74\x6f\x75\x20\x6a\x6e\x6f\x77\x20\x61\x20\x62\x69\x74\x20\x6f\x66\x20\x6d\x61\x74\x68\x21\x20\x41\x6c\x72\x69\x67\x68\x74\x2c\x20\x77\x68\x61\x74\x20\x61\x62\x6f\x75\x74\x20\x74\x68\x69\x73\x3f\x20\x57\x72\x69\x74\x65\x20\x2a\x65\x73\x63\x61\x70\x65\x2a\x2c\x20\x62\x75\x74\x20\x77\x69\x74\x68\x6f\x75\x74\x20\x74\x68\x65\x20\x6c\x65\x74\x74\x65\x72\x73\x20\x27\x61\x27\x20\x61\x6e\x64\x20\x27\x65\x27\x2e"
+                passwords: ["b459458e23f0547000d6b38992e5917462ee8fc54f3be7d2830f6ebaf10fa654", "be6782ff0fc5df6f1f440538a7c1b525f20f04e12b704cd078430b3558c49e21"],
+                ru: _d("2e444d4d1606424e23434c444243171317424b1d16110a030b4c50010e4242010c010a4d010e42424b2346044c4c541c004245084942001d0a5e0b020d4250010e42424b"),
+                en: _d("234d0c1c134149462444134707160b461d170243000a12050e471d17024145051d1c47011d1745131b47031647243b0704451717024145321047051a0647320b46130b461d1d170b045e")
             },
             {
-                passwords: ["\u043f\u0431\u0433", "\x73\x63\x70"],
-                ru: "\u0422\u044b\x20\u0438\x20\u0434\u043e\x20\u0441\u044e\u0434\u0430\x20\u0434\u043e\u0448\u0435\u043b\x2c\x20\u0434\u0430\x3f\x20\u041d\u0443\x2c\x20\u0442\u043e\u0433\u0434\u0430\x20\u043f\u0440\u0438\u0434\u0435\u0442\u0441\u044f\x20\u0432\u0441\u0435\x20\u0436\u0435\x20\x2a\u0441\u043a\u0430\u0437\u0430\u0442\u044c\x2a\x2e\x20\u0423\x20\u043c\u0435\u043d\u044f\x20\u043d\u0435\x20\u0434\u043b\u044f\x20\u0442\u0435\u0431\u044f\x20\u043f\u043e\u0434\u0441\u043a\u0430\u0437\u043a\u043e\u043a\x2e",
-                en: "\x53\x6f\x20\x71\x6f\x75\x20\x6d\x61\x64\x65\x20\x69\x74\x20\x74\x68\x69\x73\x20\x66\x61\x72\x2c\x20\x68\x75\x63\x68\x3f\x20\x57\x65\x6c\x2c\x20\x74\x68\x65\x20\x6e\x65\x78\x74\x20\x73\x74\x65\x70\x20\x69\x73\x20\x2a\x73\x61\x71\x2a\x2e"
+                passwords: ["c71c4c1a539af66d4be3da54d023f2f81907cbff389659b9a674728f328f2db6"],
+                ru: _d("2006040b030c014713000b46010e4242010c010a4d040a041c0b0a5c1b0c034710034444550f0c07440b0c16024e1317170a45021a00472e484b1d024e0e4c501c0c16024e0b020d42501a1c431b0717011d4d034a1b060d4b064c110a0d4b064c1b064c50000a42421c000d0a4d064c0b4352"),
+                en: _d("32470e144b1c17161b4d070b460317170a45060410471b1c1c1b501d0a0b0d060e471317170a450912171c1b5042410a0e104d0c4c4443425217030604471917170a450d1d1703470b1c11471b0c1c131c0e4708453c041d11470b13111b1d1245031b0447111a0b125a071d020b0014470317170a4506130b050b1c470b134604051b471c160b45060410470b134604051b5e")
             },
             {
-                passwords: ["\u0441\u043a\u0430\u0437\u0430\u0442\u044c", "\x73\x61\x71"],
-                ru: "\u0414\u0435\u0439\u0441\u0442\u0432\u0438\x2a\x31\x32\x33\x2a\u0435\u043b\u044c\u043d\u043e\x20\u0445\u043e\u0447\u0435\u0448\x20\u0447\u0442\u043e\x20\u044f\x20\u0441\u043a\u0430\u0437\u0430\u043b\x20\u043f\u0430\u0440\u043e\x2a\x2b\x2a\u043b\u044c\x3f\x20\u041d\u0443\x20\u044f\x20\u0436\u0435\x20\u0441\u043a\u0430\u0437\u0430\u043b\x20\u0443\x20\u043c\u0435\x2a\x31\x32\x33\x2a\u043d\u044f\x20\u0435\u0433\u043e\x20\u043d\u0435\x20\u043f\u043e\u043b\x21",
-                en: "\x44\x6f\x20\x71\x6f\x75\x20\x72\x65\x61\x2a\x31\x32\x33\x2a\x6c\x71\x20\x77\x61\x6e\x74\x20\x6d\x65\x20\x74\x6f\x20\x73\x61\x71\x20\x74\x68\x65\x20\x73\x61\x73\x73\x2a\x2b\x2a\x77\x6f\x72\x64\x3f\x20\x42\x75\x74\x20\x49\x20\x74\x6f\x6c\x64\x20\x71\x6f\x75\x2c\x20\x49\x20\x64\x6f\x6e\x27\x74\x20\x68\x61\x2a\x31\x32\x33\x2a\x76\x65\x20\x69\x74\x21"
+                passwords: ["5ff9e4726442b5da8785fe8eef4cf64205561a052ff881a79f1db89691652431", "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8eb27677747afc29a954b44"],
+                ru: _d("194454460706070b4352011c1d04424b1006094e1c101d0b4350160a041c0b0a5c1b0c0347104e1c1d04424b1006004b11161d020d435008060342551a020d0442"),
+                en: _d("3617473b171747071d0e1306041647030a0d130c0c160b451d170243000a12050e470217111b4507020047061d17450317170a451d1d170b044719171d1c0b46021d45031b04470912171c1b50")
             },
             {
-                passwords: ["\x32\x34\x36"],
-                ru: "\u0425\u0412\u0410\u0422\u0418\u0422\x21\x20\u042f\x20\u0421\u041a\u0410\u0417\u0410\u041b\x20\u0423\x20\u041c\u0415\u041d\u042f\x20\u041d\u0418\u0427\u0415\u0413\u041e\x20\u041d\u0415\u0422\x21\x20\u0418\u0429\u0418\x20\u041f\u0410\u0420\u041e\u041b\u0418\x20\u0412\x20\u0414\u0420\u0423\u0413\u0418\u0425\x20\u041c\u0415\u0421\u0422\u0410\x25\x21\x2a\x21\x21\x21\x21\x21\x2a",
-                en: "\x45\x4e\x4f\x55\x47\x48\x21\x20\x49\x20\x53\x41\x4a\x44\x20\x49\x20\x44\x4f\x27\x54\x20\x48\x41\x56\x45\x20\x41\x4e\x59\x54\x48\x49\x4e\x47\x21\x20\x4c\x4f\x4f\x4a\x20\x46\x4f\x52\x20\x54\x48\x45\x20\x50\x41\x53\x53\x57\x4f\x52\x44\x53\x20\x45\x4c\x53\x45\x57\x48\x45\x52\x45\x21\x2a\x21\x21\x21\x21\x21\x2a"
+                passwords: ["5910db4fb9831776595568165f12e845c08833917d23d8c1cfa28638162d08a5", "9fb896da8fbfa30562e87900b957685672a9b2b5133604f3513a968600f951e3"],
+                ru: _d("094440551906000b4b12164a5c545f444c4b0b1c0b4c50160a041c0b0a5c1b0c0347100e4c501c0c16024e0b020d42501a1c431b0717011d4d0e0d0c42421c000d0a4d064c50000a42421c000d0a4d0444550f0c07440b0c16024e1317170a450c0c16024e010c010a4d0d0a024250"),
+                en: _d("291d453b171747071d0e130604164718171d1c0b460d1d174507161207120647030a0d130c0c160b451e17170a45131b4719171d1c0b460d1d174503164719171d1c0b460411471b0c1c131c0e4708452d431c470316471e17171d030b0d42410a0e104d0c4c444342521703060447031b04470912171c1b50")
             },
             {
-                passwords: ["\x21\x21\x21\x21\x21"],
-                ru: "\u0414\u0435\u0440\u0436\u0438\x20\u0441\u0432\u043e\u0439\x20\u043f\u0430\u0440\u043e\u043b\u044c\x21\x20\u0418\x20\u043f\u0440\u043e\u0447\u044c\x20\u043e\u0442\u0441\u044e\u0434\u0430\x3a\x20\x76\x61\x2a\x66\x77\x6e\x25\u0447\u0438\x2b\u0430\u0434\u044c\x43\x3e\u0440\u0444\x24\u043b\u043d\u0445\u044f\x27\x78\x77\x31\x25\u0439\u043a\u043b\x5f\x35\u0447\u0438\u0433\u043f\u0442\u044b\u043e\u0438\x5d\x3f\u0435\x6a\x65\x23\x2a\x2e",
-                en: "\x54\x61\x6a\x65\x20\x71\x6f\x75\x20\x73\x61\x73\x73\x77\x6f\x72\x64\x21\x20\x76\x61\x2a\x66\x77\x6e\x25\u0447\u0438\x2b\u0430\u0434\u044c\x43\x3e\u0440\u0444\x24\u043b\u043d\u0445\u044f\x27\x78\x77\x31\x25\u0439\u043a\u043b\x5f\x35\u0447\u0438\u0433\u043f\u0442\u044b\u043e\u0438\x5d\x3f\u0435\x6a\x65\x23\x2a\x2e"
+                passwords: ["b199042b314995f51270fe178f0da594396b797fc74d4715f6fc146da9047970"],
+                ru: _d("235b442223332402434b222955464243171317424b23414a434b4c441c004245084942001d0a5e2322434c4424334c44424b2255464243171317424b2322444d4d1606424e23434c444243171317424b1d16110a030b4c500b020d4250000a42421c000d0a4d064c0b43524b224e22222222224e"),
+                en: _d("2a472c3b2d282245225e360b0d462947230b46241b0716071c470316470b134604051b470317170a450b1c11470317170a45170b1c11470912171c1b50452327242d2f45232725453617171d030b0d452917171d030b0d03471612071206471317170a450b1c11471b0c1c131c0e470845325e22222222225e")
             },
             {
-                passwords: ["\x76\x61\x2a\x66\x77\x6e\x25\u0447\u0438\x2b\u0430\u0434\u044c\x43\x3e\u0440\u0444\x24\u043b\u043d\u0445\u044f\x27\x78\x77\x31\x25\u0439\u043a\u043b\x5f\x35\u0447\u0438\u0433\u043f\u0442\u044b\u043e\u0438\x5d\x3f\u0435\x6a\x65\x23"],
-                ru: "\u041d\u0430\u043a\u043e\u043d\u0435\u0446\x2d\u0442\u043e\x20\u0432\u044b\x20\u043d\u0430\u0445\u043e\u0434\u0438\u0442\u0435\x20\u043f\u0430\u0440\u043e\u043b\u044c\x2e\x20\u041a\u043e\u043c\u0430\u043d\u0434\u0430\x20\x4b\x65\x65\x70\x65\x72\x20\x45\x6e\x74\x65\x72\x74\x61\x69\x6e\x6d\x65\x6e\x74\x2c\x20\u0432\u043e\u0437\u043c\u043e\u0436\u043d\u043e\x2c\x20\u0438\x20\u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043b\u0430\x20\u044d\u043f\u043e\u0445\u0443\x20\u044d\u0440\u044b\x20\u4d\x69\x6e\x65\x63\x72\x61\x66\x74\x2c\x20\u043d\u043e\x20\u043d\u0430\u0441\u0442\u043e\u044f\u0449\u0430\x20\u044d\u0440\u0430\x20\u0442\u043e\u043b\u044c\x20\u043d\u0430\u0447\u0438\u043d\u0430\u0435\u0442\x0441\u044f\x2e",
-                en: "\x51\x6f\x75\x27\x76\x65\x20\x66\x69\x6e\x61\x6c\x6c\x71\x20\x66\x6f\x75\x6e\x64\x20\x69\x74\x2e\x20\x54\x68\x65\x20\x4b\x65\x65\x70\x65\x72\x20\x45\x6e\x74\x65\x72\x74\x61\x69\x6e\x6d\x65\x6e\x74\x20\x74\x65\x61\x6d\x20\x64\x61\x79\x20\x66\x61\x76\x65\x20\x65\x6e\x64\x65\x64\x20\x74\x68\x65\x20\x4d\x69\x6e\x65\x63\x72\x61\x66\x74\x20\x65\x72\x61\x2c\x20\x62\x75\x74\x20\x74\x68\x65\x20\x74\x72\x75\x65\x20\x67\x61\x6d\x69\x6e\x67\x20\x65\x72\x61\x20\x69\x73\x20\x6a\x75\x73\x74\x20\x62\x65\x67\x69\x6e\x6e\x69\x6e\x67\x2e"
+                passwords: ["8d1b11030e6fc8508f7fbdf943ff5c1388b0664e7c75bf6079c6fa713a07ec82"],
+                ru: _d("274443425523225e211d0a0b0d060e470317170a4506130b45070200471917170a450912171c1b5042410a0e104d0b020d425011161d020d43500806034255232242551a020d044243500a1c1d44010e42424b23224444550f0c07440b0c16024e1317170a450b020d42501a1c431b0717011d4d034a2242551a020d044243500e16104e051c040042551a020d044243500a0e104d161d020d4350010c010a4d060a0242504b225c0d120a5c1c0101490b4d44010b424212555c1710170a4c0a0c164a5f575c514440074c5d5742410c0e0b4c50111b1d12450e1b1241071207164a"),
+                en: _d("26202c335e321d17174707160b461d170243000a12050e470912171c1b501d1c471b1c1c1b501d0a0b0d060e471d170243000a12050e470317170a45171d02160b0b462322211d17174707160b461d170243000a12050e470b134604051b471c160b45060410470b134604051b470317170a451c0e0b460411470b134604051b4a223f1b0c00471317170a45071d0e1306041647030a0d130c0c160b4524222f1b0c0a0b451317170a45071612071206471317170a45120216064a225c0d120a5c1c0101490b4d4444555c1710170a4c0a0c164a5f575c514440074c5d5742410c0e0b4c50111b1d12450e1b1241071207164a")
+            },
+            {
+                passwords: ["40df98555e783422941ecda34a36f0a2ca7ca873523528b6d85958cb30b35583"],
+                ru: _d("230b44421111161d020d4350060a041c0b0a5c1b0c0347100e4c16110a110a4d1d1b0d0a0242500a0e104d020d435011161d020d435008060342554a222006040b030c014713000b461317170a450b1c11471b0c1c131c0e47084501434c441c004245084942001d0a5e26471c0e0b46131c0e471d0e1b1241071207164714101d0c470b1c11471b0c1c131c0e470845340b0b000b464522060408540b010c0147111a0b125a071d020b0014470b134604051b4714101d0c470b1c11471b0c1c131c0e47084534100c4704114704051b14471d171d45131b471c0e0b461d4d161d0d0442431b0e00501a1c431b0717011d4d03"),
+                en: _d("321d1717471e17171d030b0d450c1c0a060b45071612071206471317170a450317170a4504471c0e0b460411471e17171d030b0d03471612071206471317170a45120216064a2222334707160b46011b171c530c000142461d170243000a12050e470217111b45070200470e4c501c0c16024e0b020d42501a1c431b0717011d4d034a223f034707160b460c4c44434252170306044726471c0e0b46131c0e471d0e1b1241071207164714101d0c470b1c11471b0c1c131c0e470845340b0b000b464522060408540b010c0147111a0b125a071d020b0014470b134604051b4714101d0c470b1c11471b0c1c131c0e47084534100c4704114704051b14471d171d45131b471c0e0b461b1c1c1b501d0a0b0d060e47111a0b125a071d020b0014471c160b45060410470b134604051b5e")
             }
         ];
-
         function toggleLangDropdown() {
-            var dropdown = document.getElementById("langDropdown");
-            if (dropdown) dropdown.classList.toggle("active");
+            document.getElementById("langDropdown").classList.toggle("active");
         }
 
         function selectLanguage(langCode) {
-            var dropdown = document.getElementById("langDropdown");
-            if (dropdown) dropdown.classList.remove("active");
+            document.getElementById("langDropdown").classList.remove("active");
             changeLanguage(langCode);
         }
 
@@ -487,15 +475,15 @@
         function changeLanguage(langCode) {
             currentLang = langCode;
 
-            if (currentText === startTexts["ru"] || currentText === startTexts["en"] || currentText === "") {
+            if (currentText === startTexts['ru'] || currentText === startTexts['en'] || currentText === "") {
                 currentText = startTexts[currentLang];
-            } else if (currentText === wrongTexts["ru"] || currentText === wrongTexts["en"]) {
+            } else if (currentText === wrongTexts['ru'] || currentText === wrongTexts['en']) {
                 currentText = wrongTexts[currentLang];
             } else {
                 var screen = document.getElementById("text");
                 if (screen) {
                     for (var i = 0; i < gameLevels.length; i++) {
-                        if (screen.innerText === gameLevels[i]["ru"] || screen.innerText === gameLevels[i]["en"]) {
+                        if (screen.innerText === gameLevels[i]['ru'] || screen.innerText === gameLevels[i]['en']) {
                             currentText = gameLevels[i][currentLang];
                             break;
                         }
@@ -505,32 +493,27 @@
             updateDisplay();
         }
 
-        function checkCode() {
+        async function checkCode() {
             var inputField = document.getElementById("userAnswer");
             if (!inputField) return;
 
-            var input = inputField.value.trim(); 
+            var input = inputField.value.toLowerCase().trim();
             var found = false;
 
             if (alertTimeout) {
                 clearTimeout(alertTimeout);
             }
 
-            for (var i = 0; i < gameLevels.length; i++) {
-                if (gameLevels[i].passwords.includes(input)) {
-                    var targetText = gameLevels[i][currentLang];
-                    found = true;
-                    
-                    document.body.classList.remove("error-alert");
-                    document.body.classList.add("success-alert");
-                    currentText = currentLang === "ru" ? "ДОСТУП РАЗРЕШЕН..." : "ACCESS GRANTED...";
-                    updateDisplay();
+            var msgBuffer = new TextEncoder().encode(input);
+            var hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            var hashArray = Array.from(new Uint8Array(hashBuffer));
+            var inputHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-                    alertTimeout = setTimeout(function() {
-                        document.body.classList.remove("success-alert");
-                        currentText = targetText;
-                        updateDisplay();
-                    }, 3000);
+            for (var i = 0; i < gameLevels.length; i++) {
+                if (gameLevels[i].passwords.includes(inputHash)) {
+                    currentText = gameLevels[i][currentLang];
+                    found = true;
+                    document.body.classList.remove("error-alert");
                     break;
                 }
             }
@@ -566,10 +549,10 @@
         }
 
         window.onclick = function(event) {
-            if (!event.target.matches(".custom-lang-btn")) {
+            if (!event.target.matches('.custom-lang-btn')) {
                 var dropdown = document.getElementById("langDropdown");
-                if (dropdown && dropdown.classList.contains("active")) {
-                    dropdown.classList.remove("active");
+                if (dropdown && dropdown.classList.contains('active')) {
+                    dropdown.classList.remove('active');
                 }
             }
         }
