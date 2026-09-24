@@ -324,7 +324,6 @@
         var alertTimeout = null;
         var currentScreen = "game"; 
         
-        // Переменная, которая хранит текущий текст на экране
         var activeTextRu = "Введите Пароль";
         var activeTextEn = "Enter Password";
 
@@ -340,7 +339,6 @@
             en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
         };
 
-        // Тексты ответов
         var txt_password = {
             ru: "Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?",
             en: "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?"
@@ -408,7 +406,7 @@
             ru: "Наконец-то вы находите пароль. Знаю, это было непросто, но теперь я открою вам секрет. Команда Keeper Entertainment, возможно, и завершила эпоху Minecraft, но настоящая игровая эра только начинается.",
             en: "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
         };
-                function toggleLangDropdown() {
+        function toggleLangDropdown() {
             document.getElementById("langDropdown").classList.toggle("active");
         }
 
@@ -445,54 +443,49 @@
             var inputField = document.getElementById("userAnswer");
             if (!inputField) return;
 
-            var rawInput = inputField.value.trim();
-            if (rawInput === "") return;
-
-            // Подготовка ввода: базово переводим в нижний регистр и убираем крайние пробелы
-            var input = rawInput.toLowerCase();
-
-            // Создаем альтернативный вариант БЕЗ знаков препинания для фраз типа "где я?" -> "где я"
-            var cleanInput = input.replace(/[?!.]/g, "");
+            // Абсолютно точный ввод пользователя. Убираем только пробелы по краям.
+            var input = inputField.value.trim();
+            if (input === "") return;
 
             if (alertTimeout) clearTimeout(alertTimeout);
             document.body.classList.remove("error-alert");
 
-            // Проверка «В лоб» (сначала ищем точное совпадение знаков вроде !!!!!, затем проверяем обычные фразы)
+            // Прямое сравнение строк "в лоб" без скрытых изменений символов
             if (input === "password" || input === "пароль") {
                 activeTextRu = txt_password.ru; activeTextEn = txt_password.en;
-            } else if (cleanInput === "where am i" || cleanInput === "где я") {
+            } else if (input === "where am i" || input === "где я" || input === "where am i?" || input === "где я?") {
                 activeTextRu = txt_where.ru; activeTextEn = txt_where.en;
-            } else if (cleanInput === "who are you" || cleanInput === "кто ты") {
+            } else if (input === "who are you" || input === "кто ты" || input === "who are you?" || input === "кто ты?") {
                 activeTextRu = txt_who.ru; activeTextEn = txt_who.en;
-            } else if (cleanInput === "what is the password" || cleanInput === "какой пароль") {
+            } else if (input === "what is the password" || input === "какой пароль" || input === "what is the password?" || input === "какой пароль?") {
                 activeTextRu = txt_what.ru; activeTextEn = txt_what.en;
-            } else if (cleanInput === "keeper entertainment") {
+            } else if (input === "keeper entertainment" || input === "Keeper Entertainment") {
                 activeTextRu = txt_keeper.ru; activeTextEn = txt_keeper.en;
-            } else if (cleanInput === "new era" || cleanInput === "новая эра") {
+            } else if (input === "new era" || input === "новая эра" || input === "New Era" || input === "Новая эра") {
                 activeTextRu = txt_newera.ru; activeTextEn = txt_newera.en;
-            } else if (cleanInput === "burmalda" || cleanInput === "бурмалда") {
+            } else if (input === "burmalda" || input === "бурмалда" || input === "Бурмалда") {
                 activeTextRu = txt_burmalda.ru; activeTextEn = txt_burmalda.en;
             } else if (input === "67") {
                 activeTextRu = txt_67.ru; activeTextEn = txt_67.en;
-            } else if (cleanInput === "tkom4" || cleanInput === "the king of monsters 4") {
+            } else if (input === "tkom4" || input === "the king of monsters 4" || input === "the king of monsters 4 ") {
                 activeTextRu = txt_tkom.ru; activeTextEn = txt_tkom.en;
-            } else if (cleanInput === "секрет" || cleanInput === "secret") {
+            } else if (input === "секрет" || input === "secret") {
                 activeTextRu = txt_secret.ru; activeTextEn = txt_secret.en;
             } else if (input === "*пароль*" || input === "*password*") {
                 activeTextRu = txt_starpass.ru; activeTextEn = txt_starpass.en;
             } else if (input === "16") {
                 activeTextRu = txt_16.ru; activeTextEn = txt_16.en;
-            } else if (cleanInput === "пбг" || cleanInput === "scp") {
+            } else if (input === "пбг" || input === "scp" || input === "SCP") {
                 activeTextRu = txt_pbg.ru; activeTextEn = txt_pbg.en;
-            } else if (cleanInput === "сказать" || cleanInput === "saq") {
+            } else if (input === "сказать" || input === "saq") {
                 activeTextRu = txt_say.ru; activeTextEn = txt_say.en;
             } else if (input === "246") {
                 activeTextRu = txt_246.ru; activeTextEn = txt_246.en;
-            } else if (input === "!!!!!") { 
-                // Теперь !!!!! не сбрасывается и проверяется идеально
+            } else if (input === "!!!!! " || input === "!!!!!") { 
+                // Сработает в любом случае — и с пробелом на конце, и без него
                 activeTextRu = txt_excl.ru; activeTextEn = txt_excl.en;
-            } else if (rawInput === "va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#") {
-                // Регистр букв в финальном ключе имеет значение, сверяем с оригиналом rawInput
+            } else if (input === "va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#" || input === "va*fwn%чи+адьc>рф$лнхя'xw1%йкл_5чигптыои]?}еje#") {
+                // Сработает и с маленькой "c", и с большой английской "C"
                 activeTextRu = txt_final.ru; activeTextEn = txt_final.en;
             } else {
                 // Если ничего не подошло — ошибка
@@ -571,6 +564,3 @@
 
             updateDisplay();
         };
-    </script>
-</body>
-</html>
