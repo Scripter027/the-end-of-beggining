@@ -27,14 +27,14 @@
             position: relative;
         }
 
-        /* Полный экран загрузки старого ПК */
+        /* Экран загрузки с авто-скрытием (подстраховка для мобильных) */
         #bootScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: #000000;
             color: #00ff00;
             font-family: monospace;
             font-size: 14px;
@@ -45,6 +45,14 @@
             z-index: 10000;
             overflow: hidden;
             white-space: pre-wrap;
+            /* Если JS зависнет, CSS сам уберет черный экран через 2.5 секунды */
+            animation: mobileForceHide 0.5s ease 2.5s forwards;
+        }
+
+        @keyframes mobileForceHide {
+            0% { opacity: 1; pointer-events: auto; }
+            99% { opacity: 0; pointer-events: auto; }
+            100% { opacity: 0; pointer-events: none; display: none; }
         }
 
         /* Состояние успеха (Ярко-зелёная вспышка) */
