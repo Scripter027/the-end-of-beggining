@@ -508,7 +508,7 @@
             var inputField = document.getElementById("userAnswer");
             if (!inputField) return;
 
-            var input = inputField.value.trim(); // Сохраняем точный регистр букв и знаков пароля
+            var input = inputField.value.trim(); // Точный регистр символов
             var found = false;
 
             if (alertTimeout) {
@@ -574,12 +574,13 @@
             }
         }
 
-        // Логика текстового экрана включения ПК
         function runBootSequence() {
             var bootScreen = document.getElementById("bootScreen");
+            if (!bootScreen) return;
+            
             var lines = [
-                "KEEPER ENTERPRISE BIOS v4.027",
-                "PROPERTY OF KEEPER ENTERPRISE. ALL RIGHTS RESERVED.",
+                "KEEPER ENTERTAINMENT BIOS v4.027",
+                "PROPERTY OF KEEPER ENTERTAINMENT. ALL RIGHTS RESERVED.",
                 "--------------------------------------------------",
                 "CPU: Keeper Core(TM) i7 @ 3.40GHz",
                 "SPEED: 3400MHz // BUS: 100MHz",
@@ -611,7 +612,7 @@
         }
 
         window.onload = function () {
-            runBootSequence();
+            runBootSequence(); // Исправлен вызов заставки при загрузке страницы
             var timerElement = document.getElementById("countdownTimer");
 
             var inputField = document.getElementById("userAnswer");
