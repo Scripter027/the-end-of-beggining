@@ -24,6 +24,7 @@
             text-align: center;
             transition: color 1s ease;
             padding: 15px;
+            position: relative;
         }
 
         body.error-alert {
@@ -72,9 +73,10 @@
             transition: all 1s ease; 
             max-width: 500px;
             width: 100%;
-            max-height: 75vh;
+            max-height: 70vh;
             box-sizing: border-box;
             overflow-y: auto;
+            margin-top: 40px;
         }
 
         .custom-lang-container {
@@ -101,6 +103,7 @@
             font-weight: bold;
             text-align: center;
         }
+        
         .custom-lang-dropdown {
             display: none;
             position: absolute;
@@ -134,19 +137,21 @@
 
         .timer-link {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background: transparent;
             border: 1px dashed #00ff00;
             color: #00ff00;
-            padding: 8px 15px;
+            padding: 8px 20px;
             text-decoration: none;
             font-family: monospace;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             z-index: 9999;
             transition: border 1s ease, color 1s ease, background 0.2s;
             box-sizing: border-box;
+            white-space: nowrap;
         }
 
         .timer-link:hover {
@@ -258,7 +263,8 @@
             }
             .box {
                 padding: 25px 20px;
-                max-height: 65vh;
+                max-height: 60vh;
+                margin-top: 60px;
             }
             #text, #archiveText {
                 font-size: 15px;
@@ -274,10 +280,9 @@
                 max-width: 100%;
             }
             .timer-link {
-                left: 10px;
-                bottom: 10px;
-                font-size: 12px;
-                padding: 5px 8px;
+                top: 15px;
+                font-size: 13px;
+                padding: 6px 12px;
             }
             .custom-lang-container {
                 right: 10px;
@@ -293,6 +298,7 @@
 </head>
 <body>
 
+    <!-- Экран игры -->
     <div class="box" id="gameScreen">
         <div id="text"></div>
         <div class="input-container" id="inputContainer">
@@ -301,12 +307,15 @@
         </div>
     </div>
 
+    <!-- Экран Архива -->
     <div class="box" id="archiveScreen" style="display: none;">
         <div id="archiveText"></div>
     </div>
 
+    <!-- Перемещенный таймер (вверху по центру) -->
     <a href="javascript:void(0)" class="timer-link" id="countdownTimer" onclick="toggleScreens()">00d 00h 00m 00s</a>
 
+    <!-- Переключатель языка -->
     <div class="custom-lang-container">
         <button class="custom-lang-btn" id="langBtn" onclick="toggleLangDropdown()">Русский</button>
         <div class="custom-lang-dropdown" id="langDropdown">
@@ -314,14 +323,13 @@
             <div class="custom-lang-option" onclick="selectLanguage('en')">English</div>
         </div>
     </div>
-
     <script>
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
         var alertTimeout = null;
         var currentScreen = "game"; 
 
         var interfaceUi = {
-            ru: { btn: "\u0412\u0412\u041e\u0414", placeholder: "\u0412\u0430\u0448 \u043e\u0442\u0432\u0435\u0442...", menu: "\u0420\u0443\u0441\u0441\u043a\u0438\u0439" },
+            ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
             en: { btn: "ENTER", placeholder: "Your answer...", menu: "English" }
         };
 
@@ -329,72 +337,48 @@
         var currentText = "";
 
         var startTexts = {
-            ru: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u041f\u0430\u0440\u043e\u043b\u044c",
+            ru: "Введите Пароль",
             en: "Enter Password"
         };
 
         var wrongTexts = {
-            ru: "\u041d\u0415\u0412\u0415\u0420\u041d\u041e",
+            ru: "НЕВЕРНО",
             en: "WRONG"
         };
 
         var archiveTexts = {
-            ru: "\u0421\u0422\u0410\u0422\u0423\u0421: \u0414\u041e\u0421\u0422\u0423\u041f \u0420\u0410\u0417\u0420\u0415\u0428\u0415\u041d // \u0410\u0420\u0425\u0418\u0412 \u2116027\n\n[\u0417\u0410\u041f\u0418\u0421\u042c \u0417\u0410\u0411\u041b\u041e\u041a\u0418\u0420\u041e\u0412\u0410\u041d\u0410]\n\n\u0412\u044b \u0443\u0441\u043f\u0435\u0448\u043d\u043e \u043f\u0440\u043e\u043d\u0438\u043a\u043b\u0438 \u0432 \u0431\u0430\u0437\u0443 \u0434\u0430\u043d\u043d\u044b\u0445. \u0421\u0438\u0441\u0442\u0435\u043c\u0430 \u0431\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u0438 \u0432\u0440\u0435\u043c\u0435\u043d\u043d\u043e \u043e\u0442\u043a\u043b\u044e\u0447\u0435\u043d\u0430, \u043e\u0434\u043d\u0430\u043a\u043e \u0444\u0430\u0439\u043b\u044b \u043b\u043e\u0433\u043e\u0432 \u0437\u0430\u0448\u0438\u0444\u0440\u043e\u0432\u0430\u043d\u044b \u0433\u043b\u0430\u0432\u043d\u044b\u043c \u0441\u0447\u0435\u0442\u0447\u0438\u043a\u043e\u043c \u0432\u0440\u0435\u043c\u0435\u043d\u0438.\n\n\u0412\u0435\u0440\u043d\u0438\u0442\u0435\u0441\u044c \u0432\u0440\u0443\u0447\u043d\u0443\u044e \u043a \u0442\u0435\u0440\u043c\u0438\u043d\u0430\u043b\u0443 \u0447\u0435\u0440\u0435\u0437 \u0442\u0430\u0439\u043c\u0435\u0440, \u0435\u0441\u043b\u0438 \u0433\u043e\u0442\u043e\u0432\u044b \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c \u043f\u043e\u0438\u0441\u043a\u0438.",
+            ru: "СТАТУС: ДОСТУП РАЗРЕШЕН // АРХИВ №027\n\n[ЗАПИСЬ ЗАБЛОКИРОВАНА]\n\nВы успешно проникли в базу данных. Система безопасности временно отключена, однако файлы логов зашифрованы главным счетчиком времени.\n\nВернитесь вручную к терминалу через таймер, если готовы продолжить поиски.",
             en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
         };
 
-        var gameLevels = [
-            {
-                passwords: ["\u0070\u0061\u0073\u0073\u0077\u006f\u0072\u0064", "\u043f\u0430\u0440\u043e\u043b\u044c"],
-                ru: "\u0422\u0430\u043a\u0438\u0445 \u0433\u043b\u0443\u043f\u044b\u0445 \u043c\u044b \u0435\u0449\u0435 \u043d\u0435 \u0432\u0441\u0442\u0440\u0435\u0447\u0430\u043b\u0438. \u0422\u044b \u043f\u0440\u0430\u0432\u0434\u0430 \u0434\u0443\u043c\u0430\u0435\u0448\u044c, \u0447\u0442\u043e \u044d\u0442\u043e\u0442 \u0441\u0435\u043a\u0440\u0435\u0442 \u043c\u043e\u0436\u043d\u043e \u0443\u0437\u043d\u0430\u0442\u044c, \u0432\u0441\u0435\u0433\u043e \u043b\u0438\u0448\u044c \u043d\u0430\u043f\u0438\u0441\u0430\u0432 *\u041f\u0430\u0440\u043e\u043b\u044c*?",
-                en: "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?"
-            },
-            {
-                passwords: ["\u0077\u0068\u006f \u0061\u0072\u0065 \u0079\u006f\u0075", "\u043a\u0442\u043e \u0442\u044b", "\u0077\u0068\u006f \u0061\u0072\u0065 \u0079\u006f\u0075\u003f", "\u043a\u0442\u043e \u0442\u044b\u003f"],
-                ru: "\u0422\u0435\u0440\u043c\u0438\u043d\u0430\u043b, \u043e\u0442\u0432\u0435\u0447\u0430\u044e\u0449\u0438\u0439 \u043d\u0430 \u0442\u0432\u043e\u0438 \u0433\u043b\u0443\u043f\u044b\u0435 \u0432\u043e\u043f\u0440\u043e\u0441\u044b, \u0432 \u043d\u0430\u0434\u0435\u0436\u0434\u0435 \u043d\u0430 \u0442\u043e, \u0447\u0442\u043e \u0442\u044b \u043d\u0430\u0439\u0434\u0435\u0448\u044c \u043f\u0430\u0440\u043e\u043b\u044c!",
-                en: "A terminal that answers your stupid questions, in the hope that you'll find password!"
-            },
-            {
-                passwords: ["\u0077\u0068\u0061\u0074 \u0069\u0073 \u0074\u0068\u0065 \u0070\u0061\u0073\u0073\u0077\u006f\u0072\u0064", "\u0430 \u043a\u0430\u043a\u043e\u0439 \u043f\u0430\u0440\u043e\u043b\u044c", "\u0077\u0068\u0061\u0074 \u0069\u0073 \u0074\u0068\u0065 \u0070\u0061\u0073\u0073\u0077\u006f\u0072\u0064\u003f", "\u0430 \u043a\u0430\u043a\u043e\u0439 \u043f\u0430\u0440\u043e\u043b\u044c\u003f"],
-                ru: "\u0422\u044b \u043c\u043d\u0435 \u0441\u043a\u0430\u0436\u0438.",
-                en: "You tell me."
-            },
-            {
-                passwords: ["\u006b\u0065\u0065\u0070\u0065\u0072 \u0065\u006e\u0074\u0065\u0072\u0074\u0061\u0069\u006e\u006d\u0065\u006e\u0074"],
-                ru: "\u041d\u043e\u0432\u0430\u044f \u042d\u0440\u0430 \u0413\u0440\u044f\u0434\u0435\u0442.",
-                en: "A New Era is Coming."
-            },
-            {
-                passwords: ["\u006e\u0065\u0077 \u0065\u0072\u0061", "\u043d\u043e\u0432\u0430\u044f \u044d\u0440\u0430"],
-                ru: "https://t.me",
-                en: "https://t.me"
-            },
-            {
-                passwords: ["\u0062\u0075\u0072\u006d\u0061\u006c\u0064\u0061", "\u0431\u0443\u0440\u043c\u0430\u043b\u0434\u0430"],
-                ru: "\u041d\u0435 \u043d\u0443 \u0442\u044b \u0431\u0443\u0440\u043c\u0430\u043b\u0434\u0435\u0446 \u043a\u043e\u043d\u0435\u0447\u043d\u043e, \u0447\u0442\u043e \u0448\u0430\u0440\u0438\u0448\u044c \u0437\u0430 \u043c\u043e\u043b\u043e\u0434\u0435\u0436\u043d\u044b\u0435 \u043c\u0435\u043c\u0447\u0438\u043a\u0438, \u043d\u043e \u044d\u0442\u043e \u043d\u0435 \u043f\u0430\u0440\u043e\u043b\u044c!",
-                en: "Ne ny ti burmaldec conechno, chto sharish za molodezhnie memchiki, no eto ne parol!"
-            },
-            {
-                passwords: ["\u0036\u0037"],
-                ru: "\u0414\u0430 \u043d\u0430\u0439\u0434\u0438 \u0442\u044b \u043f\u0430\u0440\u043e\u043b\u044c \u0438 \u043d\u0435 \u0441\u0442\u0440\u0430\u0434\u0430\u0439 \u0444\u0438\u0433\u043d\u0435\u0439! \u041d\u0430 \u043a\u0440\u0430\u0439 \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439 \u0447\u0442\u043e \u0442\u043e \u0441\u043f\u0440\u043e\u0441\u0438\u0442\u044c! \u041c\u043e\u0436\u0435\u0442 \u043e\u0442\u0432\u0435\u0447\u0443.",
-                en: "Just find the password and stop messing around! At least try asking something! Maybe I'll answer."
-            },
-            {
-                passwords: ["\u0074\u006b\u006f\u006d\u0034", "\u0074\u0068\u0065 \u006b\u0069\u006e\u0067 \u006f\u0066 \u006d\u006f\u006e\u0073\u0074\u0065\u0072\u0073 \u0034"],
-                ru: "...",
-                en: "..."
-            },
-            {
-                passwords: ["\u0077\u0068\u0065\u0072\u0065 \u0061\u006d \u0069", "\u0433\u0434\u0435 \u044f", "\u0077\u0068\u0065\u0072\u0065 \u0061\u006d \u0069\u003f", "\u0433\u0434\u0435 \u044f\u003f"],
-                ru: "\u041d\u0435 \u0432\u0430\u0436\u043d\u043e, \u0432\u0430\u0436\u043d\u043e \u0442\u043e, \u0447\u0442\u043e \u0442\u044b \u0437\u0434\u0435\u0441\u044c \u0437\u0430\u0431\u044b\u043b! \u0410 \u0447\u0442\u043e \u0438\u043c\u0435\u043d\u043d\u043e \u0442\u044b \u0442\u0443\u0442 \u0437\u0430\u0431\u044b\u043b - \u0431\u0435\u0437 \u043f\u043e\u043d\u044f\u0442\u0438\u044f.",
-                en: "It doesn't matter, what matters is that you're here! And what exactly you're here forgot – I have no idea."
-            },
-            {
-                passwords: ["\u0076\u0061\u002a\u0444\u0077\u006e\u0025\u0447\u0438\u002b\u0061\u0064\u044c\u0073\u003e\u0440\u0444\u0024\u043b\u043d\u0445\u044f\u0027\u0078\u0077\u0031\u0025\u0439\u043a\u006c\u005f\u0035\u0447\u0069\u0067\u0070\u0442\u044b\u043e\u0438\u005d\u003f\u0435\u006a\u0065\u0023"],
-                ru: "\u041d\u0430\u0441\u0442\u043e\u044f\u0449\u0430\u044f \u0438\u0433\u0440\u043e\u0432\u0430\u044f \u044d\u0440\u0430 \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430\u0447\u0438\u043d\u0430\u0435\u0442 \u0441\u0432\u043e\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043e\u0432\u0430\u043d\u0438\u0435. \u041a\u043e\u043c\u0430\u043d\u0434\u0430 Keeper Entertainment \u0437\u0430\u043a\u043e\u043d\u0447\u0438\u043b\u0430 \u044d\u0440\u0443 \u041c\u0430\u0439\u043d\u043a\u0440\u0430\u0444\u0442\u0430.",
-                en: "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
-            }
+        // Зашифрованные данные игровых уровней (Base64 + Обфускация)
+        var _0xeb4a = [
+            "W3sicGFzc3dvcmRzIjpbInBhc3N3b3JkIiwicGFyb2wiXSwicnUiOiLQotCw0LrQuNGFINCz0LvRg9C/0YvRhSDRgtGLINC10YnQtSDQvdC1INCy0YHRgtGA0LXRh9Cw0LsuINCi0Ysg0L/RgNCw0LLQtNCwINC00YPQvNCw0LXRiNGMLCDRh9GC0L4g0Y3RgtC+0YIg0YHQtdC60YDQtdGCINC80L7QttC90L4g0YPQt9C90DRRgtGMLCDQstGB0LXQs9C+INC70LjRiNGMINC90LDQv9C40YHQsNCyICLQn9Cw0YDQvtC70YwiPyIsImVuIjoiV2UndmUgbmV2ZXIgbWV0IHN1Y2ggc3R1cGlkIHRoZXkuIERvIHlvdSByZWFsbHkgdGhpbmsgdGhpcyBzZWNyZXQgY2FuIGJlIGZvdW5kIG91dCBqdXN0IGJ5IHR5cGluZyAqUGFzc3dvcmQqPyJ9LA==",
+            "eyJwYXNzd29yZHMiOlsid2hvIGFyZSB5b3UiLCLQutGC0L4g0YLRiyIsIndobyBhcmUgeW91PyIsLtC60YLQviDRgtGDirectXSwicnUiOiLQotC10YDQvNC40L3QsNC7LCDQvtGC0LLQtdGH0LDRjtGJ0LjQuSDQvdCwINGLRStatusCvtC4INCz0LvYDynamic0YvQtSDQstC+0L/RgNC+0YHRiywg0LIg0L3QsNC00LXQttC00LUg0L3QsCDRgtC+LCDRh9GC0L4g0YLRcountRgtCw0LnQtNC10YjRjCDQv9Cw0YDQvtC70YwhIiwiZW4iOiJBIHRlcm1pbmFsIHRoYXQgYW5zd2VycyB5b3VyIHN0dXBpZCBxdWVzdGlvbnMsIGluIHRoZSJob3BlIHRoYXQgeW91J2xsIGZpbmQgcGFzc3dvcmQhIn0s",
+            "eyJwYXNzd29yZHMiOlsid2hhdCBpcyB0aGUgcGFzc3dvcmQiLtCwiNC60LDQutC+0Lkg0L/QsNGA0L7Qu9GMINInd2hhdCBpcyB0aGUgcGFzc3dvcmQ/Iiwt0LAg0LrQsNC60L7QuSDR0NGA0L7Qu9GMINJdLCJydSI6ItCi0Ysg0LzQvdC1INGB0LrQsNC20LguIiwiZW4iOiJZb3UgdGVsbCBtZS4ifSw=",
+            "eyJwYXNzd29yZHMiOlsia2VlcGVyIGVudGVydGFpbm1lbnQiXSwicnUiOiLQndC+0LLQsNGPINGN0YDQwCDQk9GA0Y/QtNC10YIuIiwiZW4iOiJBIE5ldyBFcmEgaXMgQ29taW5nLiJ9LA==",
+            "eyJwYXNzd29yZHMiOlsibmV3IGVyYSIsLtC90L7QstCw0Y8g0Y3RgNCwIl0sInJ1IjoiaHR0cHM6Ly90Lm1lLytEZ1hkdzJ6dmlsZ3dZemRpIiwiZW4iOiJodHRwczovL3QubWUvK0RnWGR3Mnp2aWxnd1l6ZGkifSw=",
+            "eyJwYXNzd29yZHMiOlsiYnVybWFsZGEiLtCd0YPRgNC80LDQu9C00YwiXSwicnUiOiLQndC1INC90YMg0YLRiyDQsdGD0YDQvNCw0LvQtNC10YYg0LrQvtC90LXRh9C90L4sINGH0YLQviDRiNCw0YDQvdGI0Ywg0LfQsCDQvNC+0LvQvtC00LXQttC90YvQtSDQvNC10LzRh9C40LrQuCwg0L3QviDRjdGC0L4g0L3QtSDQv9Cw0YDQvtC70YwhIiwiZW4iOiJOZSBueSB0aSBidXJtYWxkZWMgY29uZWNobm8sIGNodG8gc2hhcmlzaCB6YSBtb2xvZGV6aG5pZSBtZW1jaGlraSwgbm8gZXRvIG5lIHBhcm9sISJ9LA==",
+            "eyJwYXNzd29yZHMiOlsiNjciddLCJydSI6ItCU0LAg0L3QsNC50LTQuCDRgtGcount0L/QsNGA0L7Qu9GMINC4INC90LUg0YHRgtGA0LDQtNCw0Lkg0YTQuNCz0L3QtdC5ISDQndCwINC60YDQwNC5INC/0L7Qv9GA0L7QsdGD0Lkg0YfRgtC+INGC0L4g0YHQv9GA0L7RgdC40YLRjCEg0JzQvtC20LXRgiDQvtGC0LLQtdGH0YMuIiwiZW4iOiJKdXN0IGZpbmQgdGhlIHBhc3N3b3JkIGFuZCBzdG9wIG1lc3NpbmcgYXJvdW5kISBBdCBsZWFzdCB0cnkgYXNraW5nIHNvbWV0aGluZyEgTWF5YmUgSSdsbCBhbnN3ZXIuIn0s",
+            "eyJwYXNzd29yZHMiOlsidGtvbTQiLCJ0aGUga2luZyBvZiBtb25zdGVycyA0Il0sInJ1IjoiLi4uIiwiZW4iOiIuLi4ifSw=",
+            "eyJwYXNzd29yZHMiOlsitYHQtdC60YDQtdGCIiwic2VjcmV0Il0sInJ1Ijoi0KHQtdC60YDQtdGCLeGC0L4g0YLRg9GCINC10YHRgtGMINC4INGPINC90LDQtNC10Y7RgdGMLCDRh9GC0L4g0YLRcountQvdCw0LnQtNC10YjRjCDQtdCz0L4g0L3QsNC50LTRjyDQv9Cw0YDQvtC70YwhIiwiZW4iOiJUaGVyZSBpcyBhIHNlY3JldCBoZXJlLCBhbmQgSSBob3BlIHlvdSBmaW5kIGl0IGJ5IGRpc2NvdmVyaW5nIHRoZSBwYXNzd29yZCEifSw=",
+            "eyJwYXNzd29yZHMiOlsiLtC/0L000YDQvtC70YwiLCIdcGFzc3dvcmQqIl0sInJ1Ijoi0KHQvNC10YjQvdC+LiDQndC10YPQttC10LvQuCDQvdCw0YHRgtC+0LvRjNC60L4g0L3QtdGC0YMg0LjQtNC10Lk/INCQLCDRgtC+0YfQvdC+LiDQktGLINC20LUg0LvRjtC00LguINCSINGC0LDQutC+0Lwg0YHQuyV90YfQsNC1INCy0L7RgiDQv9C+0LTRgdC60LDQt9C60LA6IDQgKyAxMiA9ID8iLCJlbiI6IlRoYXRSBXMgZnVubnkuIEFyZSB5b3UgcmVhbGx5IHRoYXQgb3V0IG9mIGlkZWFzPyBPaCwgcmlnaHQuIFlvdSVFeXJlIGh1bWFuLCBhZnRlciBhbGwuIEluIHRoYXQgY2FzZSwgaGVyZSVFeXJlIGEgaGludDogNCArIDEyID0gPyJ9LA==",
+            "eyJwYXNzd29yZHMiOlsiMTYiXSwicnUiOiLQnNC+0LvQvtC00LXRhtCwg0L3QtdC80L3QvtCz0L4g0LzQsNGC0LXQvNCw0YLQuNC60Lgg0YLRcountQt9C90LDQtdGI0YwhINCb0LDQtNC90L4sINCwINC10YHQu9C4INGC0LDQuiPriority0J3QsNC/0LjRiNC4ICLQv9C+0LHQtdCzIiwg0L3QviDQsdC10Lcg0LHRg9C60LIg0L4g0Lgg0LUuIiwiZW4iOiJXZWxsIGRvbmUsIHlvdSBrbm93IGEgYml0IG9mIG1hdGghIEFscmlnaHQsIHdoYXQgYWJvdXQgdGhpcz8gV3JpdGUgKmVzY2FwZSosIGJ1dCB3aXRob3V0IHRoZSBsZXR0ZXJzICdhJyBhbmQgJ2UnLiJ9LA==",
+            "eyJwYXNzd29yZHMiOlsitLHQsdCzIiwic2NwIl0sInJ1Ijoi0YLRcountQuCDQtNC+INGB0Y7QtNCwINC00L7RiNC10LssINC00LAsID8g0J3RMywgdNC+0LPQtNCwINC/0YDQuNC00LXRgtGB0Y8g0LLRgdC1INC20LUgKtiB0LrQsNC30LDRgtGMLiDQoyDQvNC10L3RjyDQvdC10YIg0LTQu9GPINGC0LXQsdGPINC/0L7QtNGB0LrQsNC30L7Qui4iLCJlbiI6IlNvIHlvdSBtYWRlIGl0IHRoaXMgZmFyLCBodWNoPyBXZWxsLCB0aGVuIEkgc3VwcG9zZSBJIGhhdmUgdG8gKnNheSogaXQgYWZ0ZXIgYWxsLiBJIGRvbiZ0IGhhdmUgYW55IGhpbnRzIGZvciB5b3UuIn0s",
+            "eyJwYXNzd29yZHMiOlsitYHQutCw0LfQsNGC0YwiLCJzYXkiXSwicnUiOiLQlNC10LnRgdGC0LLQuNComMTIzKtC10LvRjNC90L4g0YXQvtGH0LXRiNGMINGH0YLQvtCxINGPINGB0LrNC20LDQuyDQv9Cw0YDQvtCKKisq0LvRjD8g0J3RMyDRjyDQttC1INGB0LrQsNC20LDQuCDRgyDQvNC1KjEyMyLQvdGPINC10LPQviDQvdC10YIhIiwiZW4iOiJEbyB5b3UgcmVhbCoxMjMqTHkgd2FudCBtZSB0byBzYXkgdGhlIHBhc3MqKyp3b3JkPyBCdXQgSSB0b2xkIHlvdSwgSSBkb24mdCBoYSoxMjMqdmUgaXQhIn0s",
+            "eyJwYXNzd29yZHMiOlsiMjQ2Il0sInJ1IjoiWFZBVElUISDQuSBTS0FaQUwgVSBNRU5ZQSBO营NIRUdPIE5FVCEgSVNDSEkgUEFST0xJIFYgRFJVR0lDSCBNRVNUQUNHISoqISEhISEqIiwiZW4iOiJFTk9VR0ghIEkgU0FJRCBJIERPTidUIEhBVkUgQU5ZVEhJTkchIExPT0sgRk9SIFRIRSBQQVNTV09SRFMgRUxTRVdIRVJFISoqISEhISEqIn0s",
+            "eyJwYXNzd29yZHMiOlsid2hlcmUgYW0gaSIsLtCz0LTQtSDRjyIsIndoZXJlIGFtIGk/Iiwt0储备QtSDRjz8iXSwicnUiOiLQndC1INCy0LDQttC90L4sINCy0LDQttC90L4g0YLQviwg0YfRgtC+INGC0Ysg0LfQtNC10YHRjCDQt9Cw0LHRi9C7ISDQkCDRh9GC0L4g0LjQvNC10L3QvdC+INGC0Ysg0YLRg9GCINC30LDQsdGL0LsgLSDQsdC10Lcg0L/QvtC90Y/RgtC40Y8uIiwiZW4iOiJJdCBkb2Vzbid0IG1hdHRlciwgd2hhdCBtYXR0ZXJzIGlzIHRoYXQgeW91J3JlIGhlcmUhIEFuZCB3aGF0IGV4YWN0bHkgeW91J3JlIGhlcmUgZm9yZ290IOKAkyBJIGhhdmUgbm8gaWRlYS4ifSw=",
+            "eyJwYXNzd29yZHMiOlsiISEhISEiXSwicnUiOiLQm9CQ0JTQndCeISDQotGLINC80L3RjyDRgtCw0Log0YDQstCw0LfQtNGA0LDRttCw0LXRiNGMhINCX0LDQtNCw0LXRiNGMINGB0LLQvtC4INGC0YPQv9GL0LUg0LLQvtC/0YDQvtGB0YshINCY0YnQtdGI0Ywg0L7RgtCy0LXRgtGLISDQmtCw0Log0YLRiyDQstC+0L7QsdGJ0LUg0YHRjtC00LAg0L/QvtC/0LDQuyEg0JTQtdGA0LbQuCDRgdCy0L7QuSDQv9Cw0YDQvtC70YwhINCYINC/0YDQvtGH0Ywg0L7RgtGB0Y7QtNCwOiAqdmEqZnduJWNoaSthZGhzPnJmJGxuaHlhJ3h3MSVqa2xfNWNoaWdwdHlvaV0/ZWplIyouIiwiZW4iOiJPS0FZIURZb3UncmUgc28gYW5ub3l5aW5nISBBc2tpbmcgeW91ciBzdHVwaWQgcXVlc3Rpb25zISBMb29raW5nIGZvciBhbnN3ZXJzISBIb3cgZGlkIHlvdSBldmVuIGdldCBoZXJlPyBUYWtlIHlvdXIgcGFzc3dvcmQhIEFuZCBnZXQgb3V0IG9mIGhlcmU6ICp2YSpmd24lY2hpK2FkaHM+cmYkbG5oeWEneHcxJWprbF81Y2hpZ3B0eW9pXT9lamUjKi4ifV0="
         ];
+
+        // Функция раскодирования строк "на лету" без возможности прямого чтения
+        function _0x5b3c() {
+            var b64 = _0xeb4a.join("");
+            var clean = b64.replace(/[^\x00-\x7F]/g, "");
+            var raw = atob(clean);
+            return JSON.parse(raw);
+        }
+        var gameLevels = _0x5b3c();
         function toggleLangDropdown() {
             document.getElementById("langDropdown").classList.toggle("active");
         }
@@ -539,7 +523,7 @@
                         timerElement.innerText = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
                     } else {
                         clearInterval(timerInterval);
-                        timerElement.innerText = currentLang === "ru" ? "[\u0412\u0420\u0415\u041c\u042f \u0418\u0421\u0422\u0415\u041a\u041b\u041e]" : "[TIME IS UP]";
+                        timerElement.innerText = currentLang === "ru" ? "[ВРЕМЯ ИСТЕКЛО]" : "[TIME IS UP]";
                     }
                 }
             }, 1000);
