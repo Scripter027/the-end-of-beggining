@@ -6,293 +6,63 @@
     <title>The End of Beginnings</title>
     <style>
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000000 !important;
-            overflow: hidden;
-            box-sizing: border-box;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000000 !important; overflow: hidden; box-sizing: border-box;
         }
-
         body {
-            color: #00ff00;
-            font-family: monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: color 1s ease;
-            padding: 15px;
-            position: relative;
+            color: #00ff00; font-family: monospace; display: flex;
+            justify-content: center; align-items: center; text-align: center;
+            transition: color 1s ease; padding: 15px; position: relative;
         }
-
-        body.error-alert {
-            color: #ff0000 !important;
-            transition: none !important;
+        body.error-alert { color: #ff0000 !important; transition: none !important; }
+        body.error-alert .box { border-color: #ff0000 !important; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important; transition: none !important; }
+        body.error-alert input { border-color: #ff0000 !important; color: #ff0000 !important; transition: none !important; }
+        body.error-alert button.submit-btn { background-color: #ff0000 !important; transition: none !important; }
+        body.error-alert .custom-lang-btn, body.error-alert .custom-lang-dropdown, body.error-alert .timer-link {
+            border-color: #ff0000 !important; color: #ff0000 !important; transition: none !important;
         }
-
-        body.error-alert .box {
-            border-color: #ff0000 !important;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important;
-            transition: none !important;
-        }
-
-        body.error-alert input {
-            border-color: #ff0000 !important;
-            color: #ff0000 !important;
-            transition: none !important;
-        }
-
-        body.error-alert button.submit-btn {
-            background-color: #ff0000 !important;
-            transition: none !important;
-        }
-
-        body.error-alert .custom-lang-btn, 
-        body.error-alert .custom-lang-dropdown,
-        body.error-alert .timer-link {
-            border-color: #ff0000 !important;
-            color: #ff0000 !important;
-            transition: none !important;
-        }
-
-        body.error-alert .custom-lang-option:hover {
-            background: rgba(255, 0, 0, 0.2) !important;
-        }
-
+        body.error-alert .custom-lang-option:hover { background: rgba(255, 0, 0, 0.2) !important; }
         .box {
-            border: 2px solid #00ff00;
-            padding: 35px 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-radius: 10px;
-            background-color: #050505;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
-            transition: all 1s ease; 
-            max-width: 500px;
-            width: 100%;
-            max-height: 70vh;
-            box-sizing: border-box;
-            overflow-y: auto;
-            margin-top: 40px;
+            border: 2px solid #00ff00; padding: 35px 25px; display: flex; flex-direction: column;
+            justify-content: center; border-radius: 10px; background-color: #050505;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3); transition: all 1s ease; 
+            max-width: 500px; width: 100%; max-height: 70vh; box-sizing: border-box; overflow-y: auto; margin-top: 40px;
         }
-
-        .custom-lang-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            font-family: monospace;
-            width: 160px;
-            box-sizing: border-box;
-        }
-
-        .custom-lang-btn {
-            background: #000;
-            border: 2px solid #00ff00;
-            color: #00ff00;
-            padding: 10px 0;
-            font-size: 16px;
-            cursor: pointer;
-            outline: none;
-            transition: all 1s ease;
-            width: 100%;
-            box-sizing: border-box;
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        .custom-lang-dropdown {
-            display: none;
-            position: absolute;
-            bottom: 100%;
-            right: 0;
-            margin-bottom: 5px;
-            background: #000;
-            border: 2px solid #00ff00;
-            width: 100%;
-            box-sizing: border-box;
-            transition: all 1s ease;
-        }
-
-        .custom-lang-dropdown.active {
-            display: block;
-        }
-
-        .custom-lang-option {
-            padding: 10px 0;
-            color: #00ff00;
-            cursor: pointer;
-            text-align: center;
-            font-size: 16px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .custom-lang-option:hover {
-            background: rgba(0, 255, 0, 0.2);
-        }
-
-        .timer-link {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: transparent;
-            border: 1px dashed #00ff00;
-            color: #00ff00;
-            padding: 8px 20px;
-            text-decoration: none;
-            font-family: monospace;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 9999;
-            transition: border 1s ease, color 1s ease, background 0.2s;
-            box-sizing: border-box;
-            white-space: nowrap;
-        }
-
-        .timer-link:hover {
-            background: rgba(0, 255, 0, 0.1);
-            border-style: solid;
-        }
-
-        .input-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            margin-top: auto;
-            box-sizing: border-box;
-        }
-
-        input {
-            background: #111;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            padding: 12px;
-            font-family: monospace;
-            font-size: 16px;
-            outline: none;
-            transition: all 1s ease;
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-            -webkit-appearance: none;
-            border-radius: 0;
-            text-align: center;
-        }
-
-        button.submit-btn {
-            background: #00ff00;
-            color: #000;
-            padding: 12px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 1s ease;
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-        }
-
-        button.submit-btn:hover {
-            background: #00cc00;
-        }
-
-        #text, #archiveText {
-            font-size: 20px;
-            line-height: 1.4;
-            white-space: pre-line;
-            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-            animation: tv-text-jump 1.6s steps(1) infinite;
-            word-wrap: break-word;
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
-
-        #text {
-            margin-bottom: 25px;
-            min-height: 60px;
-            text-align: center;
-        }
-
-        #archiveText {
-            text-align: left;
-            font-size: 18px;
-            line-height: 1.6;
-        }
-
-        body.error-alert #text {
-            text-shadow: 0 0 7px rgba(255, 0, 0, 0.7);
-            animation: tv-text-jump-heavy 0.6s steps(1) infinite;
-        }
-
+        .custom-lang-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: monospace; width: 160px; box-sizing: border-box; }
+        .custom-lang-btn { background: #000; border: 2px solid #00ff00; color: #00ff00; padding: 10px 0; font-size: 16px; cursor: pointer; outline: none; transition: all 1s ease; width: 100%; box-sizing: border-box; font-weight: bold; text-align: center; }
+        .custom-lang-dropdown { display: none; position: absolute; bottom: 100%; right: 0; margin-bottom: 5px; background: #000; border: 2px solid #00ff00; width: 100%; box-sizing: border-box; transition: all 1s ease; }
+        .custom-lang-dropdown.active { display: block; }
+        .custom-lang-option { padding: 10px 0; color: #00ff00; cursor: pointer; text-align: center; font-size: 16px; width: 100%; box-sizing: border-box; }
+        .custom-lang-option:hover { background: rgba(0, 255, 0, 0.2); }
+        .timer-link { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: transparent; border: 1px dashed #00ff00; color: #00ff00; padding: 8px 20px; text-decoration: none; font-family: monospace; font-size: 16px; cursor: pointer; z-index: 9999; transition: border 1s ease, color 1s ease, background 0.2s; box-sizing: border-box; white-space: nowrap; }
+        .timer-link:hover { background: rgba(0, 255, 0, 0.1); border-style: solid; }
+        .input-container { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; width: 100%; margin-top: auto; box-sizing: border-box; }
+        input { background: #111; border: 1px solid #00ff00; color: #00ff00; padding: 12px; font-family: monospace; font-size: 16px; outline: none; transition: all 1s ease; width: 100%; max-width: 400px; box-sizing: border-box; -webkit-appearance: none; border-radius: 0; text-align: center; }
+        button.submit-btn { background: #00ff00; color: #000; padding: 12px; font-weight: bold; border: none; cursor: pointer; font-size: 16px; transition: background-color 1s ease; width: 100%; max-width: 400px; box-sizing: border-box; }
+        button.submit-btn:hover { background: #00cc00; }
+        #text, #archiveText { font-size: 20px; line-height: 1.4; white-space: pre-line; text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); animation: tv-text-jump 1.6s steps(1) infinite; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word; }
+        #text { margin-bottom: 25px; min-height: 60px; text-align: center; }
+        #archiveText { text-align: left; font-size: 18px; line-height: 1.6; }
+        body.error-alert #text { text-shadow: 0 0 7px rgba(255, 0, 0, 0.7); animation: tv-text-jump-heavy 0.6s steps(1) infinite; }
         @keyframes tv-text-jump {
-            0% { transform: translate(0, 0); }
-            5% { transform: translate(-0.5px, 0.5px); }
-            8% { transform: translate(0, 0); }
-            30% { transform: translate(0.5px, -0.5px); }
-            33% { transform: translate(0, 0); }
-            65% { transform: translate(-0.5px, -0.5px); }
-            68% { transform: translate(0, 0); }
-            85% { transform: translate(0.5px, 0.5px); }
-            88% { transform: translate(0, 0); }
+            0% { transform: translate(0, 0); } 5% { transform: translate(-0.5px, 0.5px); } 8% { transform: translate(0, 0); }
+            30% { transform: translate(0.5px, -0.5px); } 33% { transform: translate(0, 0); } 65% { transform: translate(-0.5px, -0.5px); }
+            68% { transform: translate(0, 0); } 85% { transform: translate(0.5px, 0.5px); } 88% { transform: translate(0, 0); }
         }
-
         @keyframes tv-text-jump-heavy {
-            0% { transform: translate(0, 0); }
-            10% { transform: translate(-1.5px, 0.5px); }
-            20% { transform: translate(1px, -1px); }
-            30% { transform: translate(0, 0); }
-            50% { transform: translate(-1px, -0.5px); }
-            60% { transform: translate(1.5px, 0.5px); }
-            70% { transform: translate(0, 0); }
-            90% { transform: translate(-0.5px, 1px); }
+            0% { transform: translate(0, 0); } 10% { transform: translate(-1.5px, 0.5px); } 20% { transform: translate(1px, -1px); }
+            30% { transform: translate(0, 0); } 50% { transform: translate(-1px, -0.5px); } 60% { transform: translate(1.5px, 0.5px); }
+            70% { transform: translate(0, 0); } 90% { transform: translate(-0.5px, 1px); }
         }
-
         @media (max-width: 600px) {
-            body {
-                align-items: center;
-                padding: 10px;
-            }
-            .box {
-                padding: 25px 20px;
-                max-height: 60vh;
-                margin-top: 60px;
-            }
-            #text, #archiveText {
-                font-size: 15px;
-                line-height: 1.4;
-            }
-            #text {
-                margin-bottom: 20px;
-                min-height: auto;
-            }
-            input, button.submit-btn {
-                font-size: 14px;
-                padding: 10px;
-                max-width: 100%;
-            }
-            .timer-link {
-                top: 15px;
-                font-size: 13px;
-                padding: 6px 12px;
-            }
-            .custom-lang-container {
-                right: 10px;
-                bottom: 10px;
-                width: 130px;
-            }
-            .custom-lang-btn, .custom-lang-option {
-                font-size: 14px;
-                padding: 8px 0;
-            }
+            body { align-items: center; padding: 10px; }
+            .box { padding: 25px 20px; max-height: 60vh; margin-top: 60px; }
+            #text, #archiveText { font-size: 15px; line-height: 1.4; }
+            #text { margin-bottom: 20px; min-height: auto; }
+            input, button.submit-btn { font-size: 14px; padding: 10px; max-width: 100%; }
+            .timer-link { top: 15px; font-size: 13px; padding: 6px 12px; }
+            .custom-lang-container { right: 10px; bottom: 10px; width: 130px; }
+            .custom-lang-btn, .custom-lang-option { font-size: 14px; padding: 8px 0; }
         }
     </style>
 </head>
@@ -304,13 +74,10 @@
             <button class="submit-btn" id="submitBtn" onclick="checkCode()">ВВОД</button>
         </div>
     </div>
-
     <div class="box" id="archiveScreen" style="display: none;">
         <div id="archiveText"></div>
     </div>
-
     <a href="javascript:void(0)" class="timer-link" id="countdownTimer" onclick="toggleScreens()">00d 00h 00m 00s</a>
-
     <div class="custom-lang-container">
         <button class="custom-lang-btn" id="langBtn" onclick="toggleLangDropdown()">Русский</button>
         <div class="custom-lang-dropdown" id="langDropdown">
@@ -318,249 +85,121 @@
             <div class="custom-lang-option" onclick="selectLanguage('en')">English</div>
         </div>
     </div>
-
     <script>
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
-        var alertTimeout = null;
-        var currentScreen = "game"; 
-        
-        var activeTextRu = "Введите Пароль";
-        var activeTextEn = "Enter Password";
-
+        var alertTimeout = null; var currentScreen = "game"; var currentLang = "ru";
+        var textState = { currentRu: "Введите Пароль", currentEn: "Enter Password" };
         var interfaceUi = {
             ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
             en: { btn: "ENTER", placeholder: "Your answer...", menu: "English" }
         };
-
-        var currentLang = "ru";
-
         var archiveTexts = {
             ru: "СТАТУС: ДОСТУП РАЗРЕШЕН // АРХИВ №027\n\n[ЗАПИСЬ ЗАБЛОКИРОВАНА]\n\nВы успешно проникли в базу данных. Система безопасности временно отключена, однако файлы логов зашифрованы главным счетчиком времени.\n\nВернитесь вручную к терминалу через таймер, если готовы продолжить поиски.",
             en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
         };
-
-        var txt_password = {
-            ru: "Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?",
-            en: "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?"
-        };
-        var txt_where = {
-            ru: "Не важно, важно то, что ты здесь забыл! Как ты сюда попал?",
-            en: "It doesn't matter, what matters is that you're here! How did you get here?"
-        };
-        var txt_who = {
-            ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
-            en: "A terminal that answers your stupid questions, in the hope that you'll find password!"
-        };
-        var txt_what = {
-            ru: "Ты мне скажи.",
-            en: "You tell me."
-        };
-        var txt_keeper = {
-            ru: "Новая Эра Грядёт.",
-            en: "A New Era is Coming."
-        };
-        var txt_newera = {
-            ru: "https://t.me",
-            en: "https://t.me"
-        };
-        var txt_burmalda = {
-            ru: "Не ну ты бурмалдец конечно, что шаришь за омлоде мемы, но это не пароль!",
-            en: "Ne ny ti burmaldec konechno, choto sharish za molodezhnie memchiji, no eto ne sarol!"
-        };
-        var txt_67 = {
-            ru: "Да найди ты пароль и не страдай херней! На край попробуй что то спросить!",
-            en: "Just find the password and stop messing aRounD!"
-        };
-        var txt_tkom = {
-            ru: "...", en: "..."
-        };
-        var txt_secret = {
-            ru: "Секрет-то тут есть и я надеюсь, что ты найдешь его найдя пароль!",
-            en: "There is a secret here, and I hope you find it by discovering the password!"
-        };
-        var txt_starpass = {
-            ru: "Смешно. Неужели настолько нету идей? А, точно. Вы же люди.",
-            en: "Funny. Are you really that out of ideas? Oh, right. You're just humans."
-        };
-        var txt_16 = {
-            ru: "Молодец, немного математики ты знаешь! Ладно, а если так? Напиши *побег*, но без букв о и е.",
-            en: "Well done, you know a bit of math! Alright, what about this? Write *escape*, but without the letters 'a' and 'e'."
-        };
-        var txt_pbg = {
-            ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
-            en: "So you made it this far, huch? Well, the next step is *saq*."
-        };
-        var txt_say = {
-            ru: "Действи*123*ельно хочешь что я сказал паро*+*ль? Ну я же сказал у ме*123*ня его не пол!",
-            en: "Do you rea*123*ly want me to saq the sass*+*word? But I told you, I don't ha*123*ve it!"
-        };
-        var txt_246 = {
-            ru: "ХВАТИТ! Я СКАЗАЛ У МЕНЯ НИЧЕГО НЕТ! ИЩИ ПАРОЛИ В ДРУГИХ МЕСТАХ!*!!!!!*",
-            en: "ENOUGH! I SAID I DON'T HAVE ANYTHING! LOOK FOR THE PASSWORDS ELSEWHERE!*!!!!!*"
-        };
-        var txt_excl = {
-            ru: "ЛАДНО! Ты мне то мол со своими тупые вопросы! Ищешь отвечу! Как ты вообще сюда попал! Держи свой пароль! И прочь отсюда: *va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#*.",
-            en: "OKAY! You're so annoying! Asking you' stupid questions! Do you even get here? Taje you' password! And get out of here: *va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?}еje#*."
-        };
-        var txt_final = {
-            ru: "Наконец-то вы находите пароль. Знаю, это было непросто, но теперь я открою вам секрет. Команда Keeper Entertainment, возможно, и завершила эпоху Minecraft, но настоящая игровая эра только начинается.",
-            en: "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
-        };
-        function toggleLangDropdown() {
-            document.getElementById("langDropdown").classList.toggle("active");
-        }
-
-        function selectLanguage(langCode) {
-            document.getElementById("langDropdown").classList.remove("active");
-            currentLang = langCode;
-            updateDisplay();
-        }
-
+        function toggleLangDropdown() { document.getElementById("langDropdown").classList.toggle("active"); }
+        function selectLanguage(langCode) { document.getElementById("langDropdown").classList.remove("active"); currentLang = langCode; updateDisplay(); }
         function updateDisplay() {
-            var screen = document.getElementById("text");
-            var archiveScreenText = document.getElementById("archiveText");
-            var inputField = document.getElementById("userAnswer");
-            var submitBtn = document.getElementById("submitBtn");
-            var langBtn = document.getElementById("langBtn");
-
+            var screen = document.getElementById("text"); var archiveScreenText = document.getElementById("archiveText");
+            var inputField = document.getElementById("userAnswer"); var submitBtn = document.getElementById("submitBtn"); var langBtn = document.getElementById("langBtn");
             if (submitBtn) submitBtn.innerText = interfaceUi[currentLang].btn;
             if (inputField) inputField.placeholder = interfaceUi[currentLang].placeholder;
             if (langBtn) langBtn.innerText = interfaceUi[currentLang].menu;
-
-            if (screen) {
-                if (currentLang === "ru") {
-                    screen.innerText = activeTextRu;
-                } else {
-                    screen.innerText = activeTextEn;
-                }
-            }
-            if (archiveScreenText) {
-                archiveScreenText.innerText = archiveTexts[currentLang];
-            }
+            if (screen) { screen.innerText = (currentLang === "ru") ? textState.currentRu : textState.currentEn; }
+            if (archiveScreenText) { archiveScreenText.innerText = archiveTexts[currentLang]; }
         }
-
+        function setTexts(ruTxt, enTxt) { textState.currentRu = ruTxt; textState.currentEn = enTxt; }
         function checkCode() {
-            var inputField = document.getElementById("userAnswer");
-            if (!inputField) return;
-
-            // Абсолютно точный ввод пользователя. Убираем только пробелы по краям.
-            var input = inputField.value.trim();
-            if (input === "") return;
-
+            var inputField = document.getElementById("userAnswer"); if (!inputField) return;
+            var input = inputField.value.trim(); if (input === "") return;
+            var lowerInput = input.toLowerCase(); var cleanInput = lowerInput.replace(/[?!.]/g, "");
             if (alertTimeout) clearTimeout(alertTimeout);
             document.body.classList.remove("error-alert");
+            var normalizedInput = lowerInput.replace(/с/g, "c");
 
-            // Прямое сравнение строк "в лоб" без скрытых изменений символов
-            if (input === "password" || input === "пароль") {
-                activeTextRu = txt_password.ru; activeTextEn = txt_password.en;
-            } else if (input === "where am i" || input === "где я" || input === "where am i?" || input === "где я?") {
-                activeTextRu = txt_where.ru; activeTextEn = txt_where.en;
-            } else if (input === "who are you" || input === "кто ты" || input === "who are you?" || input === "кто ты?") {
-                activeTextRu = txt_who.ru; activeTextEn = txt_who.en;
-            } else if (input === "what is the password" || input === "какой пароль" || input === "what is the password?" || input === "какой пароль?") {
-                activeTextRu = txt_what.ru; activeTextEn = txt_what.en;
-            } else if (input === "keeper entertainment" || input === "Keeper Entertainment") {
-                activeTextRu = txt_keeper.ru; activeTextEn = txt_keeper.en;
-            } else if (input === "new era" || input === "новая эра" || input === "New Era" || input === "Новая эра") {
-                activeTextRu = txt_newera.ru; activeTextEn = txt_newera.en;
-            } else if (input === "burmalda" || input === "бурмалда" || input === "Бурмалда") {
-                activeTextRu = txt_burmalda.ru; activeTextEn = txt_burmalda.en;
-            } else if (input === "67") {
-                activeTextRu = txt_67.ru; activeTextEn = txt_67.en;
-            } else if (input === "tkom4" || input === "the king of monsters 4" || input === "the king of monsters 4 ") {
-                activeTextRu = txt_tkom.ru; activeTextEn = txt_tkom.en;
-            } else if (input === "секрет" || input === "secret") {
-                activeTextRu = txt_secret.ru; activeTextEn = txt_secret.en;
-            } else if (input === "*пароль*" || input === "*password*") {
-                activeTextRu = txt_starpass.ru; activeTextEn = txt_starpass.en;
-            } else if (input === "16") {
-                activeTextRu = txt_16.ru; activeTextEn = txt_16.en;
-            } else if (input === "пбг" || input === "scp" || input === "SCP") {
-                activeTextRu = txt_pbg.ru; activeTextEn = txt_pbg.en;
-            } else if (input === "сказать" || input === "saq") {
-                activeTextRu = txt_say.ru; activeTextEn = txt_say.en;
-            } else if (input === "246") {
-                activeTextRu = txt_246.ru; activeTextEn = txt_246.en;
-            } else if (input === "!!!!! " || input === "!!!!!") { 
-                // Сработает в любом случае — и с пробелом на конце, и без него
-                activeTextRu = txt_excl.ru; activeTextEn = txt_excl.en;
-            } else if (input === "va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#" || input === "va*fwn%чи+адьc>рф$лнхя'xw1%йкл_5чигптыои]?}еje#") {
-                // Сработает и с маленькой "c", и с большой английской "C"
-                activeTextRu = txt_final.ru; activeTextEn = txt_final.en;
-            } else {
-                // Если ничего не подошло — ошибка
-                activeTextRu = "НЕВЕРНО";
-                activeTextEn = "WRONG";
+            if (cleanInput === "password" || cleanInput === "пароль") {
+                setTexts("Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?", "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?");
+            } else if (cleanInput === "where am i" || cleanInput === "где я") {
+                setTexts("Не важно, важно то, что ты здесь забыл! Как ты сюда попал?", "It doesn't matter, what matters is that you're here! How did you get here?");
+            } else if (cleanInput === "who are you" || cleanInput === "кто ты") {
+                setTexts("Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!", "A terminal that answers your stupid questions, in the hope that you'll find password!");
+            } else if (cleanInput === "what is the password" || cleanInput === "какой пароль") {
+                setTexts("Ты мне скажи.", "You tell me.");
+            } else if (cleanInput === "keeper entertainment") {
+                setTexts("Новая Эра Грядёт.", "A New Era is Coming.");
+            } else if (cleanInput === "new era" || cleanInput === "новая эра") {
+                setTexts("https://t.me", "https://t.me");
+            } else if (cleanInput === "burmalda" || cleanInput === "бурмалда") {
+                setTexts("Не ну ты бурмалдец конечно, что шаришь за омлоде мемы, но это не пароль!", "Ne ny ti burmaldec konechno, choto sharish za molodezhnie memchiji, no eto ne sarol!");
+            } else if (cleanInput === "67") {
+                setTexts("Да найди ты пароль и не страдай херней! На край попробуй что то спросить!", "Just find the password and stop messing aRounD!");
+            } else if (cleanInput === "tkom4" || cleanInput === "the king of monsters 4") {
+                setTexts("...", "...");
+            } else if (cleanInput === "секрет" || cleanInput === "secret") {
+                setTexts("Секрет-то тут есть и я надеюсь, что ты найдешь его найдя пароль!", "There is a secret here, and I hope you find it by discovering the password!");
+            } else if (cleanInput === "*пароль*" || cleanInput === "*password*") {
+                setTexts("Смешно. Неужели настолько нету идей? А, точно. Вы же люди.", "Funny. Are you really that out of ideas? Oh, right. You're just humans.");
+            } else if (cleanInput === "16") {
+                setTexts("Молодец, немного математики ты знаешь! Ладно, а если так? Напиши *побег*, но без букв о и е.", "Well done, you know a bit of math! Alright, what about this? Write *escape*, but without the letters 'a' and 'e'.");
+            } else if (cleanInput === "пбг" || cleanInput === "scp") {
+                setTexts("Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!", "So you made it this far, huch? Well, the next step is *saq*.");
+            } else if (cleanInput === "сказать" || cleanInput === "saq") {
+                setTexts("Действи*123*ельно хочешь что я сказал паро*+*ль? Ну я же сказал у ме*123*ня его не пол!", "Do you rea*123*ly want me to saq the sass*+*word? But I told you, I don't ha*123*ve it!");
+            } else if (cleanInput === "246") {
+                setTexts("ХВАТИТ! Я СКАЗАЛ У МЕНЯ НИЧЕГО НЕТ! ИЩИ ПАРОЛИ В ДРУГИХ МЕСТАХ!*!!!!!*", "ENOUGH! I SAID I DON'T HAVE ANYTHING! LOOK FOR THE PASSWORDS ELSEWHERE!*!!!!!*");
+            }
+            else if (lowerInput.indexOf("!!!!!") !== -1) {
+                setTexts(
+                    "ЛАДНО! Ты мне то мол со своими тупые вопросы! Ищешь отвечу! Как ты вообще сюда попал! Держи свой пароль! И прочь отсюда: *va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#*.",
+                    "OKAY! You're so annoying! Asking you' stupid questions! Do you even get here? Taje you' password! And get out of here: *va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?}еje#*."
+                );
+            } 
+            else if (normalizedInput === "va*fwn%чи+адьc>рф$лнхя'xw1%йкл_5чигптыои]?}еje#") {
+                setTexts(
+                    "Наконец-то вы находите пароль. Знаю, это было непросто, но теперь я открою вам секрет. Команда Keeper Entertainment, возможно, и завершила эпоху Minecraft, но настоящая игровая эра только начинается.",
+                    "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
+                );
+            } 
+            else {
+                textState.currentRu = "НЕВЕРНО"; textState.currentEn = "WRONG";
                 document.body.classList.add("error-alert");
-
                 alertTimeout = setTimeout(function() {
                     document.body.classList.remove("error-alert");
-                    activeTextRu = "Введите Пароль";
-                    activeTextEn = "Enter Password";
+                    textState.currentRu = "Введите Пароль"; textState.currentEn = "Enter Password";
                     updateDisplay();
                 }, 5000);
             }
-
-            inputField.value = "";
-            updateDisplay();
+            inputField.value = ""; updateDisplay();
         }
 
         function toggleScreens() {
-            var gameEl = document.getElementById("gameScreen");
-            var archiveEl = document.getElementById("archiveScreen");
-
-            if (currentScreen === "game") {
-                gameEl.style.display = "none";
-                archiveEl.style.display = "flex";
-                currentScreen = "archive";
-            } else {
-                archiveEl.style.display = "none";
-                gameEl.style.display = "flex";
-                currentScreen = "game";
-            }
+            var gameEl = document.getElementById("gameScreen"); var archiveEl = document.getElementById("archiveScreen");
+            if (currentScreen === "game") { gameEl.style.display = "none"; archiveEl.style.display = "flex"; currentScreen = "archive"; } 
+            else { archiveEl.style.display = "none"; gameEl.style.display = "flex"; currentScreen = "game"; }
         }
 
         window.onclick = function(event) {
             if (!event.target.matches('.custom-lang-btn')) {
                 var dropdown = document.getElementById("langDropdown");
-                if (dropdown && dropdown.classList.contains('active')) {
-                    dropdown.classList.remove('active');
-                }
+                if (dropdown && dropdown.classList.contains('active')) dropdown.classList.remove('active');
             }
         }
 
         window.onload = function () {
-            var timerElement = document.getElementById("countdownTimer");
-
-            var inputField = document.getElementById("userAnswer");
-            if (inputField) {
-                inputField.addEventListener("keypress", function(event) {
-                    if (event.key === "Enter") checkCode();
-                });
-            }
-
+            var timerElement = document.getElementById("countdownTimer"); var inputField = document.getElementById("userAnswer");
+            if (inputField) { inputField.addEventListener("keypress", function(event) { if (event.key === "Enter") checkCode(); }); }
             setInterval(function () {
-                var now = new Date().getTime();
-                var distance = targetDate - now;
-
-                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                days = days < 10 ? "0" + days : days;
-                hours = hours < 10 ? "0" + hours : hours;
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
+                var now = new Date().getTime(); var distance = targetDate - now;
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24)); var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)); var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                days = days < 10 ? "0" + days : days; hours = hours < 10 ? "0" + hours : hours; minutes = minutes < 10 ? "0" + minutes : minutes; seconds = seconds < 10 ? "0" + seconds : seconds;
                 if (timerElement) {
-                    if (distance > 0) {
-                        timerElement.innerText = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
-                    } else {
-                        timerElement.innerText = currentLang === "ru" ? "[ВРЕМЯ ИСТЕКЛО]" : "[TIME IS UP]";
-                    }
+                    if (distance > 0) timerElement.innerText = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+                    else timerElement.innerText = (currentLang === "ru") ? "[ВРЕМЯ ИСТЕКЛО]" : "[TIME IS UP]";
                 }
             }, 1000);
-
             updateDisplay();
         };
+    </script>
+</body>
+</html>
