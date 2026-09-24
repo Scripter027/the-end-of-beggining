@@ -323,7 +323,10 @@
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
         var alertTimeout = null;
         var currentScreen = "game"; 
-        var currentLevelIndex = -1; 
+        
+        // Переменная, которая хранит текущий текст на экране
+        var activeTextRu = "Введите Пароль";
+        var activeTextEn = "Enter Password";
 
         var interfaceUi = {
             ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
@@ -331,102 +334,80 @@
         };
 
         var currentLang = "ru";
-        var isShowingWrong = false;
-
-        var startTexts = { ru: "Введите Пароль", en: "Enter Password" };
-        var wrongTexts = { ru: "НЕВЕРНО", en: "WRONG" };
 
         var archiveTexts = {
             ru: "СТАТУС: ДОСТУП РАЗРЕШЕН // АРХИВ №027\n\n[ЗАПИСЬ ЗАБЛОКИРОВАНА]\n\nВы успешно проникли в базу данных. Система безопасности временно отключена, однако файлы логов зашифрованы главным счетчиком времени.\n\nВернитесь вручную к терминалу через таймер, если готовы продолжить поиски.",
             en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
         };
 
-        var gameLevels = [
-            {
-                passwords: ["password", "пароль"],
-                ru: "Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?",
-                en: "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?"
-            },
-            {
-                passwords: ["where am i", "где я"],
-                ru: "Не важно, важно то, что ты здесь забыл! Как ты сюда попал?",
-                en: "It doesn't matter, what matters is that you're here! How did you get here?"
-            },
-            {
-                passwords: ["who are you", "кто ты"],
-                ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
-                en: "A terminal that answers your stupid questions, in the hope that you'll find password!"
-            },
-            {
-                passwords: ["what is the password", "какой пароль"],
-                ru: "Ты мне скажи.",
-                en: "You tell me."
-            },
-            {
-                passwords: ["keeper entertainment"],
-                ru: "Новая Эра Грядёт.",
-                en: "A New Era is Coming."
-            },
-            {
-                passwords: ["new era", "новая эра"],
-                ru: "https://t.me",
-                en: "https://t.me"
-            },
-            {
-                passwords: ["burmalda", "бурмалда"],
-                ru: "Не ну ты бурмалдец конечно, что шаришь за омлоде мемы, но это не пароль!",
-                en: "Ne ny ti burmaldec konechno, choto sharish za molodezhnie memchiji, no eto ne sarol!"
-            },
-            {
-                passwords: ["67"],
-                ru: "Да найди ты пароль и не страдай херней! На край попробуй что то спросить!",
-                en: "Just find the password and stop messing aRounD!"
-            },
-            {
-                passwords: ["tkom4", "the king of monsters 4"],
-                ru: "...", en: "..."
-            },
-            {
-                passwords: ["секрет", "secret"],
-                ru: "Секрет-то тут есть и я надеюсь, что ты найдешь его найдя пароль!",
-                en: "There is a secret here, and I hope you find it by discovering the password!"
-            },
-            {
-                passwords: ["*пароль*", "*password*"],
-                ru: "Смешно. Неужели настолько нету идей? А, точно. Вы же люди.",
-                en: "Funny. Are you really that out of ideas? Oh, right. You' just humans."
-            },
-            {
-                passwords: ["16"],
-                ru: "Молодец, немного математики ты знаешь! Ладно, а если так? Напиши *побег*, но без букв о и е.",
-                en: "Well done, you know a bit of math! Alright, what about this? Write *escape*, but without the letters 'a' and 'e'."
-            },
-            {
-                passwords: ["пбг", "scp"],
-                ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
-                en: "So you made it this far, huch? Well, the next step is *saq*."
-            },
-            {
-                passwords: ["сказать", "saq"],
-                ru: "Действи*123*ельно хочешь что я сказал паро*+*ль? Ну я же сказал у ме*123*ня его не пол!",
-                en: "Do you rea*123*ly want me to saq the sass*+*word? But I told you, I don't ha*123*ve it!"
-            },
-            {
-                passwords: ["246"],
-                ru: "ХВАТИТ! Я СКАЗАЛ У МЕНЯ НИЧЕГО НЕТ! ИЩИ ПАРОЛИ В ДРУГИХ МЕСТАХ!*!!!!!*",
-                en: "ENOUGH! I SAID I DON'T HAVE ANYTHING! LOOK FOR THE PASSWORDS ELSEWHERE!*!!!!!*"
-            },
-            {
-                passwords: ["!!!!! "],
-                ru: "ЛАДНО! Ты мне то мол со своими тупые вопросы! Ищешь отвечу! Как ты вообще сюда попал! Держи свой пароль! И прочь отсюда: *va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#*.",
-                en: "OKAY! You're so annoying! Asking you' stupid questions! Do you even get here? Taje you' password! And get out of here: *va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?}еje#*."
-            },
-            {
-                passwords: ["va*fwn%чи+адьc>рф$лнхя'xw1%йкл_5чигптыои]?}еje#"],
-                ru: "Наконец-то вы находите пароль. Знаю, это было непросто, но теперь я открою вам секрет. Команда Keeper Entertainment, возможно, и завершила эпоху Minecraft, но настоящая игровая эра только начинается.",
-                en: "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
-            }
-        ];
+        // Тексты ответов
+        var txt_password = {
+            ru: "Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?",
+            en: "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?"
+        };
+        var txt_where = {
+            ru: "Не важно, важно то, что ты здесь забыл! Как ты сюда попал?",
+            en: "It doesn't matter, what matters is that you're here! How did you get here?"
+        };
+        var txt_who = {
+            ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
+            en: "A terminal that answers your stupid questions, in the hope that you'll find password!"
+        };
+        var txt_what = {
+            ru: "Ты мне скажи.",
+            en: "You tell me."
+        };
+        var txt_keeper = {
+            ru: "Новая Эра Грядёт.",
+            en: "A New Era is Coming."
+        };
+        var txt_newera = {
+            ru: "https://t.me",
+            en: "https://t.me"
+        };
+        var txt_burmalda = {
+            ru: "Не ну ты бурмалдец конечно, что шаришь за омлоде мемы, но это не пароль!",
+            en: "Ne ny ti burmaldec konechno, choto sharish za molodezhnie memchiji, no eto ne sarol!"
+        };
+        var txt_67 = {
+            ru: "Да найди ты пароль и не страдай херней! На край попробуй что то спросить!",
+            en: "Just find the password and stop messing aRounD!"
+        };
+        var txt_tkom = {
+            ru: "...", en: "..."
+        };
+        var txt_secret = {
+            ru: "Секрет-то тут есть и я надеюсь, что ты найдешь его найдя пароль!",
+            en: "There is a secret here, and I hope you find it by discovering the password!"
+        };
+        var txt_starpass = {
+            ru: "Смешно. Неужели настолько нету идей? А, точно. Вы же люди.",
+            en: "Funny. Are you really that out of ideas? Oh, right. You're just humans."
+        };
+        var txt_16 = {
+            ru: "Молодец, немного математики ты знаешь! Ладно, а если так? Напиши *побег*, но без букв о и е.",
+            en: "Well done, you know a bit of math! Alright, what about this? Write *escape*, but without the letters 'a' and 'e'."
+        };
+        var txt_pbg = {
+            ru: "Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!",
+            en: "So you made it this far, huch? Well, the next step is *saq*."
+        };
+        var txt_say = {
+            ru: "Действи*123*ельно хочешь что я сказал паро*+*ль? Ну я же сказал у ме*123*ня его не пол!",
+            en: "Do you rea*123*ly want me to saq the sass*+*word? But I told you, I don't ha*123*ve it!"
+        };
+        var txt_246 = {
+            ru: "ХВАТИТ! Я СКАЗАЛ У МЕНЯ НИЧЕГО НЕТ! ИЩИ ПАРОЛИ В ДРУГИХ МЕСТАХ!*!!!!!*",
+            en: "ENOUGH! I SAID I DON'T HAVE ANYTHING! LOOK FOR THE PASSWORDS ELSEWHERE!*!!!!!*"
+        };
+        var txt_excl = {
+            ru: "ЛАДНО! Ты мне то мол со своими тупые вопросы! Ищешь отвечу! Как ты вообще сюда попал! Держи свой пароль! И прочь отсюда: *va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#*.",
+            en: "OKAY! You're so annoying! Asking you' stupid questions! Do you even get here? Taje you' password! And get out of here: *va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?}еje#*."
+        };
+        var txt_final = {
+            ru: "Наконец-то вы находите пароль. Знаю, это было непросто, но теперь я открою вам секрет. Команда Keeper Entertainment, возможно, и завершила эпоху Minecraft, но настоящая игровая эра только начинается.",
+            en: "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
+        };
         function toggleLangDropdown() {
             document.getElementById("langDropdown").classList.toggle("active");
         }
@@ -449,12 +430,10 @@
             if (langBtn) langBtn.innerText = interfaceUi[currentLang].menu;
 
             if (screen) {
-                if (isShowingWrong) {
-                    screen.innerText = wrongTexts[currentLang];
-                } else if (currentLevelIndex === -1) {
-                    screen.innerText = startTexts[currentLang];
+                if (currentLang === "ru") {
+                    screen.innerText = activeTextRu;
                 } else {
-                    screen.innerText = gameLevels[currentLevelIndex][currentLang];
+                    screen.innerText = activeTextEn;
                 }
             }
             if (archiveScreenText) {
@@ -466,35 +445,58 @@
             var inputField = document.getElementById("userAnswer");
             if (!inputField) return;
 
-            // Умная очистка: приводим к нижнему регистру, убираем пробелы по краям и знаки ? ! .
-            var input = inputField.value.toLowerCase().trim().replace(/[?!.]/g, "");
-            if (!input) return;
+            // Чистый забор текста: переводим в нижний регистр, убираем пробелы по краям, знаки ? и !
+            var input = inputField.value.toLowerCase().trim().replace(/[?!]/g, "");
+            if (input === "") return;
 
             if (alertTimeout) clearTimeout(alertTimeout);
+            document.body.classList.remove("error-alert");
 
-            var found = false;
-            for (var i = 0; i < gameLevels.length; i++) {
-                // Чистим эталонные пароли из базы от знаков препинания перед сверкой
-                var cleanPasswords = gameLevels[i].passwords.map(function(p) {
-                    return p.toLowerCase().trim().replace(/[?!.]/g, "");
-                });
-
-                if (cleanPasswords.indexOf(input) !== -1) {
-                    currentLevelIndex = i;
-                    isShowingWrong = false;
-                    found = true;
-                    document.body.classList.remove("error-alert");
-                    break;
-                }
-            }
-
-            if (!found) {
-                isShowingWrong = true;
+            // Простейшая проверка «В лоб» через условия IF / ELSE
+            if (input === "password" || input === "пароль") {
+                activeTextRu = txt_password.ru; activeTextEn = txt_password.en;
+            } else if (input === "where am i" || input === "где я") {
+                activeTextRu = txt_where.ru; activeTextEn = txt_where.en;
+            } else if (input === "who are you" || input === "кто ты") {
+                activeTextRu = txt_who.ru; activeTextEn = txt_who.en;
+            } else if (input === "what is the password" || input === "какой пароль") {
+                activeTextRu = txt_what.ru; activeTextEn = txt_what.en;
+            } else if (input === "keeper entertainment") {
+                activeTextRu = txt_keeper.ru; activeTextEn = txt_keeper.en;
+            } else if (input === "new era" || input === "новая эра") {
+                activeTextRu = txt_newera.ru; activeTextEn = txt_newera.en;
+            } else if (input === "burmalda" || input === "бурмалда") {
+                activeTextRu = txt_burmalda.ru; activeTextEn = txt_burmalda.en;
+            } else if (input === "67") {
+                activeTextRu = txt_67.ru; activeTextEn = txt_67.en;
+            } else if (input === "tkom4" || input === "the king of monsters 4") {
+                activeTextRu = txt_tkom.ru; activeTextEn = txt_tkom.en;
+            } else if (input === "секрет" || input === "secret") {
+                activeTextRu = txt_secret.ru; activeTextEn = txt_secret.en;
+            } else if (input === "*пароль*" || input === "*password*") {
+                activeTextRu = txt_starpass.ru; activeTextEn = txt_starpass.en;
+            } else if (input === "16") {
+                activeTextRu = txt_16.ru; activeTextEn = txt_16.en;
+            } else if (input === "пбг" || input === "scp") {
+                activeTextRu = txt_pbg.ru; activeTextEn = txt_pbg.en;
+            } else if (input === "сказать" || input === "saq") {
+                activeTextRu = txt_say.ru; activeTextEn = txt_say.en;
+            } else if (input === "246") {
+                activeTextRu = txt_246.ru; activeTextEn = txt_246.en;
+            } else if (input === "!!!!!") {
+                activeTextRu = txt_excl.ru; activeTextEn = txt_excl.en;
+            } else if (input === "va*fwn%чи+адьc>рф$лнхя'xw1%йкл_5чигптыои]?}еje#") {
+                activeTextRu = txt_final.ru; activeTextEn = txt_final.en;
+            } else {
+                // Если ничего не подошло — выдаем ошибку
+                activeTextRu = "НЕВЕРНО";
+                activeTextEn = "WRONG";
                 document.body.classList.add("error-alert");
 
                 alertTimeout = setTimeout(function() {
                     document.body.classList.remove("error-alert");
-                    isShowingWrong = false;
+                    activeTextRu = "Введите Пароль";
+                    activeTextEn = "Enter Password";
                     updateDisplay();
                 }, 5000);
             }
