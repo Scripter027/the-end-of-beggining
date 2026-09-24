@@ -432,7 +432,7 @@
             },
             {
                 passwords: ["\u0441\u043a\u0430\u0437\u0430\u0442\u044c", "\x73\x61\x71"],
-                ru: "\u041d\u0443\x20\u044f\x20\u0436\u0435\x20\u0441\u043a\u0430\u0437\u0430\u043b\x20\u0443\x20\u043c\u0435\u043d\u044f\x20\u0435\u0433\u043e\x20\u043d\u0435\x20\u043f\u043e\u043b\x21",
+                ru: "\u041d\u0434\u0435\u0442\x2c\x20\u0443\x20\u043c\u0435\u043d\u044f\x20\u0435\u0433\u043e\x20\u043d\u0435\x20\u043f\u043e\u043b\x21",
                 en: "\x42\x75\x74\x20\x49\x20\x64\x6f\x6e\x27\x20\x68\x61\x76\x65\x20\x69\x74\x21"
             },
             {
@@ -442,13 +442,13 @@
             },
             {
                 passwords: ["\x21\x21\x21\x21\x21"],
-                ru: "\u0414\u0435\u0440\u0436\u0438\x20\u0441\u0432\u043e\u0439\x20\u043f\u0430\u0440\u043e\u043b\u044c\x21\x20\u0418\x20\u043f\u0440\u043e\u0447\u044c\x20\u043e\u0442\u0441\u044e\u0434\u0430\x3a\x20va*fwn%\u0447\u0438+\u0430\u0434\u044c\u0441\x3e\u0440\u0444\x24\u043b\u043n\u0445\u044f\x27xw1%\u0439\u043a\u043b\x5f\x35\u0447\u0438\u0433\u043f\u0442\u044b\u043e\u0438\x5d\x3f\u0435\x6a\x65\x23",
-                en: "\x54\x61\x6a\x65\x20\x71\x6f\x75\x72\x20\x73\x61\x73\x73\x77\x6f\x72\x64\x21\x20va*fwn%\u0447\u0438+\u0430\u0434\u044c\u0441\x3e\u0440\u0444\x24\u043b\u043n\u0445\u044f\x27xw1%\u0439\u043a\u043b\x5f\x35\u0447\u0438\u0433\u043f\u0442\u044b\u043e\u0438\x5d\x3f\u0435\x6a\x65\x23"
+                ru: "Держи свой пароль! И прочь отсюда: va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?еjе#",
+                en: "Take your password! And get out of here: va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?еjе#"
             },
             {
                 passwords: ["va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?еjе#"],
-                ru: "\u0410\u0431\u0441\u043e\u043b\u044e\u0442\u043d\u043e\x20\u0432\u0435\u0440\u043d\u043e\x2e\x20\u041a\u043e\u043c\u0430\u043d\u0434\u0430\x20\x4b\x65\x65\x70\x65\x72\x20\x45\x6e\x74\x65\x72\x74\x61\x69\x6e\x6d\x65\x6e\x74\x2c\x20\u0432\u043e\u0437\u043c\u043e\u0436\u043d\u043e\x2c\x20\u0438\x20\u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043b\u0430\x20\u044d\u043f\u043e\u0445\u0443\x20\u044d\u0440\u044b\x20\u4d\x69\x6e\x65\x63\x72\x61\x66\x74\x2c\x20\u043d\u043e\x20\u043d\u0430\u0441\u0442\u043e\u044f\u0449\u0430\x20\u044d\u0440\u0430\x20\u0442\u043e\u043b\u044c\x043a\u043e\x20\u043d\u0430\u0447\u0438\u043d\u0430\u0435\u0442\x25\u043f\u0435\x2e",
-                en: "\x51\x6f\x75\x27\x76\x65\x20\x66\x69\x6e\x61\x6c\x6c\x71\x20\x66\x6f\x75\x6e\x64\x20\x69\x74\x2e"
+                ru: "Абсолютно верно. Команда Keeper Entertainment, возможно, и завершила эпоху Minecraft, но настоящая игровая эра только начинается.",
+                en: "You've finally found it. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
             }
         ];
 
@@ -460,7 +460,7 @@
             document.getElementById("langDropdown").classList.remove("active");
             changeLanguage(langCode);
         }
-                function updateDisplay() {
+                    function updateDisplay() {
             var screen = document.getElementById("text");
             var archiveScreenText = document.getElementById("archiveText");
             var inputField = document.getElementById("userAnswer");
@@ -574,6 +574,7 @@
             }
         }
 
+        // Логика текстового экрана включения ПК (BIOS Keeper Entertainment)
         function runBootSequence() {
             var bootScreen = document.getElementById("bootScreen");
             if (!bootScreen) return;
@@ -612,7 +613,7 @@
         }
 
         window.onload = function () {
-            runBootSequence(); // Исправлен вызов заставки при загрузке страницы
+            runBootSequence(); 
             var timerElement = document.getElementById("countdownTimer");
 
             var inputField = document.getElementById("userAnswer");
