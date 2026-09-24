@@ -460,7 +460,7 @@
             document.getElementById("langDropdown").classList.remove("active");
             changeLanguage(langCode);
         }
-                    function updateDisplay() {
+                            function updateDisplay() {
             var screen = document.getElementById("text");
             var archiveScreenText = document.getElementById("archiveText");
             var inputField = document.getElementById("userAnswer");
@@ -508,7 +508,7 @@
             var inputField = document.getElementById("userAnswer");
             if (!inputField) return;
 
-            var input = inputField.value.trim(); // Точный регистр символов
+            var input = inputField.value.trim(); 
             var found = false;
 
             if (alertTimeout) {
@@ -520,7 +520,6 @@
                     var targetText = gameLevels[i][currentLang];
                     found = true;
                     
-                    // ЭФФЕКТ: Ярко-зелёная вспышка успеха на 3 секунды
                     document.body.classList.remove("error-alert");
                     document.body.classList.add("success-alert");
                     currentText = currentLang === "ru" ? "ДОСТУП РАЗРЕШЕН..." : "ACCESS GRANTED...";
@@ -574,7 +573,7 @@
             }
         }
 
-        // Логика текстового экрана включения ПК (BIOS Keeper Entertainment)
+        // Мобильная оптимизация бегущих строк Keeper Entertainment
         function runBootSequence() {
             var bootScreen = document.getElementById("bootScreen");
             if (!bootScreen) return;
@@ -605,11 +604,13 @@
                     currentLine++;
                 } else {
                     clearInterval(bootInterval);
+                    bootInterval = null; // Высвобождаем оперативную память устройства
+                    bootScreen.style.opacity = "0"; // Плавное скрытие для мобильных систем
                     setTimeout(function() {
                         bootScreen.style.display = "none";
-                    }, 500);
+                    }, 300);
                 }
-            }, 180);
+            }, 120); // Слегка ускорили для отзывчивости на смартфонах
         }
 
         window.onload = function () {
@@ -654,4 +655,3 @@
     </script>
 </body>
 </html>
-
