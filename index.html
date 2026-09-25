@@ -2,41 +2,58 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>The End of Beginnings</title>
 <style>
 @import url('https://googleapis.com');
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #000; color: #0f0; font-family: 'Share+Tech+Mono', monospace; height: 100vh; overflow: hidden; position: relative; }
+body { background: #000; color: #0f0; font-family: 'Share+Tech+Mono', monospace; height: 100vh; height: calc(var(--vh, 1vh) * 100); overflow: hidden; position: relative; }
 body::after { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 999; background-size: 100% 4px, 6px 100%; pointer-events: none; }
 .glare { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,30,0,0.15) 0%, rgba(0,0,0,0) 80%); pointer-events: none; z-index: 998; }
-#boot-screen { position: absolute; width: 100%; height: 100%; background: #000; padding: 20px; overflow: hidden; z-index: 10; font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
-#main-screen { display: none; height: 100vh; flex-direction: column; justify-content: space-between; padding: 20px; position: relative; transition: background 0.1s ease; }
+#boot-screen { position: absolute; width: 100%; height: 100%; background: #000; padding: 15px; overflow: hidden; z-index: 10; font-size: 13px; line-height: 1.4; white-space: pre-wrap; word-break: break-all; }
+#main-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: space-between; padding: 15px; position: relative; transition: background 0.1s ease; }
 .correct-flash { animation: flash-green 0.4s ease-out; }
 .wrong-flash { animation: flash-red 0.5s ease-out; }
 @keyframes flash-green { 0% { background: #4f4; color: #000; } 10% { background: #4f4; } 100% { background: #000; } }
 @keyframes flash-red { 0% { background: #f00; color: #fff; } 10% { background: #f00; } 100% { background: #000; } }
-header { display: flex; justify-content: center; align-items: center; position: relative; height: 60px; }
-#timer-container { cursor: pointer; text-align: center; border: 1px solid #0f0; padding: 8px 20px; background: rgba(0,20,0,0.4); text-transform: uppercase; letter-spacing: 2px; font-size: 18px; box-shadow: 0 0 10px rgba(0,255,0,0.2); }
+header { display: flex; justify-content: center; align-items: center; position: relative; height: 50px; margin-top: 5px; }
+#timer-container { cursor: pointer; text-align: center; border: 1px solid #0f0; padding: 8px 16px; background: rgba(0,20,0,0.4); text-transform: uppercase; letter-spacing: 1px; font-size: 16px; box-shadow: 0 0 10px rgba(0,255,0,0.2); user-select: none; -webkit-tap-highlight-color: transparent; }
 #timer-container:hover { background: #0f0; color: #000; }
-.center-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
-#terminal-output { width: 100%; max-width: 600px; text-align: center; min-height: 40px; font-size: 20px; letter-spacing: 1px; word-break: break-word; }
-.input-panel { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 500px; background: rgba(0,10,0,0.5); border: 1px solid #0f0; padding: 5px 10px; box-shadow: 0 0 15px rgba(0,255,0,0.1); }
-.input-panel input { flex: 1; background: transparent; border: none; outline: none; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 22px; padding: 5px; text-transform: uppercase; }
-.input-panel button { background: #0f0; color: #000; border: none; font-family: 'Share+Tech+Mono', monospace; font-size: 18px; font-weight: bold; padding: 8px 20px; cursor: pointer; text-transform: uppercase; }
+.center-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; width: 100%; padding: 0 10px; }
+#terminal-output { width: 100%; max-width: 600px; text-align: center; min-height: 50px; font-size: 18px; letter-spacing: 1px; word-break: break-word; display: flex; align-items: center; justify-content: center; }
+.input-panel { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 500px; background: rgba(0,10,0,0.5); border: 1px solid #0f0; padding: 6px 12px; box-shadow: 0 0 15px rgba(0,255,0,0.1); transition: all 0.2s ease; }
+.input-panel input { flex: 1; background: transparent; border: none; outline: none; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 20px; padding: 6px 0; text-transform: uppercase; width: 100%; }
+.input-panel button { background: #0f0; color: #000; border: none; font-family: 'Share+Tech+Mono', monospace; font-size: 16px; font-weight: bold; padding: 10px 20px; cursor: pointer; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
 .input-panel button:hover { background: #0a0; }
-footer { display: flex; justify-content: flex-end; align-items: center; padding: 10px 0; }
-#lang-toggle { cursor: pointer; border: 1px solid #0f0; padding: 4px 10px; font-size: 14px; background: transparent; color: #0f0; font-family: 'Share+Tech+Mono', monospace; }
+footer { display: flex; justify-content: flex-end; align-items: center; padding: 5px 5px; height: 40px; }
+#lang-toggle { cursor: pointer; border: 1px solid #0f0; padding: 6px 14px; font-size: 14px; background: transparent; color: #0f0; font-family: 'Share+Tech+Mono', monospace; -webkit-tap-highlight-color: transparent; }
 #lang-toggle:hover { background: #0f0; color: #000; }
-#secret-screen { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; background: #000; color: #0f0; padding: 20px; text-align: center; position: relative; }
-#secret-title { font-size: 28px; letter-spacing: 4px; margin-bottom: 30px; text-transform: uppercase; animation: pulse 2s infinite; }
-#secret-timer { font-size: 48px; font-weight: bold; letter-spacing: 3px; border: 2px solid #0f0; padding: 20px 40px; background: rgba(0,15,0,0.3); box-shadow: 0 0 25px rgba(0,255,0,0.3); }
-#back-btn { margin-top: 40px; border: 1px solid #0f0; background: transparent; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 16px; padding: 8px 20px; cursor: pointer; text-transform: uppercase; }
+#secret-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: center; align-items: center; background: #000; color: #0f0; padding: 20px; text-align: center; position: relative; }
+#secret-title { font-size: 22px; letter-spacing: 3px; margin-bottom: 25px; text-transform: uppercase; animation: pulse 2s infinite; padding: 0 10px; }
+#secret-timer { font-size: 34px; font-weight: bold; letter-spacing: 2px; border: 2px solid #0f0; padding: 15px 25px; background: rgba(0,15,0,0.3); box-shadow: 0 0 25px rgba(0,255,0,0.3); width: 100%; max-width: 420px; white-space: nowrap; }
+#back-btn { margin-top: 40px; border: 1px solid #0f0; background: transparent; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 16px; padding: 10px 24px; cursor: pointer; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
 #back-btn:hover { background: #0f0; color: #000; }
 @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; text-shadow: 0 0 15px #0f0; } 100% { opacity: 0.7; } }
 .red-ui { color: #f00 !important; border-color: #f00 !important; box-shadow: 0 0 15px rgba(255,0,0,0.2) !important; }
 .red-ui input { color: #f00 !important; }
 .red-ui button { background: #f00 !important; color: #000 !important; }
+@media (max-width: 480px) {
+  #boot-screen { font-size: 11px; padding: 10px; }
+  #main-screen { padding: 10px; }
+  #timer-container { font-size: 14px; padding: 6px 12px; }
+  #terminal-output { font-size: 16px; min-height: 60px; }
+  .input-panel { flex-direction: column; gap: 12px; padding: 10px; background: rgba(0,15,0,0.7); }
+  .input-panel input { text-align: center; border-bottom: 1px dashed rgba(0,255,0,0.3); padding-bottom: 8px; font-size: 18px; }
+  .input-panel button { width: 100%; padding: 12px; font-size: 16px; }
+  .red-ui input { border-bottom-color: rgba(255,0,0,0.4); }
+  #secret-title { font-size: 18px; letter-spacing: 2px; }
+  #secret-timer { font-size: 26px; padding: 12px 15px; max-width: 290px; }
+  #back-btn { width: 80%; max-width: 200px; padding: 12px; }
+}
+@media (min-width: 481px) and (max-width: 768px) {
+  #timer-container { font-size: 16px; }
+  #secret-timer { font-size: 38px; max-width: 380px; }
+}
 </style>
 </head>
 <body>
@@ -69,6 +86,12 @@ footer { display: flex; justify-content: flex-end; align-items: center; padding:
 <script>
 const targetDate = new Date('2027-02-22T00:00:00').getTime();
 let currentLang = 'RU';
+
+function resetHeight() {
+  document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+}
+window.addEventListener('resize', resetHeight);
+resetHeight();
 
 const bootLines = [
   "CORE::INIT -> LAUNCHING TERMINAL SUBSYSTEM",
@@ -124,14 +147,15 @@ function runBootSequence() {
     if (lineIdx < bootLines.length) {
       container.innerHTML += bootLines[lineIdx] + "\n";
       lineIdx++;
-      setTimeout(addLine, Math.random() * 250 + 100);
+      setTimeout(addLine, Math.random() * 200 + 80);
     } else {
       setTimeout(() => {
         container.style.display = 'none';
         document.getElementById('main-screen').style.display = 'flex';
         updateUI();
         document.getElementById('terminal-output').innerText = localization[currentLang].init;
-      }, 600);
+        document.getElementById('terminal-input').focus();
+      }, 500);
     }
   }
   addLine();
@@ -176,6 +200,7 @@ function openSecret() {
 function closeSecret() {
   document.getElementById('secret-screen').style.display = 'none';
   document.getElementById('main-screen').style.display = 'flex';
+  setTimeout(() => { document.getElementById('terminal-input').focus(); }, 50);
 }
 
 function processInput() {
