@@ -86,143 +86,143 @@
         </div>
     </div>
     <script>
+        function b64(str) {
+            return decodeURIComponent(atob(str).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
         var alertTimeout = null; var currentScreen = "game"; var currentLang = "ru";
-        var textState = { currentRu: "Введите Пароль", currentEn: "Enter Password" };
+        var textState = { currentRu: b64("0JLRQNC10LTQuNGC0LUg0J/QsNGA0L7Qu9GMINC6"), currentEn: b64("RW50ZXIgUGFzc3dvcmQ=") };
         var interfaceUi = {
-            ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
-            en: { btn: "ENTER", placeholder: "Your answer...", menu: "English" }
+            ru: { btn: b64("0JLRktCe0JQ="), placeholder: b64("0JLQsNGIINC+0YLQstC10YIuLi4="), menu: b64("0KDRg9GB0YHQutC40Lk=") },
+            en: { btn: b64("RU5URVI="), placeholder: b64("WW91ciBhbnN3ZXIuLi4="), menu: b64("RW5nbGlzaA==") }
+        };
         async function sha256(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-var archiveTexts = {
-    ru: "СТАТУС: ДОСТУП РАЗРЕШЕН // АРХИВ №027\n\n[ЗАПИСЬ ЗАБЛОКИРОВАНА]\n\nВы успешно проникли в базу данных. Система безопасности временно отключена, однако файлы логов зашифрованы главным счетчиком времени.\n\nВернитесь вручную к терминалу через таймер, если готовы продолжить поиски.",
-    en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
-};
-
-function toggleLangDropdown() { document.getElementById("langDropdown").classList.toggle("active"); }
-function selectLanguage(langCode) { document.getElementById("langDropdown").classList.remove("active"); currentLang = langCode; updateDisplay(); }
-
-function updateDisplay() {
-    var screen = document.getElementById("text"); var archiveScreenText = document.getElementById("archiveText");
-    var inputField = document.getElementById("userAnswer"); var submitBtn = document.getElementById("submitBtn"); var langBtn = document.getElementById("langBtn");
-    if (submitBtn) submitBtn.innerText = interfaceUi[currentLang].btn;
-    if (inputField) inputField.placeholder = interfaceUi[currentLang].placeholder;
-    if (langBtn) langBtn.innerText = interfaceUi[currentLang].menu;
-    if (screen) { screen.innerText = (currentLang === "ru") ? textState.currentRu : textState.currentEn; }
-    if (archiveScreenText) { archiveScreenText.innerText = archiveTexts[currentLang]; }
-}
-
-function setTexts(ruTxt, enTxt) { textState.currentRu = ruTxt; textState.currentEn = enTxt; }
-
-async function checkCode() {
-    var inputField = document.getElementById("userAnswer"); if (!inputField) return;
-    var input = inputField.value.trim(); if (input === "") return;
-    var lowerInput = input.toLowerCase(); var cleanInput = lowerInput.replace(/[?!.]/g, "");
-    if (alertTimeout) clearTimeout(alertTimeout);
-    document.body.classList.remove("error-alert");
-    var normalizedInput = lowerInput.replace(/с/g, "c");
-
-    const hashClean = await sha256(cleanInput);
-    const hashNormalized = await sha256(normalizedInput);
-
-    if (hashClean === "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8" || 
-        hashClean === "92706fb6b3ff1c849e7747b0a7dbf261907cb5383f98299292d3f74676579fa0") {
-        setTexts("Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?", "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?");
-    } 
-    else if (hashClean === "519f96b9967656910903828943ef19ec0ca0fec2965688567117df85493b82fb" || 
-             hashClean === "ef333eb53b8f108d3ff2cb6d953d607412f864fc8fae3230c171e54911075aa3") {
-        setTexts("Не важно, важно то, что ты здесь забыл! Этого я не знаю", "It doesn't matter, what matters is that you're here! I don't know this.");
-    } 
-    else if (hashClean === "e2920257e5b565a5879a9573855ff4cd73a3ba9f0866cb314ba9633e7e0e719c" || 
-             hashClean === "fa6b0eb7502c11438914b18c6cd3116dfbe30bfae4125fb7a3c39a8e9389f417") {
-        setTexts("Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!", "A terminal that answers your stupid questions, in the hope that you'll find password!");
-    } 
-    else if (hashClean === "4e047f2010839e080277bd21da0a9f5d343b46995079a4da9e8a75e33d07e600" || 
-             hashClean === "0f7f3da1d322b7245a4918e6924b17f54128da1a017e2c94ca38ee2cf93f9ef5") {
-        setTexts("Ты мне скажи.", "You tell me.");
-    } 
-    else if (hashClean === "df3df43a85b967fb4268e0a7f14b301777083f2fc6ebff0cb60775d713c8f38c") {
-        setTexts("Новая Эра Грядёт.", "A New Era is Coming.");
-    } 
-    else if (hashClean === "c73d9d6e4922114757c9197c3af50942dcae06aa7d37315ef98711815b804825" || 
-             hashClean === "1994b72635951d8b76b29b6b7136015d862875a5e3b8b1db84f5f5904bb9d73d") {
-        setTexts("https://t.me", "https://t.me");
-    } 
-    else if (hashClean === "00965e6381df693ba9cb87ff636ff60759089f660f7a070ccaa2d069b2241cf1" || 
-             hashClean === "d9f67a28532454a8e0cb205e46be9f2eeec87570659229be4949a21237a6b7da") {
-        setTexts("Не ну ты бурмалдец конечно, что шаришь за молодежные мемчики, но это не пароль!", "Ne ny ti burmaldec konechno, choto sharish za molodezhnie memchiji, no eto ne sarol!");
-    } 
-    else if (hashClean === "44caaba3b06381cf906febc55c7a47ebda1b8931a9de4f7aa114fa9cf0247ff7") {
-        setTexts("Да найди ты пароль и не страдай фигней! На край попробуй что то спросить!", "Just find the password and stop messing aRounD!");
-    } 
-    else if (hashClean === "ef33bc716e133e9d807604586d63ef1330fa59d646be1b4f4945d94943fcf31f" || 
-             hashClean === "9e2c60c3822839bfa816e254e2ee2a101b0a88099ff866b16e4531be4d8f074d") {
-        setTexts("...", "...");
-    } 
-    else if (hashClean === "f77977464a4d6f461e7e9be1913f9c6f2df6b150c9b0e27163f9252fe05dfb28" || 
-             hashClean === "2bb80d537b1da3e38bd30361aa855686bde0eacd7162feeff14a4d70f9287045") {
-        setTexts("Секрет-то тут есть и я надеюсь, что ты найдешь его найдя пароль!", "There is a secret here, and I hope you find it by discovering the password!");
-    } 
-    else if (hashClean === "4b4f59c86940d9906660fa1f97022a1068a44b82d45c52c938c5b05a761ec81d" || 
-             hashClean === "823901b09b0b47101869e5d4cb077d700810ee6ca95cfa1fb0630b91e9f1a268") {
-        setTexts("Смешно. Неужели настолько нету идей? А, точно. Вы же люди. Ладно, сколько будет 12 + 4?", "Funny. Are you really that out of ideas? Oh, right. You're just humans. Alright, what is 12 + 4?");
-    } 
-    else if (hashClean === "3a7458cd3045a5e11697518482b0e9657a944e03f47af5c65d8be4d9ec507111") {
-        setTexts("Молодец, немного математики ты знаешь! Ладно, а если так? Напиши *побег*, но без букв о и е.", "Well done, you know a bit of math! Alright, what about this? Write *escape*, but without the letters 'a' and 'e'.");
-    } 
-    else if (hashClean === "d9e8316c05daefbf8d8d752f97c47d39103e390237e1a74d284f69747a8bc61f" || 
-             hashClean === "31df400938b009e99332616f73e48ab2b6b0b2e312e09ffcb37df1e1525a4d04") {
-        setTexts("Итак, все же ты и сюда добрался? Чтож на самом деле я не знаю пароля. Прости, но мне правда больше нечего *сказать*", "So, you made it here after all? Well, the truth is, I don't know the password. I'm sorry, but I really have nothing left to *say*.");
-    } 
-    else if (hashClean === "8c04ec566cf257c7b80b721867c4b18c0c4a03429fa2a893699b794fdbca8f18" || 
-             hashClean === "7981507efbc5a07d6d5eb5fe5e786b3a37fc644e5be463b785d0d8bbecbc3566") {
-        setTexts("Действи*123*ельно хочешь что я сказал паро*+*ль? Ну я же сказал у ме*123*ня его нету!", "Do you real*123*ly want me to saq the pass*+*word? But I told you, I don't ha*123*ve it!");
-    } 
-    else if (hashClean === "df78f902404e9fb6bb9a444a72d7f872cc4a1be70eb0092f6b86e001859bf989") {
-        setTexts("ХВАТИТ! Я СКАЗАЛ У МЕНЯ НИЧЕГО НЕТ! ИЩИ ПАРОЛИ В ДРУГИХ МЕСТАХ!*!!!!!*", "ENOUGH! I SAID I DON'T HAVE ANYTHING! LOOK FOR THE PASSWORDS ELSEWHERE!*!!!!!*");
-    }
-    else if (lowerInput.indexOf("!!!!!") !== -1) {
-        setTexts(
-            "ЛАДНО! Ты мне так надоел со своими тупыми вопросами! Ищешь ответы, ну так держи! Как ты вообще сюда попал! Держи свой пароль! И прочь отсюда: va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#.",
-            "OKAY! You're so annoying! Asking you' stupid questions! Do you even get here? Taje you' password! And get out of here: va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?}еje#."
-        );
-    } 
-    else if (hashNormalized === "8b7e770f1a9b238380894be64fa833cb92b23a59df741364375b48db905c102a") {
-        setTexts(
-            "Наконец-то вы нашли пароль. Знаю, это было непросто, но теперь я открою вам секрет. Команда Keeper Entertainment, возможно, и завершила эпоху Minecraft, но настоящая игровая эра только начинается.",
-            "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
-        );
-    }
-            else {
-                textState.currentRu = "НЕВЕРНО"; textState.currentEn = "WRONG";
-                document.body.classList.add("error-alert");
-                alertTimeout = setTimeout(function() {
-                    document.body.classList.remove("error-alert");
-                    textState.currentRu = "Введите Пароль"; textState.currentEn = "Enter Password";
-                    updateDisplay();
-                }, 5000);
-            }
-            inputField.value = ""; updateDisplay();
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
-
+        var archiveTexts = {
+            ru: b64("0KHQotCQ0KLQo9ChOiDQlNCe0KHQotCj0J8g0KDQkNCX0KDQldCo0JXQnCAvLyDQkNCKDQCl0JIgTikwMjcNCg0KW9CX0JDQn9CY0KHQnCDQl9CQ0JHQm9Ce0JrQUndefinedCg0J7QktCQ0J3QkF0NCg0K0JLRiyDRg9GB0L/QtdGI0L3QviDQv9GA0L7QvdC40LrQu9C4INCyINCx0LDQt9GDINC00LDQvdC90YvRhS4g0KHQuNGB0YLQtdC80LAg0LHQtdC30L7Qv9Cw0YHQvdC+0YHRgtC4INCy0YDQtdC80LXQvdC90L4g0L7RgtC40LvRjtGH0LXQvdCwLCDQvtC00L3QsNC60L4g0YTQsNC50LvRiyDQu9C+0LPQvtCyINC30LDRiNC40YTRgNC+0LLQsNC90Ysg0LPQu9Cw0LLQvdGL0Lwg0YHRh9C10YLRh9C40LrQvtC8INCy0YDQtdC80LXQvdC4Lg0KDQrQktC10YDQvdC40YLQtdGB0Ywg0LLRgNGD0YfQvdGD0Y4g0Log0YLQtdGA0LzQuNC90LDQuNGDINGH0LXRgNC10Lcg0YLQsNC50LzQtdGALCDQtdGB0LvQuCDQs9C+0YLQvtCy0Ysg0L/RgNC+0LTQvtC70LbQuNGC0Ywg0L/QvtC40YHQutC4Lg=="),
+            en: b64("U1RBVFVTOiBBQ0NFU1MgR1JBTlRFRCAvLyBBUkNISVZFICMwMjcNCg0KW1JFQ09SRCxMT0NLRURdDQoNCllvdSBoYXZlIHN1Y2Nlc3NmdWxseSBicmVhY2hlZCB0aGUgZGF0YWJhc2UuIFRoZSBzZWN1cml0eSBzeXN0ZW0gaXMgb2ZmbGluZSwgYnV0IHRoZSBsb2dzIGFyZSBlbmNyeXB0ZWQgYnkgdGhlIG1haW4gY291bnRkb3duIGNsb2NrLg0KDQpSZXR1cm4gdG8gdGhlIHRlcm1pbmFsIHVzaW5nIHRoZSB0aW1lciBpbiB0aGUgY29ybmVyIGlmIHlvdSBhcmUgcmVhZHkgdG8gY29udGludWUu")
+        };
+        function toggleLangDropdown() { document.getElementById("langDropdown").classList.toggle("active"); }
+        function selectLanguage(langCode) { document.getElementById("langDropdown").classList.remove("active"); currentLang = langCode; updateDisplay(); }
+        function updateDisplay() {
+            var screen = document.getElementById("text"); var archiveScreenText = document.getElementById("archiveText");
+            var inputField = document.getElementById("userAnswer"); var submitBtn = document.getElementById("submitBtn"); var langBtn = document.getElementById("langBtn");
+            if (submitBtn) submitBtn.innerText = interfaceUi[currentLang].btn;
+            if (inputField) inputField.placeholder = interfaceUi[currentLang].placeholder;
+            if (langBtn) langBtn.innerText = interfaceUi[currentLang].menu;
+            if (screen) { screen.innerText = (currentLang === "ru") ? textState.currentRu : textState.currentEn; }
+            if (archiveScreenText) { archiveScreenText.innerText = archiveTexts[currentLang]; }
+        }
+        function setTexts(ruTxt, enTxt) { textState.currentRu = ruTxt; textState.currentEn = enTxt; updateDisplay(); }
         function toggleScreens() {
             var gameEl = document.getElementById("gameScreen"); var archiveEl = document.getElementById("archiveScreen");
             if (currentScreen === "game") { gameEl.style.display = "none"; archiveEl.style.display = "flex"; currentScreen = "archive"; } 
             else { archiveEl.style.display = "none"; gameEl.style.display = "flex"; currentScreen = "game"; }
         }
-
         window.onclick = function(event) {
             if (!event.target.matches('.custom-lang-btn')) {
                 var dropdown = document.getElementById("langDropdown");
                 if (dropdown && dropdown.classList.contains('active')) dropdown.classList.remove('active');
             }
         }
-
+        async function checkCode() {
+            var inputField = document.getElementById("userAnswer"); if (!inputField) return;
+            var input = inputField.value.trim(); if (input === "") return;
+            var lowerInput = input.toLowerCase(); var cleanInput = lowerInput.replace(/[?!.]/g, "");
+            if (alertTimeout) clearTimeout(alertTimeout);
+            document.body.classList.remove("error-alert");
+            var normalizedInput = lowerInput.replace(/с/g, "c");
+            const hashClean = await sha256(cleanInput);
+            const hashNormalized = await sha256(normalizedInput);
+            var matched = true;
+            if (hashClean === "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8" || 
+                hashClean === "92706fb6b3ff1c849e7747b0a7dbf261907cb5383f98299292d3f74676579fa0") {
+                setTexts(b64("0KLQsNC60LjRhSDQs9C70YPQv9GL0YUg0LzRiyDQtdGJ0LUg0L3QtSDQstGB0YLRgNC10YfQsNC70LguINCi0Ysg0L/RgNC00LLQtNCwINC00YPQvNCw0LXRiNGB0YwsIGNodG8gZXRvdCDRgdC10LrRgNC10YIg0LzQvtC20L3QviDRg9C30L3QsNGC0YwsINCy0YHQtdCz0L4gbGlzaCcgbmFwaXNhdiAq0J/QsNGA0L7Qu9GMKj8="), b64("V2UndmUgbmV2ZXIgbWV0IHN1Y2ggc3R1cGlkIHBlb3BsZS4gRG8geW91IHJlYWxseSB0aGluayB0aGlzIHNlY3JldCBjYW4gYmUgZm91bmQgb3V0IGp1c3QgYnkgdHlwaW5nICpQYXNzd29yZCo/"));
+            } 
+            else if (hashClean === "519f96b9967656910903828943ef19ec0ca0fec2965688567117df85493b82fb" || 
+                     hashClean === "ef333eb53b8f108d3ff2cb6d953d607412f864fc8fae3230c171e54911075aa3") {
+                setTexts(b64("0J3QtSDQstCw0LbQvdC4LCDQstCw0LbQvdC+INGC0L4sIGNodG8g0YLRiyDQt9C00LXRgdGwn9C30LDQsdGL0LshINCV0YLQvtCz0L4geWEgbmUgem5heXU="), b64("SXQgZG9lc24ndCBtYXR0ZXIsIHdoYXQgbWF0dGVycyBpcyB0aGF0IHlvdSdyZSBoZXJlISBJIGRvbid0IGtub3cgdGhpcy4="));
+            } 
+            else if (hashClean === "e2920257e5b565a5879a9573855ff4cd73a3ba9f0866cb314ba9633e7e0e719c" || 
+                     hashClean === "fa6b0eb7502c11438914b18c6cd3116dfbe30bfae4125fb7a3c39a8e9389f417") {
+                setTexts(b64("0KLQtdGA0LzQuNC90LDQuCwg0L7RgtCy0LXRh9Cw0Y7RidC40Lkg0L3QsCDRgtCy0L7QuCDQs9C70YPQv9GL0LUg0LLQvtC/0YDQvtGB0YssINCyINC90LDQtNC10LbQtNC1INC90LAgdG8sIGNodG8g0YLRiyDQvdCw0LnQtNC10YjGjCDQv9Cw0YDQvtC70icsIQ=="), b64("QSB0ZXJtaW5hbCB0aGF0IGFuc3dlcnMgeW91ciBzdHVwaWQgcXVlc3Rpb25zLCBpbiB0aGUgaG9wZSB0aGF0IHlvdSdsbCBmaW5kIHBhc3N3b3JkIQ=="));
+            } 
+            else if (hashClean === "4e047f2010839e080277bd21da0a9f5d343b46995079a4da9e8a75e33d07e600" || 
+                     hashClean === "0f7f3da1d322b7245a4918e6924b17f54128da1a017e2c94ca38ee2cf93f9ef5") {
+                setTexts(b64("0KLRiyDQvNC90LUgc2themhpLg=="), b64("WW91IHRlbGwgbWUu"));
+            } 
+            else if (hashClean === "df3df43a85b967fb4268e0a7f14b301777083f2fc6ebff0cb60775d713c8f38c") {
+                setTexts(b64("0J3QvtCy0DRRjyDQrdGA0LAg0JPRgNGP0LTQtdGCLg=="), b64("QSBOZXcgRXJhIGlzIENvbWluZy4="));
+            } 
+            else if (hashClean === "c73d9d6e4922114757c9197c3af50942dcae06aa7d37315ef98711815b804825" || 
+                     hashClean === "1994b72635951d8b76b29b6b7136015d862875a5e3b8b1db84f5f5904bb9d73d") {
+                setTexts(b64("aHR0cHM6Ly90Lm1lLytEZ1hkdzJ2aWxnd1l6ZGk="), b64("aHR0cHM6Ly90Lm1lLytEZ1hkdzJ2aWxnd1l6ZGk="));
+            } 
+            else if (hashClean === "00965e6381df693ba9cb87ff636ff60759089f660f7a070ccaa2d069b2241cf1" || 
+                     hashClean === "d9f67a28532454a8e0cb205e46be9f2eeec87570659229be4949a21237a6b7da") {
+                setTexts(b64("0J3QtSDQvdGDINGLR抑INCx0YPRgNC80LDQu9C00LXRhiBrb25lY2hubywgY2h0byBzaGFyaXNoJyB6YSBtb2xvZGV6aG55ZSBtZW1jaGlraSwgbm8gZXRvIG5lIHBhcm9sJyE="), b64("TmUgbnkgdGkgYnVybWFsZGVjIGtvbmVjaG5vLCBjaG90byBzaGFyaXNoIHphIG1vbG9kZXpobnllIG1lbWNoaWppLCBubyBldG8gbmUgc2Fyb2wh"));
+            } 
+            else if (hashClean === "44caaba3b06381cf906febc55c7a47ebda1b8931a9de4f7aa114fa9cf0247ff7") {
+                setTexts(b64("0JTQsCDQvdCw0LnQtNC4INGLR抑DRj9Cw0YDQvtC70icsIGkgbmUgc3RyYWRhaScgZmlnbmVqISBOYSBrcmFqIHBvcHJvYnV5IGNodG8gdG8gc3Byb3NpdG4h"), b64("SnVzdCBmaW5kIHRoZSBwYXNzd29yZCBhbmQgc3RvcCBtZXNzaW5nIGFSb3VuRCE="));
+            }
+            else if (hashClean === "ef33bc716e133e9d807604586d63ef1330fa59d646be1b4f4945d94943fcf31f" || 
+                     hashClean === "9e2c60c3822839bfa816e254e2ee2a101b0a88099ff866b16e4531be4d8f074d") {
+                setTexts(b64("Li4u"), b64("Li4u"));
+            } 
+            else if (hashClean === "f77977464a4d6f461e7e9be1913f9c6f2df6b150c9b0e27163f9252fe05dfb28" || 
+                     hashClean === "2bb80d537b1da3e38bd30361aa855686bde0eacd7162feeff14a4d70f9287045") {
+                setTexts(b64("0KHQtdC60YDQtdGCLdGC0L4g0YLRg9GCINC10YHRgtGMINC4IHlhIG5hZGV5dXN5JywgY2h0byB0eSBuYXlkZXNoJyBlZ28gbmF5ZHBhcm9sJyE="), b64("VGhlcmUgaXMgYSBzZWNyZXQgaGVyZSwgYW5kIEkgaG9wZSB5b3UgZmluZCBpdCBieSBkaXNjb3ZlcmluZyB0aGUgcGFzc3dvcmQh"));
+            } 
+            else if (hashClean === "4b4f59c86940d9906660fa1f97022a1068a44b82d45c52c938c5b05a761ec81d" || 
+                     hashClean === "823901b09b0b47101869e5d4cb077d700810ee6ca95cfa1fb0630b91e9f1a268") {
+                setTexts(b64("0KHQvNC10YjQvdC+LiBOZXV6aGVsaSBuYXN0b2wna28gbmV0dSBpZGVqPyBBLCDRgtC+0YfQvdC+LiDQktGLIHpoZSBseXVkレンIExhZG5vLCBza29sJ2tvIGJ1ZGV0IDEyICsgND8="), b64("RnVubnkuIEFyZSB5b3UgcmVhbGx5IHRoYXQgb3V0IG9mIGlkZWFzPyBPaCwgcmlnaHQuIFlvdSdyZSBqdXN0IGh1bWFucy4gQWxyaWdodCwgd2hhdCBpcyAxMiArIDQ/"));
+            } 
+            else if (hashClean === "3a7458cd3045a5e11697518482b0e9657a944e03f47af5c65d8be4d9ec507111") {
+                setTexts(b64("0JzQvtC70L7QtNC10YYsINC90LXQvNC90L7Qs9C+INC80LDRgtC10LzQsNGC0BDRbmtpINGC0Ysg0LfQvdCw0LXRjGgnISBMYWRubywgYSBlc2xpIHRhayA/IE5hcGlzaGkgKnBvYmVnKiwgbm8gYmV6IGJ1a3YgbyBpIGUu"), b64("V2VsbCBkb25lLCB5b3Uga25vdyBhIGJpdCBvZiBtYXRoISBBbHJpZ2h0LCB3aGF0IGFib3V0IHRoaXM/IFdyaXRlICplc2NhcGUqLCBidXQgd2l0aG91dCB0aGUgbGV0dGVycyAnYScgYW5kICdlJy4="));
+            } 
+            else if (hashClean === "d9e8316c05daefbf8d8d752f97c47d39103e390237e1a74d284f69747a8bc61f" || 
+                     hashClean === "31df400938b009e99332616f73e48ab2b6b0b2e312e09ffcb37df1e1525a4d04") {
+                setTexts(b64("0JjRgtCw0LosIHZzZSB6aGUgdHkgaSBzeXVkYSBkb2JyYWxzeT8gQ2h0b3poIG5hIHNhbW9tIGRlbGUgeWEgbmUgem5heXUgcGFyb2x5YS4g0J/RgNC+0YHRgtC4LCBubyBtbmUg0L/RgNCw0LLQtNCwINCx0L7Qu9G40YjQtSDQvdC10YfQtdCz0L4gKnNrYXphdCAnKg=="), b64("U28sIHlvdSBtYWRlIGl0IGhlcmUgYWZ0ZXIgYWxsPyBXZWxsLCB0aGUgdHJ1dGggaXMsIEkgZG9uJ3Qga25vdyB0aGUgcGFzc3dvcmQuIEknbSBzb3JyeSwgYnV0IEkgcmVhbGx5IGhhdmUgbm90aGluZyBsZWZ0IHRvICpzYXkqLiA="));
+            } 
+            else if (hashClean === "8c04ec566cf257c7b80b721867c4b18c0c4a03429fa2a893699b794fdbca8f18" || 
+                     hashClean === "7981507efbc5a07d6d5eb5fe5e786b3a37fc644e5be463b785d0d8bbecbc3566") {
+                setTexts(b64("0JTQtdC50YHRgtCy0LgqMTIzKirQtdC70YzQs9C90L4gY2hvY2hlc2gnIGNodG8geWEgc2themFsIHBhcm8qKypscj8gTnUgeWEgemhlIHNrYXphbCB1IG1lKjEyMypueWEgZWdvIG5ldHUh"), b64("RG8geW91IHJlYWwqMTIzKmx5IHdhbnQgbWUgdG8gc2FxIHRoZSBwYXNzKisqd29yZD8gQnV0IEkgdG9sZCB5b3UsIEkgZG9uJ3QgaGEqMTIzKnZlIGl0IQ=="));
+            } 
+            else if (hashClean === "df78f902404e9fb6bb9a444a72d7f872cc4a1be70eb0092f6b86e001859bf989") {
+                setTexts(b64("WFZBVElUISBZQSBTS0FaQUwgVSBNRU5ZQU5JQ0hFR08gTkVUISBJU0hESSBQQVJPTGkgViBEUlVHSUtIIE1FU1RBSCEqISEhISEq"), b64("RU5PVUdIISBJIFNBSUQgSSBET04nVCBIQVZVIEFOWVRISU5HIVBPT0sgRk9SIFRIRSBQQVNTV09SRFMgRUxTRVdIRVJFISohISEhISo="));
+            }
+            else if (lowerInput.indexOf("!!!!!") !== -1) {
+                setTexts(
+                    b64("0JvQkNCU0J3QTshINCi0Ysg0LzQvdC5INGC0LDQuiBuYWRvZWwgc28gc3ZvaW1pIHR1cHltaSB2b3Byb3NhbWkhINCY0hjaGVzaCcgb3R2ZXR5LCBudSB0YWsgZGVyemhpISBLYWsgdHkgdnNlZ2RhIHN5dWRhIHBvcGFsISBEZXJ6aGkgc3ZvaiBwYXJvbCchIEkgcHJvY2hoJyBvdHN5dWRhOiB2YSpmd24lY2hpK2FkY0M+cmYkbG54eSd4dzElamtsXzVjaGlncHR5b2lpXX0/ZWplIy4="),
+                    b64("T0tBWSFormatJ3JlIHNvIGFubm95aW5nISBBc2tpbmcgeW91JyBzdHVwaWQgcXVlc3Rpb25zISBEbyB5b3UgZXZlbiBnZXQgaGVyZT8gVGFqZSB5b3UnIHBhc3N3b3JkISBBbmQgZ2V0IG91dCBvZiBoZXJlOiB2YSpmd24lY2hpK2FkY3M+cmYkbG54eSd4dzElamtsXzVjaGlncHR5b2lpXX0/ZWplIy4=")
+                );
+            } 
+            else if (hashNormalized === "8b7e770f1a9b238380894be64fa833cb92b23a59df741364375b48db905c102a") {
+                setTexts(
+                    b64("0J3QsNGF0L7QtNC90LXRhi3RgtC+INCy0Ysg0L3QsNGI0LvQuCDQv9Cw0YDRvtC70icsLiDQl9C90DRRjXUsINC10YLQviDQsdGL0LvQviDQvdC10L/RgNC+0YHRgtC4LCBubyDRgtC10L/QtdGA0RicsIHlhINC+0YLQutGA0L7RjtGWINCy0LDQvCDRgdC10LrRgNC10YIuINCa0L7QvNCw0L3QtNCwIEtlZXBlciBFbnRlcnRhaW5tZW50LCDQv9C+0LfQvNC+0LbQvdC+LCDQuCDQt9Cw0LLQtdGA0YjQuNC70LAg0Y3Qv9C+0YXRgyBNaW5lY3JhZnQsIG5vINC90LDRgdGC0L7Rj9GJ0LDRjyDQuNCz0YDQvtCy0DRRgiDRjdGA0LAg0YLQvtC70YzQutC+INC90LDRh9C40L3QsNC10YLRgdGPLg=="),
+                    b64("WW91J3ZlIGZpbmFsbHkgZm91bmQgdGhlIHBhc3N3b3JkLiBJdCB3YXMgaGFyZCwgSSBrbm93LCBidXQgbm93IEknbGwgdGVsbCB5b3UgYSBzZWNyZXQuIFRoZSBLZWVwZXIgRW50ZXJ0YWlubWVudCB0ZWFtIG1heSBoYXZlIGVuZGVkIHRoZSBNaW5lY3JhZnQgZXJhLCBidXQgdGhlIHRydWUgZ2FtaW5nIGVyYSBpcyBqdXN0IGJlZ2lubmluZy4=")
+                );
+            }
+            else {
+                matched = false;
+                textState.currentRu = b64("0J3QldCS0JXQoNCd0J4="); textState.currentEn = b64("V1JPTkc=");
+                document.body.classList.add("error-alert");
+                updateDisplay();
+                alertTimeout = setTimeout(function() {
+                    document.body.classList.remove("error-alert");
+                    textState.currentRu = b64("0JLRNC10LTQuNGC0LUg0J/QsNGA0L7Qu9GMINC6"); textState.currentEn = b64("RW50ZXIgUGFzc3dvcmQ=");
+                    updateDisplay();
+                }, 5000);
+            }
+            if (matched) { inputField.value = ""; }
+            updateDisplay();
+        }
         window.onload = function () {
             var timerElement = document.getElementById("countdownTimer"); var inputField = document.getElementById("userAnswer");
             if (inputField) { inputField.addEventListener("keypress", function(event) { if (event.key === "Enter") checkCode(); }); }
@@ -233,7 +233,7 @@ async function checkCode() {
                 days = days < 10 ? "0" + days : days; hours = hours < 10 ? "0" + hours : hours; minutes = minutes < 10 ? "0" + minutes : minutes; seconds = seconds < 10 ? "0" + seconds : seconds;
                 if (timerElement) {
                     if (distance > 0) timerElement.innerText = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
-                    else timerElement.innerText = (currentLang === "ru") ? "[ВРЕМЯ ИСТЕКЛО]" : "[TIME IS UP]";
+                    else timerElement.innerText = (currentLang === "ru") ? b64("W9CS0KDQldCc0K8g0DeadNCh0KLQldCa0JvQOV0=") : b64("W1RJTUUgSVMgVVBd");
                 }
             }, 1000);
             updateDisplay();
