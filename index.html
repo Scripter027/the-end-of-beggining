@@ -98,23 +98,28 @@
             }
             return new TextDecoder('utf-8').decode(new Uint8Array(buffer));
         }
+
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
         var alertTimeout = null; var currentScreen = "game"; var currentLang = "ru";
-        var textState = { currentRu: dec("0JLQtdC00LjRgtC1INCf0LDRgNC+0LvRjA=="), currentEn: dec("RW50ZXIgUGFzc3dvcmQ=") };
+        
+        var textState = { currentRu: "Введите Пароль", currentEn: "Enter Password" };
         var interfaceUi = {
-            ru: { btn: dec("0JLQktCe0JQ="), placeholder: dec("0JLQsNGIINC+0YLQstC10YIuLi4="), menu: dec("0KDRg9GB0YHQutC40Lk=") },
-            en: { btn: dec("RU5URVI="), placeholder: dec("WW91ciBhbnN3ZXIuLi4="), menu: dec("RW5nbGlzaA==") }
+            ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
+            en: { btn: "ENTER", placeholder: "Your answer...", menu: "English" }
         };
+
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
+
         var archiveTexts = {
             ru: dec("0KHQotCQ0KLQo9ChOiDQlNCe0KHQotCj0J8g0KDQkNCX0KDQldCo0JXQnCAvLyDQkNCKDQCl0JIgTikwMjcNCg0KW9CX0JDQn9CY0KHQnCDQl9CQ0JHQm9Ce0JrQUndefinedCg0J7QktCQ0J3QkF0NCg0K0JLRiyDRg9GB0L/QtdGI0L3QviDQv9GA0L7QvdC40LrQu9C4INCyINCx0LDQt9GDINC00LDQvdC90YvRhS4g0KHQuNGB0YLQtdC80LAg0LHQtdC30L7Qv9Cw0YHQvdC+0YHRgtC4INCy0YDQtdC80LXQvdC90L4g0L7RgtC40LvRjtGH0LXQvdCwLCDQvtC00L3QsNC60L4g0YTQsNC50LvRiyDQu9C+0LPQvtCyINC30LDRiNC40YTRgNC+0LLQsNC90Ysg0LPQu9Cw0LLQvdGL0Lwg0YHRh9C10YLRh9C40LrQvtC8INCy0YDQtdC80LXQvdC4Lg0KDQrQktC10YDQvdC40YLQtdGB0Ywg0LLRgNGD0YfQvdGD0Y4g0Log0YLQtdGA0LzQuNC90LDQuNGDINGH0LXRgNC10Lcg0YLQsNC50LzQtdGALCDQtdGB0LvQuCDQs9C+0YLQvtCy0Ysg0L/RgNC+0LTQvtC70LbQuNGC0Ywg0L/QvtC40YHQutC4Lg=="),
             en: dec("U1RBVFVTOiBBQ0NFU1MgR1JBTlRFRCAvLyBBUkNISVZFICMwMjcNCg0KW1JFQ09SRCxMT0NLRURdDQoNCllvdSBoYXZlIHN1Y2Nlc3NmdWxseSBicmVhY2hlZCB0aGUgZGF0YWJhc2UuIFRoZSBzZWN1cml0eSBzeXN0ZW0gaXMgb2ZmbGluZSwgYnV0IHRoZSBsb2dzIGFyZSBlbmNyeXB0ZWQgYnkgdGhlIG1haW4gY291bnRkb3duIGNsb2NrLg0KDQpSZXR1cm4gdG8gdGhlIHRlcm1pbmFsIHVzaW5nIHRoZSB0aW1lciBpbiB0aGUgY29ybmVyIGlmIHlvdSBhcmUgcmVhZHkgdG8gY29udGludWUu")
         };
+
         function toggleLangDropdown() { document.getElementById("langDropdown").classList.toggle("active"); }
         function selectLanguage(langCode) { document.getElementById("langDropdown").classList.remove("active"); currentLang = langCode; updateDisplay(); }
         function updateDisplay() {
@@ -150,7 +155,7 @@
             var matched = true;
             if (hashClean === "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8" || 
                 hashClean === "92706fb6b3ff1c849e7747b0a7dbf261907cb5383f98299292d3f74676579fa0") {
-                setTexts(dec("0KLQsNC60LjRhSDQs9C70YPQv9GL0YUg0LzRiyDQtdGJ0LUg0L3QtSDQstGB0YLRgNC10YfQsNC70LguINCi0Ysg0L/RgNCw0LLQtNCwINC00YPQvNCw0LXRiNGB0YwsINGD0LfQvdCw0YLRjCDRgdC10LrRgNC10YIg0LzQvtC20L3QviDQstGB0LXQs9C+INC70LjRiNGMINC90LDQv9C40YHQsNCyICfQn9Cw0YDQvtC70YwnPw=="), dec("V2UndmUgbmV2ZXIgbWV0IHN1Y2ggc3R1cGlkIHBlb3BsZS4gRG8geW91IHJlYWxseSB0aGluayB0aGlzIHNlY3JldCBjYW4gYmUgZm91bmQgb3V0IGp1c3QgYnkgdHlwaW5nICpQYXNzd29yZCo/"));
+                setTexts(dec("0KLQsNC60LjRhSDQs9C70YPQv9GL0YUg0LzRiyDQtdGJ0LUg0L3QtSDQstGB0YLRgNC10YfQsNC70LguINCi0Ysg0L/RgNC00LLQtNCwINC00YPQvNCw0LXRiNGB0YwsIGNodG8gZXRvdCDRgdC10LrRgNC10YIg0LzQvtC20L3QviDRg9C30L3QsNGC0YwsINCy0YHQtdCz0L4gbGlzaCcgbmFwaXNhdiAq0J/QsNGA0L7Qu9GMKj8="), dec("V2UndmUgbmV2ZXIgbWV0IHN1Y2ggc3R1cGlkIHBlb3BsZS4gRG8geW91IHJlYWxseSB0aGluayB0aGlzIHNlY3JldCBjYW4gYmUgZm91bmQgb3V0IGp1c3QgYnkgdHlwaW5nICpQYXNzd29yZCo/"));
             } 
             else if (hashClean === "519f96b9967656910903828943ef19ec0ca0fec2965688567117df85493b82fb" || 
                      hashClean === "ef333eb53b8f108d3ff2cb6d953d607412f864fc8fae3230c171e54911075aa3") {
@@ -218,12 +223,12 @@
             }
             else {
                 matched = false;
-                textState.currentRu = dec("0J3QldCS0JXQoNCd0J4="); textState.currentEn = dec("V1JPTkc=");
+                textState.currentRu = "НЕВЕРНО"; textState.currentEn = "WRONG";
                 document.body.classList.add("error-alert");
                 updateDisplay();
                 alertTimeout = setTimeout(function() {
                     document.body.classList.remove("error-alert");
-                    textState.currentRu = dec("0JLQtdC00LjRgtC1INCf0LDRgNC+0LvRjA=="); textState.currentEn = dec("RW50ZXIgUGFzc3dvcmQ=");
+                    textState.currentRu = "Введите Пароль"; textState.currentEn = "Enter Password";
                     updateDisplay();
                 }, 5000);
             }
@@ -240,7 +245,7 @@
                 days = days < 10 ? "0" + days : days; hours = hours < 10 ? "0" + hours : hours; minutes = minutes < 10 ? "0" + minutes : minutes; seconds = seconds < 10 ? "0" + seconds : seconds;
                 if (timerElement) {
                     if (distance > 0) timerElement.innerText = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
-                    else timerElement.innerText = (currentLang === "ru") ? dec("W9CS0KDQldCc0K8g0DeadNCh0KLQldCa0JvQOV0=") : dec("W1RJTUUgSVMgVVBd");
+                    else timerElement.innerText = (currentLang === "ru") ? "[ВРЕМЯ ИСТЕКЛО]" : "[TIME IS UP]";
                 }
             }, 1000);
             updateDisplay();
