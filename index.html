@@ -1,246 +1,226 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>The End of Beginnings</title>
-    <style>
-        html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000000 !important; overflow: hidden; box-sizing: border-box;
-        }
-        body {
-            color: #00ff00; font-family: monospace; display: flex;
-            justify-content: center; align-items: center; text-align: center;
-            transition: color 1s ease; padding: 15px; position: relative;
-        }
-        body.error-alert { color: #ff0000 !important; transition: none !important; }
-        body.error-alert .box { border-color: #ff0000 !important; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important; transition: none !important; }
-        body.error-alert input { border-color: #ff0000 !important; color: #ff0000 !important; transition: none !important; }
-        body.error-alert button.submit-btn { background-color: #ff0000 !important; transition: none !important; }
-        body.error-alert .custom-lang-btn, body.error-alert .custom-lang-dropdown, body.error-alert .timer-link {
-            border-color: #ff0000 !important; color: #ff0000 !important; transition: none !important;
-        }
-        body.error-alert .custom-lang-option:hover { background: rgba(255, 0, 0, 0.2) !important; }
-        .box {
-            border: 2px solid #00ff00; padding: 35px 25px; display: flex; flex-direction: column;
-            justify-content: center; border-radius: 10px; background-color: #050505;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3); transition: all 1s ease; 
-            max-width: 500px; width: 100%; max-height: 70vh; box-sizing: border-box; overflow-y: auto; margin-top: 40px;
-        }
-        .custom-lang-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: monospace; width: 160px; box-sizing: border-box; }
-        .custom-lang-btn { background: #000; border: 2px solid #00ff00; color: #00ff00; padding: 10px 0; font-size: 16px; cursor: pointer; outline: none; transition: all 1s ease; width: 100%; box-sizing: border-box; font-weight: bold; text-align: center; }
-        .custom-lang-dropdown { display: none; position: absolute; bottom: 100%; right: 0; margin-bottom: 5px; background: #000; border: 2px solid #00ff00; width: 100%; box-sizing: border-box; transition: all 1s ease; }
-        .custom-lang-dropdown.active { display: block; }
-        .custom-lang-option { padding: 10px 0; color: #00ff00; cursor: pointer; text-align: center; font-size: 16px; width: 100%; box-sizing: border-box; }
-        .custom-lang-option:hover { background: rgba(0, 255, 0, 0.2); }
-        .timer-link { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: transparent; border: 1px dashed #00ff00; color: #00ff00; padding: 8px 20px; text-decoration: none; font-family: monospace; font-size: 16px; cursor: pointer; z-index: 9999; transition: border 1s ease, color 1s ease, background 0.2s; box-sizing: border-box; white-space: nowrap; }
-        .timer-link:hover { background: rgba(0, 255, 0, 0.1); border-style: solid; }
-        .input-container { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; width: 100%; margin-top: auto; box-sizing: border-box; }
-        input { background: #111; border: 1px solid #00ff00; color: #00ff00; padding: 12px; font-family: monospace; font-size: 16px; outline: none; transition: all 1s ease; width: 100%; max-width: 400px; box-sizing: border-box; -webkit-appearance: none; border-radius: 0; text-align: center; }
-        button.submit-btn { background: #00ff00; color: #000; padding: 12px; font-weight: bold; border: none; cursor: pointer; font-size: 16px; transition: background-color 1s ease; width: 100%; max-width: 400px; box-sizing: border-box; }
-        button.submit-btn:hover { background: #00cc00; }
-        #text, #archiveText { font-size: 20px; line-height: 1.4; white-space: pre-line; text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); animation: tv-text-jump 1.6s steps(1) infinite; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word; }
-        #text { margin-bottom: 25px; min-height: 60px; text-align: center; }
-        #archiveText { text-align: left; font-size: 18px; line-height: 1.6; }
-        body.error-alert #text { text-shadow: 0 0 7px rgba(255, 0, 0, 0.7); animation: tv-text-jump-heavy 0.6s steps(1) infinite; }
-        @keyframes tv-text-jump {
-            0% { transform: translate(0, 0); } 5% { transform: translate(-0.5px, 0.5px); } 8% { transform: translate(0, 0); }
-            30% { transform: translate(0.5px, -0.5px); } 33% { transform: translate(0, 0); } 65% { transform: translate(-0.5px, -0.5px); }
-            68% { transform: translate(0, 0); } 85% { transform: translate(0.5px, 0.5px); } 88% { transform: translate(0, 0); }
-        }
-        @keyframes tv-text-jump-heavy {
-            0% { transform: translate(0, 0); } 10% { transform: translate(-1.5px, 0.5px); } 20% { transform: translate(1px, -1px); }
-            30% { transform: translate(0, 0); } 50% { transform: translate(-1px, -0.5px); } 60% { transform: translate(1.5px, 0.5px); }
-            70% { transform: translate(0, 0); } 90% { transform: translate(-0.5px, 1px); }
-        }
-        @media (max-width: 600px) {
-            body { align-items: center; padding: 10px; }
-            .box { padding: 25px 20px; max-height: 60vh; margin-top: 60px; }
-            #text, #archiveText { font-size: 15px; line-height: 1.4; }
-            #text { margin-bottom: 20px; min-height: auto; }
-            input, button.submit-btn { font-size: 14px; padding: 10px; max-width: 100%; }
-            .timer-link { top: 15px; font-size: 13px; padding: 6px 12px; }
-            .custom-lang-container { right: 10px; bottom: 10px; width: 130px; }
-            .custom-lang-btn, .custom-lang-option { font-size: 14px; padding: 8px 0; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The End of Beginnings</title>
+<style>
+@import url('https://googleapis.com');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #000; color: #0f0; font-family: 'Share+Tech+Mono', monospace; height: 100vh; overflow: hidden; position: relative; }
+body::after { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 999; background-size: 100% 4px, 6px 100%; pointer-events: none; }
+.glare { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,30,0,0.15) 0%, rgba(0,0,0,0) 80%); pointer-events: none; z-index: 998; }
+#boot-screen { position: absolute; width: 100%; height: 100%; background: #000; padding: 20px; overflow: hidden; z-index: 10; font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
+#main-screen { display: none; height: 100vh; flex-direction: column; justify-content: space-between; padding: 20px; position: relative; transition: background 0.1s ease; }
+.correct-flash { animation: flash-green 0.4s ease-out; }
+.wrong-flash { animation: flash-red 0.5s ease-out; }
+@keyframes flash-green { 0% { background: #4f4; color: #000; } 10% { background: #4f4; } 100% { background: #000; } }
+@keyframes flash-red { 0% { background: #f00; color: #fff; } 10% { background: #f00; } 100% { background: #000; } }
+header { display: flex; justify-content: center; align-items: center; position: relative; height: 60px; }
+#timer-container { cursor: pointer; text-align: center; border: 1px solid #0f0; padding: 8px 20px; background: rgba(0,20,0,0.4); text-transform: uppercase; letter-spacing: 2px; font-size: 18px; box-shadow: 0 0 10px rgba(0,255,0,0.2); }
+#timer-container:hover { background: #0f0; color: #000; }
+.center-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
+#terminal-output { width: 100%; max-width: 600px; text-align: center; min-height: 40px; font-size: 20px; letter-spacing: 1px; word-break: break-word; }
+.input-panel { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 500px; background: rgba(0,10,0,0.5); border: 1px solid #0f0; padding: 5px 10px; box-shadow: 0 0 15px rgba(0,255,0,0.1); }
+.input-panel input { flex: 1; background: transparent; border: none; outline: none; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 22px; padding: 5px; text-transform: uppercase; }
+.input-panel button { background: #0f0; color: #000; border: none; font-family: 'Share+Tech+Mono', monospace; font-size: 18px; font-weight: bold; padding: 8px 20px; cursor: pointer; text-transform: uppercase; }
+.input-panel button:hover { background: #0a0; }
+footer { display: flex; justify-content: flex-end; align-items: center; padding: 10px 0; }
+#lang-toggle { cursor: pointer; border: 1px solid #0f0; padding: 4px 10px; font-size: 14px; background: transparent; color: #0f0; font-family: 'Share+Tech+Mono', monospace; }
+#lang-toggle:hover { background: #0f0; color: #000; }
+#secret-screen { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; background: #000; color: #0f0; padding: 20px; text-align: center; position: relative; }
+#secret-title { font-size: 28px; letter-spacing: 4px; margin-bottom: 30px; text-transform: uppercase; animation: pulse 2s infinite; }
+#secret-timer { font-size: 48px; font-weight: bold; letter-spacing: 3px; border: 2px solid #0f0; padding: 20px 40px; background: rgba(0,15,0,0.3); box-shadow: 0 0 25px rgba(0,255,0,0.3); }
+#back-btn { margin-top: 40px; border: 1px solid #0f0; background: transparent; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 16px; padding: 8px 20px; cursor: pointer; text-transform: uppercase; }
+#back-btn:hover { background: #0f0; color: #000; }
+@keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; text-shadow: 0 0 15px #0f0; } 100% { opacity: 0.7; } }
+.red-ui { color: #f00 !important; border-color: #f00 !important; box-shadow: 0 0 15px rgba(255,0,0,0.2) !important; }
+.red-ui input { color: #f00 !important; }
+.red-ui button { background: #f00 !important; color: #000 !important; }
+</style>
 </head>
 <body>
-    <div class="box" id="gameScreen">
-        <div id="text"></div>
-        <div class="input-container" id="inputContainer">
-            <input type="text" id="userAnswer" placeholder="" autocomplete="off">
-            <button class="submit-btn" id="submitBtn" onclick="checkCode()">ВВОД</button>
-        </div>
+<div class="glare"></div>
+<div id="boot-screen"></div>
+
+<div id="main-screen">
+  <header>
+    <div id="timer-container" onclick="openSecret()">00:00:00:00</div>
+  </header>
+
+  <div class="center-container">
+    <div id="terminal-output"></div>
+    <div class="input-panel" id="panel-box">
+      <input type="text" id="terminal-input" autocomplete="off" autofocus>
+      <button id="submit-btn" onclick="processInput()"></button>
     </div>
-    <div class="box" id="archiveScreen" style="display: none;">
-        <div id="archiveText"></div>
-    </div>
-    <a href="javascript:void(0)" class="timer-link" id="countdownTimer" onclick="toggleScreens()">00d 00h 00m 00s</a>
-    <div class="custom-lang-container">
-        <button class="custom-lang-btn" id="langBtn" onclick="toggleLangDropdown()">Русский</button>
-        <div class="custom-lang-dropdown" id="langDropdown">
-            <div class="custom-lang-option" onclick="selectLanguage('ru')">Русский</div>
-            <div class="custom-lang-option" onclick="selectLanguage('en')">English</div>
-        </div>
-    </div>
-    <script>
-        function dec(arr) {
-            return String.fromCharCode.apply(null, arr);
-        }
+  </div>
 
-        var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
-        var alertTimeout = null; var currentScreen = "game"; var currentLang = "ru";
-        
-        var textState = { currentRu: "Введите Пароль", currentEn: "Enter Password" };
-        var interfaceUi = {
-            ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
-            en: { btn: "ENTER", placeholder: "Your answer...", menu: "English" }
-        };
+  <footer>
+    <button id="lang-toggle" onclick="toggleLang()">EN</button>
+  </footer>
+</div>
 
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+<div id="secret-screen">
+  <div id="secret-title"></div>
+  <div id="secret-timer">00:00:00:00</div>
+  <button id="back-btn" onclick="closeSecret()"></button>
+</div>
+<script>
+const targetDate = new Date('2027-02-22T00:00:00').getTime();
+let currentLang = 'RU';
 
-        var archiveTexts = {
-            ru: dec([1057,1058,1040,1058,1059,1057,58,32,1044,1054,1057,1058,1059,1055,32,1056,1040,1047,1056,1045,1064,1045,1053,32,47,47,32,1040,1056,1061,1048,1042,32,1104,48,50,55,10,10,91,1047,1040,1055,1048,1057,1068,32,1047,1040,1041,1051,1054,1050,1048,1056,1054,1042,1040,1053,1040,93,10,10,1042,1103,32,1091,1089,1087,1077,1096,1085,1086,32,1087,1088,1086,1085,1080,1082,1083,1080,32,1074,32,1073,1072,1079,1091,32,1076,1072,1085,1085,1099,1093,46,32,1057,1080,1081,1092,1077,1084,1072,32,1073,1077,1079,1086,1087,1072,1089,1085,1086,1089,1092,1080,32,1074,1088,1077,1084,1077,1085,1085,1086,32,1086,1090,1082,1083,1102,1095,1077,1085,1072,44,32,1086,1076,1085,1072,1082,1086,32,1092,1072,1081,1083,1099,32,1083,1086,1075,1082,1074,32,1079,1072,1096,1080,1092,1088,1086,1074,1072,1085,1099,32,1075,1083,1072,1074,1085,1099,1084,32,1089,1095,1077,1090,1095,1080,1082,1086,1084,32,1074,1088,1077,1084,1077,1085,1080,46,10,10,1042,1077,1088,1085,1080,1092,1077,1089,1100,32,1074,1088,1091,1095,1085,1103,1102,32,1082,32,1090,1077,1088,1084,1080,1085,1072,1083,1091,32,1095,1077,1088,1077,1079,32,1090,1072,1081,1084,1077,1088,44,32,1077,1089,1083,1080,32,1075,1086,1092,1086,1074,1099,32,1087,1088,1086,1076,1086,1083,1078,1080,1092,1100,32,1087,1082,1080,1089,1082,1080,46]),
-            en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
-        };
+const bootLines = [
+  "CORE::INIT -> LAUNCHING TERMINAL SUBSYSTEM",
+  "LOADING CORE MODULES.......................[OK]",
+  "ESTABLISHING SECURE PROTOCOLS...............[OK]",
+  "DECRYPTING KEEPER NETWORKS..................[OK]",
+  "WARNING: CHANNELS ARE UNSTABLE",
+  "IDENTITY VERIFICATION REJECTED. ANONYMOUS STATUS ASSIGNED.",
+  "SYSTEM IS READY. DO NOT WASTE MY TIME."
+];
 
-        function toggleLangDropdown() { document.getElementById("langDropdown").classList.toggle("active"); }
-        function selectLanguage(langCode) { document.getElementById("langDropdown").classList.remove("active"); currentLang = langCode; updateDisplay(); }
-        function updateDisplay() {
-            var screen = document.getElementById("text"); var archiveScreenText = document.getElementById("archiveText");
-            var inputField = document.getElementById("userAnswer"); var submitBtn = document.getElementById("submitBtn"); var langBtn = document.getElementById("langBtn");
-            if (submitBtn) submitBtn.innerText = interfaceUi[currentLang].btn;
-            if (inputField) inputField.placeholder = interfaceUi[currentLang].placeholder;
-            if (langBtn) langBtn.innerText = interfaceUi[currentLang].menu;
-            if (screen) { screen.innerText = (currentLang === "ru") ? textState.currentRu : textState.currentEn; }
-            if (archiveScreenText) { archiveScreenText.innerText = archiveTexts[currentLang]; }
-        }
-        function setTexts(ruTxt, enTxt) { textState.currentRu = ruTxt; textState.currentEn = enTxt; updateDisplay(); }
-        function toggleScreens() {
-            var gameEl = document.getElementById("gameScreen"); var archiveEl = document.getElementById("archiveScreen");
-            if (currentScreen === "game") { gameEl.style.display = "none"; archiveEl.style.display = "flex"; currentScreen = "archive"; } 
-            else { archiveEl.style.display = "none"; gameEl.style.display = "flex"; currentScreen = "game"; }
-        }
-        window.onclick = function(event) {
-            if (!event.target.matches('.custom-lang-btn')) {
-                var dropdown = document.getElementById("langDropdown");
-                if (dropdown && dropdown.classList.contains('active')) dropdown.classList.remove('active');
-            }
-        }
-        async function checkCode() {
-            var inputField = document.getElementById("userAnswer"); if (!inputField) return;
-            var input = inputField.value.trim(); if (input === "") return;
-            var lowerInput = input.toLowerCase(); var cleanInput = lowerInput.replace(/[?!.]/g, "");
-            if (alertTimeout) clearTimeout(alertTimeout);
-            document.body.classList.remove("error-alert");
-            var normalizedInput = lowerInput.replace(/с/g, "c");
-            const hashClean = await sha256(cleanInput);
-            const hashNormalized = await sha256(normalizedInput);
-            var matched = true;
-            if (hashClean === "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8" || 
-                hashClean === "92706fb6b3ff1c849e7747b0a7dbf261907cb5383f98299292d3f74676579fa0") {
-                setTexts(dec([1058,1072,1082,1080,1093,32,1075,1083,1091,1087,1099,1093,32,1084,1099,32,1077,1097,1077,32,1085,1077,32,1074,1089,1090,1088,1077,1095,1072,1083,1080,46,32,1058,1099,32,1087,1088,1072,1074,1076,1072,32,1076,1091,1084,1072,1077,1096,1100,44,32,1095,1090,1086,32,1101,1090,1086,1090,32,1089,1077,1082,1088,1077,1090,32,1084,1086,1078,1085,1086,32,1091,1079,1085,1072,1090,1100,44,32,1074,1089,1077,1075,1086,32,1083,1080,1096,1100,32,1085,1072,1087,1080,1089,1072,1074,32,42,1055,1072,1088,1086,1083,1100,42,63]), "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?");
-            } 
-            else if (hashClean === "519f96b9967656910903828943ef19ec0ca0fec2965688567117df85493b82fb" || 
-                     hashClean === "ef333eb53b8f108d3ff2cb6d953d607412f864fc8fae3230c171e54911075aa3") {
-                setTexts(dec([1053,1077,32,1074,1072,1078,1085,1086,44,32,1074,1072,1078,1085,1086,32,1090,1086,44,32,1095,1090,1086,32,1090,1099,32,1079,1076,1075,1089,1100,32,1079,1072,1073,1099,1083,32,1045,1090,1086,1075,1086,32,1103,32,1085,1077,32,1079,1085,1072,1102]), "It doesn't matter, what matters is that you're here! I don't know this.");
-            } 
-            else if (hashClean === "e2920257e5b565a5879a9573855ff4cd73a3ba9f0866cb314ba9633e7e0e719c" || 
-                     hashClean === "fa6b0eb7502c11438914b18c6cd3116dfbe30bfae4125fb7a3c39a8e9389f417") {
-                setTexts(dec([1058,1077,1088,1084,1080,1085,1072,1083,44,32,1086,1090,1074,1077,1095,1072,1102,1097,1080,1081,32,1085,1072,32,1090,1074,1086,1080,32,1075,1083,1091,1087,1099,1077,32,1074,1086,1087,1088,1086,1089,1099,44,32,1074,32,1085,1072,1076,1077,1078,1076,1077,32,1085,1072,32,1090,1086,44,32,1095,1090,1086,32,1090,1099,32,1085,1072,1081,1076,1077,1096,1100,32,1087,1072,1088,1086,1083,1100,33]), "A terminal that answers your stupid questions, in the hope that you'll find password!");
-            } 
-            else if (hashClean === "4e047f2010839e080277bd21da0a9f5d343b46995079a4da9e8a75e33d07e600" || 
-                     hashClean === "0f7f3da1d322b7245a4918e6924b17f54128da1a017e2c94ca38ee2cf93f9ef5") {
-                setTexts(dec([1058,1099,32,1084,1085,1077,32,1089,1082,1072,1078,1080,46]), "You tell me.");
-            } 
-            else if (hashClean === "df3df43a85b967fb4268e0a7f14b301777083f2fc6ebff0cb60775d713c8f38c") {
-                setTexts(dec([1053,1086,1074,1072,1103,32,1069,1088,1072,32,1043,1088,1103,1076,1077,1090,46]), "A New Era is Coming.");
-            } 
-            else if (hashClean === "c73d9d6e4922114757c9197c3af50942dcae06aa7d37315ef98711815b804825" || 
-                     hashClean === "1994b72635951d8b76b29b6b7136015d862875a5e3b8b1db84f5f5904bb9d73d") {
-                setTexts("https://t.me", "https://t.me");
-            } 
-            else if (hashClean === "00965e6381df693ba9cb87ff636ff60759089f660f7a070ccaa2d069b2241cf1" || 
-                     hashClean === "d9f67a28532454a8e0cb205e46be9f2eeec87570659229be4949a21237a6b7da") {
-                setTexts(dec([1053,1077,32,1085,1091,32,1090,1099,32,1073,1091,1088,1084,1072,1083,1076,1077,1094,32,1082,1086,1085,1077,1095,1085,1086,44,32,1095,1090,1086,32,1096,1072,1088,1080,1096,1100,32,1079,1072,32,1084,1086,1083,1086,1076,1077,1078,1085,1099,1077,32,1084,1077,1084,1095,1080,1082,1080,44,32,1085,1086,32,1101,1090,1086,32,1085,1077,32,1087,1072,1088,1086,1083,1100,33]), "Ne ny ti burmaldec konechno, choto sharish za molodezhnie memchiji, no eto ne sarol!");
-            } 
-            else if (hashClean === "44caaba3b06381cf906febc55c7a47ebda1b8931a9de4f7aa114fa9cf0247ff7") {
-                setTexts(dec([1044,1072,32,1085,1072,1081,1076,1080,32,1090,1099,32,1087,1072,1088,1086,1083,1100,32,1080,32,1085,1077,32,1089,1090,1088,1072,1076,1072,1081,32,1092,1080,1075,1085,1077,1081,33,32,1053,1072,32,1082,1088,1072,1081,32,1087,1086,1087,1088,1086,1073,1091,1081,32,1095,1090,1086,32,1090,1086,32,1089,1087,1088,1086,1089,1080,1090,1100,33]), "Just find the password and stop messing aRounD!");
-            }
-            else if (hashClean === "ef33bc716e133e9d807604586d63ef1330fa59d646be1b4f4945d94943fcf31f" || 
-                     hashClean === "9e2c60c3822839bfa816e254e2ee2a101b0a88099ff866b16e4531be4d8f074d") {
-                setTexts("...", "...");
-            } 
-            else if (hashClean === "f77977464a4d6f461e7e9be1913f9c6f2df6b150c9b0e27163f9252fe05dfb28" || 
-                     hashClean === "2bb80d537b1da3e38bd30361aa855686bde0eacd7162feeff14a4d70f9287045") {
-                setTexts(dec([1057,1077,1082,1088,1077,1090,45,1090,1086,32,1090,1091,1090,32,1077,1089,1090,1100,32,1080,32,1103,32,1085,1072,1076,1077,1102,1089,1100,44,32,1095,1090,1086,32,1090,1099,32,1085,1072,1081,1076,1077,1096,1100,32,1077,1075,1086,32,1085,1072,1081,1076,1103,32,1087,1072,1088,1086,1083,1100,33]), "There is a secret here, and I hope you find it by discovering the password!");
-            } 
-            else if (hashClean === "4b4f59c86940d9906660fa1f97022a1068a44b82d45c52c938c5b05a761ec81d" || 
-                     hashClean === "823901b09b0b47101869e5d4cb077d700810ee6ca95cfa1fb0630b91e9f1a268") {
-                setTexts(dec([1057,1084,1077,1096,1085,1086,46,32,1053,1077,1091,1078,1077,1083,1080,32,1085,1072,1089,1090,1086,1083,1100,1082,1086,32,1085,1077,1090,1091,32,1080,1076,1077,1081,63,32,1040,44,32,1090,1086,1095,1085,1086,46,32,1042,1099,32,1078,1077,32,1083,1091,1076,1080,46,32,1051,1072,1076,1085,1086,44,32,1089,1082,1086,1083,1100,1072,1086,32,1073,1091,1076,1077,1090,32,33,50,32,43,32,52,63]), "Funny. Are you really that out of ideas? Oh, right. You're just humans. Alright, what is 12 + 4?");
-            } 
-            else if (hashClean === "3a7458cd3045a5e11697518482b0e9657a944e03f47af5c65d8be4d9ec507111") {
-                setTexts(dec([1052,1086,1083,1086,1076,1077,1094,44,32,1085,1077,1084,1085,1086,1075,1086,32,1084,1072,1090,1077,1084,1072,1090,1080,1082,1080,32,1090,1099,32,1079,1071,1072,1077,1096,1100,33,32,1051,1072,1076,1085,1086,44,32,1072,32,1077,1089,1083,1080,32,1090,1072,1082,63,32,1053,1072,1087,1080,1096,1080,32,42,1087,1086,1073,1077,1075,42,44,32,1085,1086,32,1073,1077,1079,32,1073,1091,1082,1074,32,1086,32,1080,32,1077,46]), "Well done, you know a bit of math! Alright, what about this? Write *escape*, but without the letters 'a' and 'e'.");
-            } 
-            else if (hashClean === "d9e8316c05daefbf8d8d752f97c47d39103e390237e1a74d284f69747a8bc61f" || 
-                     hashClean === "31df400938b009e99332616f73e48ab2b6b0b2e312e09ffcb37df1e1525a4d04") {
-                setTexts(dec([1048,1090,1072,1082,44,32,1074,1089,1077,32,1078,1077,32,1090,1099,32,1080,32,1089,1091,1076,1072,32,1076,1086,1073,1088,1072,1083,1089,1103,63,32,1063,1090,1086,1078,32,1085,1072,32,1089,1072,1084,1086,1084,32,1076,1077,1083,1077,32,1103,32,1085,1077,32,1079,1072,1085,1102,32,1090,1072,1088,1086,1083,1103,46,32,1055,1088,1086,1089,1090,1080,44,32,1085,1086,32,1084,1085,1077,32,1087,1088,1072,1074,1076,1072,32,1073,1086,1083,1100,1096,1077,32,1085,1077,1095,1077,1075,1086,32,42,1089,1082,1072,1079,1072,1090,1100,42]), "So, you made it here after all? Well, the truth is, I don't know the password. I'm sorry, but I really have nothing left to *say*.");
-            } 
-            else if (hashClean === "8c04ec566cf257c7b80b721867c4b18c0c4a03429fa2a893699b794fdbca8f18" || 
-                     hashClean === "7981507efbc5a07d6d5eb5fe5e786b3a37fc644e5be463b785d0d8bbecbc3566") {
-                setTexts(dec([1044,1077,1081,1089,1090,1074,1080,42,49,50,51,42,1077,1083,1100,1085,1086,32,1093,1086,1095,1077,1096,1100,32,1095,1090,1086,32,1103,32,1089,1082,1072,1079,1072,1083,32,1087,1072,1088,1086,42,43,42,1083,1100,63,32,1053,1091,32,1103,32,1078,1077,32,1089,1082,1072,1079,1072,1083,32,1091,32,1084,1077,42,49,50,51,42,1085,1103,32,1077,1075,1086,32,1085,1077,1090,1091,33]), "Do you real*123*ly want me to saq the pass*+*word? But I told you, I don't ha*123*ve it!");
-            } 
-            else if (hashClean === "df78f902404e9fb6bb9a444a72d7f872cc4a1be70eb0092f6b86e001859bf989") {
-                setTexts(dec([1061,1042,1040,1058,1048,1058,1100,33,32,1071,32,1057,1050,1040,1047,1040,1051,32,1059,32,1052,1045,1053,1071,32,1053,1048,1063,1045,1043,1054,32,1053,1045,1058,33,32,1048,1065,1048,32,1055,1040,1056,1054,1051,1048,32,1042,32,1044,1056,1059,1043,1048,1061,32,1052,1045,1057,1058,1040,1061,33,42,33,33,33,33,33,42]), "ENOUGH! I SAID I DON'T HAVE ANYTHING! LOOK FOR THE PASSWORDS ELSEWHERE!*!!!!!*");
-            }
-            else if (lowerInput.indexOf("!!!!!") !== -1) {
-                setTexts(
-                    dec([1051,1040,1044,1053,1054,33,32,1058,1099,32,1084,1085,1077,32,1090,1072,1082,32,1085,1072,1076,1086,1077,1083,32,1089,1086,32,1089,1074,1086,1080,1084,1080,32,1090,1091,1087,1099,1084,1080,32,1074,1086,1087,1088,1086,1089,1072,1084,1080,33,32,1048,1097,1077,1096,1100,32,1086,1090,1074,1077,1090,1099,44,32,1085,1091,32,1090,1072,1082,32,1076,1077,1088,1078,1080,33,32,1050,1072,1082,32,1090,1099,32,1074,1086,1086,1073,1097,1077,32,1089,1102,1076,1072,32,1087,1086,1087,1072,1083,33,32,1044,1077,1088,1078,1080,32,1089,1074,1086,1081,32,1087,1072,1088,1086,1083,1100,33,32,1048,32,1087,1088,1086,1095,1100,32,1086,1090,1089,1102,1076,1072,58,32,118,97,42,102,119,110,37,1095,1080,43,1072,1076,1100,67,62,1088,1092,36,1083,1085,1093,1103,39,120,119,49,37,1081,1082,1083,95,53,1095,1080,1075,1087,1090,1099,1082,1080,93,125,125,63,1077,1066,101,35,46]),
-                    "OKAY! You're so annoying! Asking you' stupid questions! Do you even get here? Taje you' password! And get out of here: va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?}еje#."
-                );
-            } 
-            else if (hashNormalized === "8b7e770f1a9b238380894be64fa833cb92b23a59df741364375b48db905c102a") {
-                setTexts(
-                    dec([1053,1072,1093,1086,1085,1077,1094,45,1090,1086,32,1074,1099,32,1085,1072,1096,1083,1080,32,1087,1072,1088,1086,1083,1100,46,32,1047,1085,1072,1102,44,32,1077,1090,1086,32,1073,1099,1083,1086,32,1085,1077,1087,1088,1086,1089,1090,1086,44,32,1085,1086,32,1090,1077,1087,1077,1088,1100,32,1103,32,1086,1090,1082,1088,1086,1102,32,1074,1072,1084,32,1089,1077,1082,1088,1077,1090,46,32,1050,108e,1084,1072,1085,1076,1072,32,1034,1077,1077,1087,1077,1088,32,1045,1085,1090,1077,1088,1090,1072,1080,1085,1084,1077,1085,1090,44,32,1074,1086,1079,1084,1086,1078,1085,1086,44,32,1080,32,1079,1072,1074,1077,1088,1096,1080,1083,1072,32,1101,1087,1086,1093,1091,32,1052,1080,1085,1077,1091,1088,1072,1092,1090,2c,32,1085,1086,32,1085,1072,1089,1090,1086,1103,1097,1072,1103,32,1080,1075,1088,1086,1074,1072,1103,32,1101,1088,1072,32,1090,1086,1083,1100,1082,1086,32,1085,1072,1095,1080,1085,1072,1077,1090,1089,1103,4e]),
-                    "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
-                );
-            }
-            else {
-                matched = false;
-                textState.currentRu = "НЕВЕРНО"; textState.currentEn = "WRONG";
-                document.body.classList.add("error-alert");
-                updateDisplay();
-                alertTimeout = setTimeout(function() {
-                    document.body.classList.remove("error-alert");
-                    textState.currentRu = "Введите Пароль"; textState.currentEn = "Enter Password";
-                    updateDisplay();
-                }, 5000);
-            }
-            if (matched) { inputField.value = ""; }
-            updateDisplay();
-        }
-        window.onload = function () {
-            var timerElement = document.getElementById("countdownTimer"); var inputField = document.getElementById("userAnswer");
-            if (inputField) { inputField.addEventListener("keypress", function(event) { if (event.key === "Enter") checkCode(); }); }
-            setInterval(function () {
-                var now = new Date().getTime(); var distance = targetDate - now;
-                var days = Math.floor(distance / (1000 * 60 * 60 * 24)); var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)); var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                days = days < 10 ? "0" + days : days; hours = hours < 10 ? "0" + hours : hours; minutes = minutes < 10 ? "0" + minutes : minutes; seconds = seconds < 10 ? "0" + seconds : seconds;
-                if (timerElement) {
-                    if (distance > 0) timerElement.innerText = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
-                    else timerElement.innerText = (currentLang === "ru") ? "[ВРЕМЯ ИСТЕКЛО]" : "[TIME IS UP]";
-                }
-            }, 1000);
-            updateDisplay();
-        };
-    </script>
+const localization = {
+  RU: {
+    submit: "ВВОД",
+    secretTitle: "Отсчет до момента x",
+    back: "Назад",
+    wrong: "НЕПРАВИЛЬНО",
+    init: "Ну. Чего тебе?",
+    empty: "Пустую строку кидаешь? Издеваешься?",
+    era: "Новая Эра Keeper Ent. вот вот начнется.",
+    scolded: [
+      "Мимо. Еще раз подумай.",
+      "Слабо. Очень слабо.",
+      "И это всё, на что ты способен?",
+      "Не угадал. Твоя логика пуста.",
+      "Прекрати перебирать мусор.",
+      "Неверно. Система видит твою растерянность."
+    ]
+  },
+  EN: {
+    submit: "ENTER",
+    secretTitle: "Countdown to moment x",
+    back: "Back",
+    wrong: "WRONG",
+    init: "Well. What do you want?",
+    empty: "An empty string? Are you mocking me?",
+    era: "The New Era of Keeper Ent. is about to begin.",
+    scolded: [
+      "Missed. Think again.",
+      "Weak. Pathetic.",
+      "Is that all you can do?",
+      "Wrong guess. Your logic is empty.",
+      "Stop entering garbage.",
+      "Incorrect. The system sees your confusion."
+    ]
+  }
+};
+
+function runBootSequence() {
+  const container = document.getElementById('boot-screen');
+  let lineIdx = 0;
+  function addLine() {
+    if (lineIdx < bootLines.length) {
+      container.innerHTML += bootLines[lineIdx] + "\n";
+      lineIdx++;
+      setTimeout(addLine, Math.random() * 250 + 100);
+    } else {
+      setTimeout(() => {
+        container.style.display = 'none';
+        document.getElementById('main-screen').style.display = 'flex';
+        updateUI();
+        document.getElementById('terminal-output').innerText = localization[currentLang].init;
+      }, 600);
+    }
+  }
+  addLine();
+}
+
+function updateTimers() {
+  const now = new Date().getTime();
+  const diff = targetDate - now;
+  if (diff <= 0) {
+    document.getElementById('timer-container').innerText = "00:00:00:00";
+    document.getElementById('secret-timer').innerText = "00:00:00:00";
+    return;
+  }
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  const pad = (num) => String(num).padStart(2, '0');
+  const timerStr = pad(days) + ":" + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+  document.getElementById('timer-container').innerText = timerStr;
+  document.getElementById('secret-timer').innerText = timerStr;
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'RU' ? 'EN' : 'RU';
+  document.getElementById('lang-toggle').innerText = currentLang === 'RU' ? 'EN' : 'RU';
+  updateUI();
+  document.getElementById('terminal-output').innerText = localization[currentLang].init;
+}
+
+function updateUI() {
+  document.getElementById('submit-btn').innerText = localization[currentLang].submit;
+  document.getElementById('secret-title').innerText = localization[currentLang].secretTitle;
+  document.getElementById('back-btn').innerText = localization[currentLang].back;
+}
+
+function openSecret() {
+  document.getElementById('main-screen').style.display = 'none';
+  document.getElementById('secret-screen').style.display = 'flex';
+}
+
+function closeSecret() {
+  document.getElementById('secret-screen').style.display = 'none';
+  document.getElementById('main-screen').style.display = 'flex';
+}
+
+function processInput() {
+  const inputEl = document.getElementById('terminal-input');
+  const outputEl = document.getElementById('terminal-output');
+  const mainScreen = document.getElementById('main-screen');
+  const panelBox = document.getElementById('panel-box');
+  const rawVal = inputEl.value.trim();
+  
+  mainScreen.classList.remove('correct-flash', 'wrong-flash');
+  panelBox.classList.remove('red-ui');
+  outputEl.style.color = '#0f0';
+  
+  if (!rawVal) {
+    outputEl.innerText = localization[currentLang].empty;
+    return;
+  }
+  
+  const superSecretHash = "KEEPER_404_99_OMEGA_INIT_2027";
+  
+  if (rawVal.toUpperCase() === superSecretHash) {
+    void mainScreen.offsetWidth;
+    mainScreen.classList.add('correct-flash');
+    outputEl.innerText = localization[currentLang].era;
+    inputEl.value = '';
+  } else {
+    void mainScreen.offsetWidth;
+    mainScreen.classList.add('wrong-flash');
+    panelBox.classList.add('red-ui');
+    outputEl.style.color = '#f00';
+    const lines = localization[currentLang].scolded;
+    const randomLine = lines[Math.floor(Math.random() * lines.length)];
+    outputEl.innerText = localization[currentLang].wrong + ". " + randomLine;
+  }
+}
+
+document.getElementById('terminal-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    processInput();
+  }
+});
+
+setInterval(updateTimers, 1000);
+updateTimers();
+window.onload = runBootSequence;
+</script>
 </body>
 </html>
