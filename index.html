@@ -28,6 +28,7 @@ body.correct-flash { animation: flash-green 0.4s ease-out; }
   0% { box-shadow: 0 0 25px rgba(0, 255, 0, 0.8); border-color: #4f4; }
   100% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.1); border-color: #0f0; }
 }
+
 header { display: flex; justify-content: center; align-items: center; position: relative; height: 50px; margin-top: 5px; }
 #timer-container { cursor: pointer; text-align: center; border: 1px solid #0f0; padding: 8px 16px; background: rgba(0,20,0,0.4); text-transform: uppercase; letter-spacing: 1px; font-size: 16px; box-shadow: 0 0 10px rgba(0,255,0,0.2); user-select: none; -webkit-tap-highlight-color: transparent; transition: all 0.1s ease; }
 #timer-container:hover { background: #0f0; color: #000; }
@@ -109,6 +110,7 @@ let currentStep = 0;
 let isLockout = false;
 let customMessageActive = false;
 let currentCustomKey = null;
+let lastDecryptedStepText = { RU: "", EN: "" };
 
 const bootLines = [
   "CORE::INIT -> LAUNCHING TERMINAL SUBSYSTEM",
@@ -120,77 +122,72 @@ const bootLines = [
   "SYSTEM IS READY. DO NOT WASTE MY TIME."
 ];
 
-const localization = {
-  RU: {
-    submit: "ВВОД",
-    secretTitle: "Отсчет до момента x",
-    back: "Назад",
-    init: "ВВЕДИТЕ ПАРОЛЬ",
-    wrongPrefix: "НЕВЕРНО. ",
-    emptyError: "НЕВЕРНО серьезно пустая строка?",
-    toastText: "Язык сменен на: Русский",
-    step0_hint: "Серьезно? Ты жалок. Ладно дам подсказку - 12 + 4.",
-    step1_next: "Молодец! Кстати столько лет подряд ИИ подбирал бы пароль. Скажи слово побег но без о и е",
-    step2_next: "ладно на самом деле у меня нет пароля. Прости, но разбирайся <em>сам</em>",
-    step3_next: "я же сказал у ме123+123ня ничего нет! Я чист!",
-    step4_next: "ДОВОЛЬНО! У МЕНЯ НЕТ ПАРОЛЯ! <em>!!!!!</em>",
-    step5_next: "Вот пароль! Подавись им и прочь отсюда: va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje#",
-    era: "Новая Эра Keeper Ent. вот вот начнется.",
-    scolded: [
-      "Мимо. Еще раз подумай.",
-      "Слабо. Очень слабо.",
-      "И это всё, на что ты способен?",
-      "Не угадал. Твоя логика пуста.",
-      "Прекрати перебирать мусор.",
-      "Система видит твою растерянность."
-    ]
-  },
-  EN: {
-    submit: "ENTER",
-    secretTitle: "Countdown to moment x",
-    back: "Back",
-    init: "ENTER PASSWORD",
-    wrongPrefix: "WRONG. ",
-    emptyError: "WRONG seriously an empty string?",
-    toastText: "Language changed to: English",
-    step0_hint: "Seriously? You are pathetic. Fine, I'll give you a hint - 12 + 4.",
-    step1_next: "Well done! By the way, that's exactly how many years in a row an AI would crack a password. Say the word escape but without o and e",
-    step2_next: "okay, honestly I don't have a password. Sorry, deal with it <em>myself</em>",
-    step3_next: "I told you I ha123+123ve nothing! I am clean!",
-    step4_next: "ENOUGH! I HAVE NO PASSWORD! <em>!!!!!</em>",
-    step5_next: "Here is the password! Choke on it and get out: va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje#",
-    era: "The New Era of Keeper Ent. is about to begin.",
-    scolded: [
-      "Missed. Think again.",
-      "Weak. Pathetic.",
-      "Is that all you can do?",
-      "Wrong guess. Your logic is empty.",
-      "Stop entering garbage.",
-      "The system sees your confusion."
-    ]
-  }
+const UI_DATA = {
+  "RU": { "s": "ВВОД", "st": "Отсчет до момента x", "b": "Назад", "t": "Язык сменен на: Русский" },
+  "EN": { "s": "ENTER", "st": "Countdown to moment x", "b": "Back", "t": "Language changed to: English" }
 };
 
-const easterEggs = {
-  "67": { RU: "Перестань деградировать и займись делом!", EN: "Stop degrading yourself and get to work!" },
-  "бурмалда": { RU: "не ну ты молодец конечно что за молодежные мемчики шаришь, но это не пароль!", EN: "Ne nu to molded konechno chto za molodezhnie memchiki sharish, no eto ne parol." },
-  "привет": { RU: "Пока до тех пор пока не найдешь пароль!", EN: "Bye until you find the password!" },
-  "hello": { RU: "Пока до тех пор пока не найдешь пароль!", EN: "Bye until you find the password!" },
-  "кто ты": { RU: "Терминал, который ждет твоего правильного пароля! Мне не платят за пустую болтовню с тобой!", EN: "A terminal waiting for your correct password! I don't get paid for empty small talk with you!" },
-  "who are you": { RU: "A terminal waiting for your correct password! I don't get paid for empty small talk with you!", EN: "A terminal waiting for your correct password! I don't get paid for empty small talk with you!" },
-  "где я": { RU: "Откуда я то знаю? Ты открыл сайт с поиском пароля, а находится ты можешь где угодно!", EN: "How should I know? You opened a password search site, you could be anywhere!" },
-  "where am i": { RU: "How should I know? You opened a password search site, you could be anywhere!", EN: "How should I know? You opened a password search site, you could be anywhere!" },
-  "какой пароль": { RU: "Ты мне скажи.", EN: "You tell me." },
-  "what is the password": { RU: "Ты мне скажи.", EN: "You tell me." },
+const openEggs = {
   "новая эра": { RU: '<a href="https://t.me" target="_blank">https://t.me</a>', EN: '<a href="https://t.me" target="_blank">https://t.me</a>' },
-  "new era": { RU: '<a href="https://t.me" target="_blank">https://t.me</a>', EN: '<a href="https://t.me" target="_blank">https://t.me</a>' },
-  "уран": { RU: "…", EN: "…" },
-  "uranium": { RU: "…", EN: "…" },
-  "хамам": { RU: "…", EN: "…" },
-  "hamam": { RU: "…", EN: "…" }
+  "new era": { RU: '<a href="https://t.me" target="_blank">https://t.me</a>', EN: '<a href="https://t.me" target="_blank">https://t.me</a>' }
+};
+
+function xor(str, key) {
+  let result = '';
+  for (let i = 0; i < str.length; i++) {
+    result += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  }
+  return result;
+}
+
+function hexToTxt(hex) {
+  let str = '';
+  for (let i = 0; i < hex.length; i += 2) {
+    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+  }
+  return str;
+}
+
+const secureVault = {
+  "init": { RU: "03091104111300401d00160f0b1c", EN: "21232821264c3c253723332f262044" },
+  "empty": { RU: "2b2603091104115f0117071017111300401c101c1100064d161110001f0241", EN: "333f232b23434327313f253b2f23244245252b4421294437294420234244" },
+  "prefix": { RU: "2b2603091104115f", EN: "333f232b2343" },
+  "step0": { RU: "360010041d0b171c115112525547434758504245595955140f0c051a4e10170a000d024b4556441b4e54", EN: "3719161d2b2f4c3a53232145452d33303d35275840255d322b27422f4625293d40292f4445332b2f293b2145" },
+  "step1": { RU: "3a0010000a0e1b1241475c40464f5240544558504245595955150f001b0f1a4e0b0e000410410a1102144e0b0b001a1d4111160a0b0d4d1610091309074d0a1b410d4d0a", EN: "331918184422212f414247562f274246532d212239454133274229415840332f2b444533222b2742255d214541295c2b29405d212b232b3d402b2344453d2b2323253b2145" },
+  "step2": { RU: "1b110b1411441c0d401116130302061301131c114e13024c04111a1d131500414e1500095f00030f1d111b1d161d124c13031043", EN: "1b171d1d4411132f232f44203d40131924442129442344332322442b1d442b23443d3d443b33342c443b23273c" },
+  "step3": { RU: "16551b1f5513101c101d1c5513411b101c40401d0a5f011707101711130040525d1c521f5211161c104d", EN: "1d4420332822442129443c33441c2c431b33424424234421294427303d352758403c334421232821264c" },
+  "step4": { RU: "2134262426333c2e554130425c1116130302061301131c114e5959595959", EN: "21342b2b232e2c454133442c43232f442b2344332322442b5c5c5c5c5c" },
+  "step5": { RU: "213437433027372d3721415f171017111300405c14101108031d161a0b5f1013411b4e121c0003114b53444558504245595955434758504245595955140f0c051a41551a021d4c5c16500e5e0d49464e51141c59424911475d404c", EN: "2c23262144213744313f253b2f2324424521442b2344332322442b44213d4421234421232821264c58504245595955434758504245595955140f0c051a412b332b44453b" },
+  "step7": { RU: "21342a170f03125d4810114b301713171311425e4c1303104358504245595955434758504245595955140f0c051a4e10170a000d024b", EN: "302429442a233b4421232821264c3322442f2b232421264c3b2244212344312b44333b442c2323232442" },
+  "egg0": { RU: "3d161111161d0016145f0617051a0701041113004000101c4e0c051110001f41", EN: "373623344422212f442b234421232821264c23232244212344233b442323422f" },
+  "egg1": { RU: "13165f171c5f111e1710111111015f0111031c110300065f1e10111015111a4e16100913161d0a0b0d4d161d1d111f164d171d1713160a114d10174100104111164d13031043", EN: "2a2344202344313f253b2f2324424521232821264c37313b3333314541295c2b29405d212b232b3d402b2344453d2b2323253b2145412323442b2344332322442b1d442b23443d3d443b33342c443b23273c" },
+  "egg2": { RU: "331c18105f031c5f1d11105f1f11105f11101741160c051a4e10170a000d024b", EN: "2633214433244421232821264c23232244212344233b422f" },
+  "egg3": { RU: "391611131c11100241411e121217111a145f13111b1d16111b1d4e11111612111b1d12111d4d3011115f11114e131102071612164d1d111111134d16071011164d1b11110d1c4c", EN: "25443021362b23222d3b4421232821264c23232244212344233b422f412d442023224344212944332322442b44213d4421234421232821264c4437294420234244232344332322442b1d442b23443d3d443b33342c443b23273c" },
+  "egg4": { RU: "321d1a1215165f145f111c4e1211161241394b455644131b1c114e1013411b4e10105f170d1a10021c17111b1d4e41111c1d000302061301131c114e160a0b0d4d131b1c114e101c1211161111114c", EN: "2c23334437222143262c442b2344332322442b44213d4421234421232821264c29415840332f2b444533222b2742255d214541295c2b29405d212b232b3d402b2344453d2b2323253b2145" },
+  "egg5": { RU: "39424c161111161d00", EN: "333333443c2322442129" },
+  "egg6": { RU: "66", EN: "66" },
+  "err0": { RU: "201c101c114d4e41303126443c3f2b234422212f442b234421232821264c", EN: "2923373721264c3322442f2b232421264c3b2244212344312b44" },
+  "err1": { RU: "3e111c11164d4e33353e24443c3f2b234422212f442b234421232821264c", EN: "3321252f403c334421232821264c" },
+  "err2": { RU: "244c4e1c1d1a4e10115f4e111c4e41314d3f3f272a2344202344313f253b2f23244245", EN: "2d3744212328442129443c334421232821264c3c3f" },
+  "err3": { RU: "23115f121e1a171c114d4e31101c1a164d11160a0b0d4d161d1d111f164d", EN: "333f232b23434327313f253b2f23244245252b4421294437294420234244" },
+  "err4": { RU: "3d1b1112111c1d114e13111b1d1611114b1c1d4e101c11101c4c", EN: "373f23344421234421232821264c23232244212344233b442323422f" },
+  "err5": { RU: "36101e1d11141c4e13101d111d4e1d111a1d114e1116101d11161111111a1112114c", EN: "3024294421232821264c3322442f2b232421264c3b2244212344312b44" }
 };
 </script>
 <script>
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function getSecText(vaultKey, decryptKey) {
+  if (!secureVault[vaultKey] || !secureVault[vaultKey][currentLang]) return "";
+  const hex = secureVault[vaultKey][currentLang];
+  return xor(hexToTxt(hex), decryptKey);
+}
+
 function runBootSequence() {
   const container = document.getElementById('boot-screen');
   let lineIdx = 0;
@@ -204,7 +201,8 @@ function runBootSequence() {
         container.style.display = 'none';
         document.getElementById('main-screen').style.display = 'flex';
         updateUI();
-        document.getElementById('terminal-output').innerHTML = localization[currentLang].init;
+        document.getElementById('terminal-output').innerHTML = 
+          getSecText("init", "KPR2027");
         document.getElementById('terminal-input').focus();
       }, 500);
     }
@@ -232,7 +230,7 @@ function updateTimers() {
 
 function showToast() {
   const toast = document.getElementById('lang-toast');
-  toast.innerText = localization[currentLang].toastText;
+  toast.innerText = UI_DATA[currentLang].t;
   toast.classList.add('show');
   setTimeout(() => { toast.classList.remove('show'); }, 1200);
 }
@@ -240,28 +238,35 @@ function showToast() {
 function toggleLang() {
   if(isLockout) return;
   currentLang = currentLang === 'RU' ? 'EN' : 'RU';
-  document.getElementById('lang-toggle').innerText = currentLang === 'RU' ? 'EN' : 'RU';
+  document.getElementById('lang-toggle').innerText = 
+    currentLang === 'RU' ? 'EN' : 'RU';
   updateUI();
   showToast();
   
-  if (customMessageActive && currentCustomKey && easterEggs[currentCustomKey]) {
-    document.getElementById('terminal-output').innerHTML = easterEggs[currentCustomKey][currentLang];
+  if (customMessageActive && currentCustomKey) {
+    if (openEggs[currentCustomKey]) {
+      document.getElementById('terminal-output').innerHTML = 
+        openEggs[currentCustomKey][currentLang];
+    } else {
+      document.getElementById('terminal-output').innerHTML = 
+        getSecText(currentCustomKey, currentCustomKey === "init" ? 
+          "KPR2027" : currentCustomKey);
+    }
   } else {
-    if (currentStep === 0) document.getElementById('terminal-output').innerHTML = localization[currentLang].init;
-    else if (currentStep === 1) document.getElementById('terminal-output').innerHTML = localization[currentLang].step0_hint;
-    else if (currentStep === 2) document.getElementById('terminal-output').innerHTML = localization[currentLang].step1_next;
-    else if (currentStep === 3) document.getElementById('terminal-output').innerHTML = localization[currentLang].step2_next;
-    else if (currentStep === 4) document.getElementById('terminal-output').innerHTML = localization[currentLang].step3_next;
-    else if (currentStep === 5) document.getElementById('terminal-output').innerHTML = localization[currentLang].step4_next;
-    else if (currentStep === 6) document.getElementById('terminal-output').innerHTML = localization[currentLang].step5_next;
-    else if (currentStep === 7) document.getElementById('terminal-output').innerHTML = localization[currentLang].era;
+    if (currentStep === 0) {
+      document.getElementById('terminal-output').innerHTML = 
+        getSecText("init", "KPR2027");
+    } else {
+      document.getElementById('terminal-output').innerHTML = 
+        lastDecryptedStepText[currentLang];
+    }
   }
 }
 
 function updateUI() {
-  document.getElementById('submit-btn').innerText = localization[currentLang].submit;
-  document.getElementById('secret-title').innerText = localization[currentLang].secretTitle;
-  document.getElementById('back-btn').innerText = localization[currentLang].back;
+  document.getElementById('submit-btn').innerText = UI_DATA[currentLang].s;
+  document.getElementById('secret-title').innerText = UI_DATA[currentLang].st;
+  document.getElementById('back-btn').innerText = UI_DATA[currentLang].b;
 }
 
 function openSecret() {
@@ -275,20 +280,17 @@ function closeSecret() {
   document.getElementById('main-screen').style.display = 'flex';
   setTimeout(() => { document.getElementById('terminal-input').focus(); }, 50);
 }
-
-function triggerRedLockout(customMsg) {
+</script>
+<script>
+function triggerRedLockout() {
   isLockout = true;
   document.body.classList.add('wrong-state');
   const inputEl = document.getElementById('terminal-input');
   const outputEl = document.getElementById('terminal-output');
   
-  if (customMsg) {
-    outputEl.innerHTML = customMsg;
-  } else {
-    const lines = localization[currentLang].scolded;
-    const randomLine = lines[Math.floor(Math.random() * lines.length)];
-    outputEl.innerHTML = localization[currentLang].wrongPrefix + randomLine;
-  }
+  const randomIdx = Math.floor(Math.random() * 6);
+  outputEl.innerHTML = getSecText("prefix", "KPR2027") + 
+    getSecText("err" + randomIdx, "KPR2027");
   inputEl.disabled = true;
   
   setTimeout(() => {
@@ -331,32 +333,80 @@ function cleanInput(val) {
   return cleaned;
 }
 
-function processInput() {
+async function processInput() {
   if (isLockout) return;
   const inputEl = document.getElementById('terminal-input');
   let rawVal = inputEl.value;
   
   if (!rawVal.trim()) {
-    triggerRedLockout(localization[currentLang].emptyError);
+    isLockout = true;
+    document.body.classList.add('wrong-state');
+    document.getElementById('terminal-output').innerHTML = 
+      getSecText("empty", "KPR2027");
+    inputEl.disabled = true;
+    setTimeout(() => {
+      document.body.classList.remove('wrong-state');
+      inputEl.disabled = false;
+      inputEl.value = '';
+      isLockout = false;
+      inputEl.focus();
+    }, 2000);
     return;
   }
+  
   rawVal = cleanInput(rawVal).toLowerCase();
-  if (!rawVal) {
-    triggerRedLockout(localization[currentLang].emptyError);
+  
+  if (openEggs[rawVal]) {
+    triggerGreenSuccess(openEggs[rawVal][currentLang], true, rawVal);
     return;
   }
   
-  if (easterEggs[rawVal]) {
-    triggerGreenSuccess(easterEggs[rawVal][currentLang], true, rawVal);
+  const inputHash = await sha256(rawVal);
+  
+  const eggMapping = {
+    "e205ee2a5de471a70c1fd15f1ff41a2926839bc1efb253b3ae4101185aa08323": "egg0",
+    "83d57b282bc7198967df2a6f8745d614d79d67bc8f0477bf25642d99d34fb05a": "egg1",
+    "922e38c98342416f0814981f4a974b2f293ffb21703e3906354898c60f4eb789": "egg2",
+    "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824": "egg2",
+    "4f54bf63d09a0a1f7959045ee3df5b4b1a437e69d76c6691f165932ef9a941ef": "egg3",
+    "27ac0219ca62ba1e9af73e86c0e5a2db39d48b174afdb04a2be25cf4649b1a50": "egg3",
+    "cc82eb750624d7729b16bfca7179047468165b4513ec1317d7bbf72ea5a7b63f": "egg4",
+    "b369ba0027f66a84ed39cb9fc5da909b43354ff0511855e975ca828e833e218b": "egg4",
+    "cf6c1a8e9323bdfdd503cb328e6c7fc737756f6b645b23d537df129013f99e4b": "egg5",
+    "b70e4c6c06a3e6f987f6e2c34bc1f2ef64d7df64be735dd226df7f292d3fbe2e": "egg5",
+    "29ef40632a688863f69906660144f8007a36f78ee9caeef667825d105260fa11": "egg6",
+    "1c5a7df4ef130f140685938d87ef8740c02c67c5f87b8b408544d6db87413669": "egg6",
+    "0db843cd345f7c32e92c2a05cfcb99be0ef424269e8b603816ec5a7a7265be75": "egg6",
+    "7c94fa103ef8f35bbf6c96b7978254b7c126d4ca9ca9c2bfb99eb7d160109033": "egg6"
+  };
+  
+  if (eggMapping[inputHash]) {
+    const key = eggMapping[inputHash];
+    triggerGreenSuccess(getSecText(key, "KPR2027"), true, key);
     return;
   }
   
-  const truePass = "va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje#".toLowerCase();
+  const hashStep0 = "71ec4f23b207db81561f38e68407481ba8d30e017688fa8db340db423719b0aa";
+  const hashStep0_en = "9336ebf25087d91c818ee6e9ec29f8c1dd4e06ffec68564c6aa3c9e3a0b3f713";
+  const hashStep1 = "3a7bd3e2360a33ec6816fa2b741fe3e90b537ed11a4369e46a71ab113175cd77";
+  const hashStep2_ru = "cd76ccbf737750731d1d867da2045239e3cb16e87b7a1ecbe012351cb992e59e";
+  const hashStep2_en1 = "4f2271816e88514930be6f19999037e96b34cf40ff26227447db48062ec7e3e9";
+  const hashStep2_en2 = "b71e847761d4285b1a457053075cb450c266858e390c3757bf0037a3b3a30c5e";
+  const hashStep2_en3 = "4901f41db457017fc7c6a99281e05d04cc63f27f03f75da7e6ff82cf19793139";
+  const hashStep3_ru = "d5ef8d0590a36bc6bc562098020d588494b29bb80f86234bc5b19e2468305c93";
+  const hashStep3_ru2 = "03cf36f32e987c2fb8b2ca5fa5d8a87b1c31828114f0e7eb15be7754d5885cda";
+  const hashStep3_en = "830ea28490a6f4439c65ca6270ebc121e42fa4ea23555234208a05c754d0263f";
+  const hashStep4 = "88b22a0753e8fcda9b3df98f6d63d047b11d9f8e02d6d03d360efbe3662d5119";
+  const hashStep5 = "1b22e17e4f16df16be64811a216f497afcb14660ebbcbf49ee7ba980fa516086";
+  const hashTruePass = "07d9d02cb08d9ca7868bb03b12363e790757a3e7db010ee38a6a68393c6f2df6";
 
-  if (rawVal === truePass) {
-    triggerGreenSuccess(localization[currentLang].era);
+  if (inputHash === hashTruePass) {
+    const txt = getSecText("step7", "KPR2027");
+    triggerGreenSuccess(txt);
     currentStep = 7;
     customMessageActive = false;
+    lastDecryptedStepText.RU = txt;
+    lastDecryptedStepText.EN = txt;
     return;
   }
   
@@ -364,39 +414,59 @@ function processInput() {
   currentCustomKey = null;
   
   if (currentStep === 0) {
-    if (rawVal === "пароль" || rawVal === "password") {
-      triggerGreenSuccess(localization[currentLang].step0_hint);
+    if (inputHash === hashStep0 || inputHash === hashStep0_en) {
+      const txt = getSecText("step0", "KPR2027");
+      triggerGreenSuccess(txt);
       currentStep = 1;
+      lastDecryptedStepText.RU = txt;
+      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   } 
   else if (currentStep === 1) {
-    if (rawVal === "16") {
-      triggerGreenSuccess(localization[currentLang].step1_next);
+    if (inputHash === hashStep1) {
+      const txt = getSecText("step1", "KPR2027");
+      triggerGreenSuccess(txt);
       currentStep = 2;
+      lastDecryptedStepText.RU = txt;
+      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   } 
   else if (currentStep === 2) {
-    if (rawVal === "пбг" || rawVal === "scp" || rawVal === "scap" || rawVal === "scpe") {
-      triggerGreenSuccess(localization[currentLang].step2_next);
+    if (inputHash === hashStep2_ru || inputHash === hashStep2_en1 || 
+        inputHash === hashStep2_en2 || inputHash === hashStep2_en3) {
+      const txt = getSecText("step2", "KPR2027");
+      triggerGreenSuccess(txt);
       currentStep = 3;
+      lastDecryptedStepText.RU = txt;
+      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   } 
   else if (currentStep === 3) {
-    if (rawVal === "ам" || rawVal === "сам" || rawVal === "myself") {
-      triggerGreenSuccess(localization[currentLang].step3_next);
+    if (inputHash === hashStep3_ru || inputHash === hashStep3_ru2 || 
+        inputHash === hashStep3_en) {
+      const txt = getSecText("step3", "KPR2027");
+      triggerGreenSuccess(txt);
       currentStep = 4;
+      lastDecryptedStepText.RU = txt;
+      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   } 
   else if (currentStep === 4) {
-    if (rawVal === "246") {
-      triggerGreenSuccess(localization[currentLang].step4_next);
+    if (inputHash === hashStep4) {
+      const txt = getSecText("step4", "KPR2027");
+      triggerGreenSuccess(txt);
       currentStep = 5;
+      lastDecryptedStepText.RU = txt;
+      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   } 
   else if (currentStep === 5) {
-    if (rawVal === "!!!!!") {
-      triggerGreenSuccess(localization[currentLang].step5_next);
+    if (inputHash === hashStep5) {
+      const txt = getSecText("step5", "KPR2027");
+      triggerGreenSuccess(txt);
       currentStep = 6;
+      lastDecryptedStepText.RU = txt;
+      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   }
   else { triggerRedLockout(); }
