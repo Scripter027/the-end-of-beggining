@@ -11,7 +11,7 @@ body { background: #000; color: #0f0; font-family: 'Share+Tech+Mono', monospace;
 body::after { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 999; background-size: 100% 4px, 6px 100%; pointer-events: none; }
 .glare { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,30,0,0.15) 0%, rgba(0,0,0,0) 80%); pointer-events: none; z-index: 998; }
 #boot-screen { position: absolute; width: 100%; height: 100%; background: #000; padding: 15px; overflow: hidden; z-index: 10; font-size: 13px; line-height: 1.4; white-space: pre-wrap; word-break: break-all; }
-#main-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: space-between; padding: 15px; position: relative; animation: jitter 0.25s infinite; }
+#main-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: space-between; padding: 15px; position: relative; }
 body.wrong-state { color: #f00 !important; }
 body.wrong-state #timer-container, body.wrong-state .input-panel, body.wrong-state #lang-toggle { border-color: #f00 !important; color: #f00 !important; box-shadow: 0 0 15px rgba(255,0,0,0.2) !important; }
 body.wrong-state .input-panel input { color: #f00 !important; }
@@ -19,12 +19,12 @@ body.wrong-state .input-panel button { background: #f00 !important; color: #000 
 body.wrong-state #terminal-output { color: #f00 !important; }
 .correct-flash { animation: flash-green 0.4s ease-out; }
 @keyframes flash-green { 0% { background: #4f4; color: #000; } 10% { background: #4f4; } 100% { background: #000; } }
-@keyframes jitter {
+#timer-container, #terminal-output, .input-panel, #lang-toggle, #secret-title, #secret-timer, #back-btn, #lang-toast { animation: textJitter 0.3s infinite; }
+@keyframes textJitter {
   0% { transform: translate(0, 0); }
-  20% { transform: translate(-0.5px, 0.5px); }
-  40% { transform: translate(0.5px, -0.5px); }
-  60% { transform: translate(-0.5px, -0.5px); }
-  80% { transform: translate(0.5px, 0.5px); }
+  25% { transform: translate(-0.3px, 0.3px); }
+  50% { transform: translate(0.3px, -0.3px); }
+  75% { transform: translate(-0.3px, -0.3px); }
   100% { transform: translate(0, 0); }
 }
 header { display: flex; justify-content: center; align-items: center; position: relative; height: 50px; margin-top: 5px; }
@@ -43,7 +43,7 @@ footer { display: flex; justify-content: flex-end; align-items: center; padding:
 #lang-toggle:hover { background: #0f0; color: #000; }
 #lang-toast { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid #0f0; background: rgba(0,30,0,0.9); color: #0f0; padding: 15px 30px; font-size: 18px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 0 25px rgba(0,255,0,0.4); pointer-events: none; opacity: 0; transition: opacity 0.2s ease; z-index: 100; text-align: center; }
 #lang-toast.show { opacity: 1; }
-#secret-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: center; align-items: center; background: #000; color: #0f0; padding: 20px; text-align: center; position: relative; animation: jitter 0.25s infinite; }
+#secret-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: center; align-items: center; background: #000; color: #0f0; padding: 20px; text-align: center; position: relative; }
 #secret-title { font-size: 22px; letter-spacing: 3px; margin-bottom: 25px; text-transform: uppercase; animation: pulse 2s infinite; padding: 0 10px; }
 #secret-timer { font-size: 34px; font-weight: bold; letter-spacing: 2px; border: 2px solid #0f0; padding: 15px 25px; background: rgba(0,15,0,0.3); box-shadow: 0 0 25px rgba(0,255,0,0.3); width: 100%; max-width: 420px; white-space: nowrap; }
 #back-btn { margin-top: 40px; border: 1px solid #0f0; background: transparent; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 16px; padding: 10px 24px; cursor: pointer; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
@@ -178,9 +178,9 @@ const easterEggs = {
   "привет": { RU: "Пока до тех пор пока не найдешь пароль!", EN: "Bye until you find the password!" },
   "hello": { RU: "Пока до тех пор пока не найдешь пароль!", EN: "Bye until you find the password!" },
   "кто ты": { RU: "Терминал, который ждет твоего правильного пароля! Мне не платят за пустую болтовню с тобой!", EN: "A terminal waiting for your correct password! I don't get paid for empty small talk with you!" },
-  "who are you": { RU: "Терминал, который ждет твоего правильного пароля! Мне не платят за пустую болтовню с тобой!", EN: "A terminal waiting for your correct password! I don't get paid for empty small talk with you!" },
+  "who are you": { RU: "A terminal waiting for your correct password! I don't get paid for empty small talk with you!", EN: "A terminal waiting for your correct password! I don't get paid for empty small talk with you!" },
   "где я": { RU: "Откуда я то знаю? Ты открыл сайт с поиском пароля, а находится ты можешь где угодно!", EN: "How should I know? You opened a password search site, you could be anywhere!" },
-  "where am i": { RU: "Откуда я то знаю? Ты открыл сайт с поиском пароля, а находится ты можешь где угодно!", EN: "How should I know? You opened a password search site, you could be anywhere!" },
+  "where am i": { RU: "How should I know? You opened a password search site, you could be anywhere!", EN: "How should I know? You opened a password search site, you could be anywhere!" },
   "какой пароль": { RU: "Ты мне скажи.", EN: "You tell me." },
   "what is the password": { RU: "Ты мне скажи.", EN: "You tell me." },
   "новая эра": { RU: '<a href="https://t.me" target="_blank">https://t.me</a>', EN: '<a href="https://t.me" target="_blank">https://t.me</a>' },
