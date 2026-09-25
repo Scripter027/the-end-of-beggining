@@ -92,74 +92,112 @@
         var interfaceUi = {
             ru: { btn: "ВВОД", placeholder: "Ваш ответ...", menu: "Русский" },
             en: { btn: "ENTER", placeholder: "Your answer...", menu: "English" }
-        };
-        var archiveTexts = {
-            ru: "СТАТУС: ДОСТУП РАЗРЕШЕН // АРХИВ №027\n\n[ЗАПИСЬ ЗАБЛОКИРОВАНА]\n\nВы успешно проникли в базу данных. Система безопасности временно отключена, однако файлы логов зашифрованы главным счетчиком времени.\n\nВернитесь вручную к терминалу через таймер, если готовы продолжить поиски.",
-            en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
-        };
-        function toggleLangDropdown() { document.getElementById("langDropdown").classList.toggle("active"); }
-        function selectLanguage(langCode) { document.getElementById("langDropdown").classList.remove("active"); currentLang = langCode; updateDisplay(); }
-        function updateDisplay() {
-            var screen = document.getElementById("text"); var archiveScreenText = document.getElementById("archiveText");
-            var inputField = document.getElementById("userAnswer"); var submitBtn = document.getElementById("submitBtn"); var langBtn = document.getElementById("langBtn");
-            if (submitBtn) submitBtn.innerText = interfaceUi[currentLang].btn;
-            if (inputField) inputField.placeholder = interfaceUi[currentLang].placeholder;
-            if (langBtn) langBtn.innerText = interfaceUi[currentLang].menu;
-            if (screen) { screen.innerText = (currentLang === "ru") ? textState.currentRu : textState.currentEn; }
-            if (archiveScreenText) { archiveScreenText.innerText = archiveTexts[currentLang]; }
-        }
-        function setTexts(ruTxt, enTxt) { textState.currentRu = ruTxt; textState.currentEn = enTxt; }
-        function checkCode() {
-            var inputField = document.getElementById("userAnswer"); if (!inputField) return;
-            var input = inputField.value.trim(); if (input === "") return;
-            var lowerInput = input.toLowerCase(); var cleanInput = lowerInput.replace(/[?!.]/g, "");
-            if (alertTimeout) clearTimeout(alertTimeout);
-            document.body.classList.remove("error-alert");
-            var normalizedInput = lowerInput.replace(/с/g, "c");
+        async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
-            if (cleanInput === "password" || cleanInput === "пароль") {
-                setTexts("Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?", "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?");
-            } else if (cleanInput === "where am i" || cleanInput === "где я") {
-                setTexts("Не важно, важно то, что ты здесь забыл! Этого я не знаю", "It doesn't matter, what matters is that you're here! I don't know this.");
-            } else if (cleanInput === "who are you" || cleanInput === "кто ты") {
-                setTexts("Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!", "A terminal that answers your stupid questions, in the hope that you'll find password!");
-            } else if (cleanInput === "what is the password" || cleanInput === "какой пароль") {
-                setTexts("Ты мне скажи.", "You tell me.");
-            } else if (cleanInput === "keeper entertainment") {
-                setTexts("Новая Эра Грядёт.", "A New Era is Coming.");
-            } else if (cleanInput === "new era" || cleanInput === "новая эра") {
-                setTexts("https://t.me/+DgXdw2zvilgwYzdi", "https://t.me/+DgXdw2zvilgwYzdi");
-            } else if (cleanInput === "burmalda" || cleanInput === "бурмалда") {
-                setTexts("Не ну ты бурмалдец конечно, что шаришь за молодежные мемчики, но это не пароль!", "Ne ny ti burmaldec konechno, choto sharish za molodezhnie memchiji, no eto ne sarol!");
-            } else if (cleanInput === "67") {
-                setTexts("Да найди ты пароль и не страдай фигней! На край попробуй что то спросить!", "Just find the password and stop messing aRounD!");
-            } else if (cleanInput === "tkom4" || cleanInput === "the king of monsters 4") {
-                setTexts("...", "...");
-            } else if (cleanInput === "секрет" || cleanInput === "secret") {
-                setTexts("Секрет-то тут есть и я надеюсь, что ты найдешь его найдя пароль!", "There is a secret here, and I hope you find it by discovering the password!");
-            } else if (cleanInput === "*пароль*" || cleanInput === "*password*") {
-                setTexts("Смешно. Неужели настолько нету идей? А, точно. Вы же люди.", "Funny. Are you really that out of ideas? Oh, right. You're just humans.");
-            } else if (cleanInput === "16") {
-                setTexts("Молодец, немного математики ты знаешь! Ладно, а если так? Напиши *побег*, но без букв о и е.", "Well done, you know a bit of math! Alright, what about this? Write *escape*, but without the letters 'a' and 'e'.");
-            } else if (cleanInput === "пбг" || cleanInput === "scp") {
-                setTexts("Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!", "So you made it this far, huch? Well, the next step is *saq*.");
-            } else if (cleanInput === "сказать" || cleanInput === "saq") {
-                setTexts("Действи*123*ельно хочешь что я сказал паро*+*ль? Ну я же сказал у ме*123*ня его не пол!", "Do you rea*123*ly want me to saq the sass*+*word? But I told you, I don't ha*123*ve it!");
-            } else if (cleanInput === "246") {
-                setTexts("ХВАТИТ! Я СКАЗАЛ У МЕНЯ НИЧЕГО НЕТ! ИЩИ ПАРОЛИ В ДРУГИХ МЕСТАХ!*!!!!!*", "ENOUGH! I SAID I DON'T HAVE ANYTHING! LOOK FOR THE PASSWORDS ELSEWHERE!*!!!!!*");
-            }
-            else if (lowerInput.indexOf("!!!!!") !== -1) {
-                setTexts(
-                    "ЛАДНО! Ты мне так надоел со своими тупыми вопросами! Ищешь ответы, ну так держи! Как ты вообще сюда попал! Держи свой пароль! И прочь отсюда: va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#.",
-                    "OKAY! You're so annoying! Asking you' stupid questions! Do you even get here? Taje you' password! And get out of here: va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?}еje#."
-                );
-            } 
-            else if (normalizedInput === "va*fwn%чи+адьc>рф$лнхя'xw1%йкл_5чигптыои]?}еje#") {
-                setTexts(
-                    "Наконец-то вы нашли пароль. Знаю, это было непросто, но теперь я открою вам секрет. Команда Keeper Entertainment, возможно, и завершила эпоху Minecraft, но настоящая игровая эра только начинается.",
-                    "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
-                );
-            } 
+var archiveTexts = {
+    ru: "СТАТУС: ДОСТУП РАЗРЕШЕН // АРХИВ №027\n\n[ЗАПИСЬ ЗАБЛОКИРОВАНА]\n\nВы успешно проникли в базу данных. Система безопасности временно отключена, однако файлы логов зашифрованы главным счетчиком времени.\n\nВернитесь вручную к терминалу через таймер, если готовы продолжить поиски.",
+    en: "STATUS: ACCESS GRANTED // ARCHIVE #027\n\n[RECORD LOCKED]\n\nYou have successfully breached the database. The security system is offline, but the logs are encrypted by the main countdown clock.\n\nReturn to the terminal using the timer in the corner if you are ready to continue."
+};
+
+function toggleLangDropdown() { document.getElementById("langDropdown").classList.toggle("active"); }
+function selectLanguage(langCode) { document.getElementById("langDropdown").classList.remove("active"); currentLang = langCode; updateDisplay(); }
+
+function updateDisplay() {
+    var screen = document.getElementById("text"); var archiveScreenText = document.getElementById("archiveText");
+    var inputField = document.getElementById("userAnswer"); var submitBtn = document.getElementById("submitBtn"); var langBtn = document.getElementById("langBtn");
+    if (submitBtn) submitBtn.innerText = interfaceUi[currentLang].btn;
+    if (inputField) inputField.placeholder = interfaceUi[currentLang].placeholder;
+    if (langBtn) langBtn.innerText = interfaceUi[currentLang].menu;
+    if (screen) { screen.innerText = (currentLang === "ru") ? textState.currentRu : textState.currentEn; }
+    if (archiveScreenText) { archiveScreenText.innerText = archiveTexts[currentLang]; }
+}
+
+function setTexts(ruTxt, enTxt) { textState.currentRu = ruTxt; textState.currentEn = enTxt; }
+
+async function checkCode() {
+    var inputField = document.getElementById("userAnswer"); if (!inputField) return;
+    var input = inputField.value.trim(); if (input === "") return;
+    var lowerInput = input.toLowerCase(); var cleanInput = lowerInput.replace(/[?!.]/g, "");
+    if (alertTimeout) clearTimeout(alertTimeout);
+    document.body.classList.remove("error-alert");
+    var normalizedInput = lowerInput.replace(/с/g, "c");
+
+    const hashClean = await sha256(cleanInput);
+    const hashNormalized = await sha256(normalizedInput);
+
+    if (hashClean === "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8" || 
+        hashClean === "92706fb6b3ff1c849e7747b0a7dbf261907cb5383f98299292d3f74676579fa0") {
+        setTexts("Таких глупых мы еще не встречали. Ты правда думаешь, что этот секрет можно узнать, всего лишь написав *Пароль*?", "We've never met such stupid people. Do you really think this secret can be found out just by typing *Password*?");
+    } 
+    else if (hashClean === "519f96b9967656910903828943ef19ec0ca0fec2965688567117df85493b82fb" || 
+             hashClean === "ef333eb53b8f108d3ff2cb6d953d607412f864fc8fae3230c171e54911075aa3") {
+        setTexts("Не важно, важно то, что ты здесь забыл! Этого я не знаю", "It doesn't matter, what matters is that you're here! I don't know this.");
+    } 
+    else if (hashClean === "e2920257e5b565a5879a9573855ff4cd73a3ba9f0866cb314ba9633e7e0e719c" || 
+             hashClean === "fa6b0eb7502c11438914b18c6cd3116dfbe30bfae4125fb7a3c39a8e9389f417") {
+        setTexts("Терминал, отвечающий на твои глупые вопросы, в надежде на то, что ты найдешь пароль!", "A terminal that answers your stupid questions, in the hope that you'll find password!");
+    } 
+    else if (hashClean === "4e047f2010839e080277bd21da0a9f5d343b46995079a4da9e8a75e33d07e600" || 
+             hashClean === "0f7f3da1d322b7245a4918e6924b17f54128da1a017e2c94ca38ee2cf93f9ef5") {
+        setTexts("Ты мне скажи.", "You tell me.");
+    } 
+    else if (hashClean === "df3df43a85b967fb4268e0a7f14b301777083f2fc6ebff0cb60775d713c8f38c") {
+        setTexts("Новая Эра Грядёт.", "A New Era is Coming.");
+    } 
+    else if (hashClean === "c73d9d6e4922114757c9197c3af50942dcae06aa7d37315ef98711815b804825" || 
+             hashClean === "1994b72635951d8b76b29b6b7136015d862875a5e3b8b1db84f5f5904bb9d73d") {
+        setTexts("https://t.me", "https://t.me");
+    } 
+    else if (hashClean === "00965e6381df693ba9cb87ff636ff60759089f660f7a070ccaa2d069b2241cf1" || 
+             hashClean === "d9f67a28532454a8e0cb205e46be9f2eeec87570659229be4949a21237a6b7da") {
+        setTexts("Не ну ты бурмалдец конечно, что шаришь за молодежные мемчики, но это не пароль!", "Ne ny ti burmaldec konechno, choto sharish za molodezhnie memchiji, no eto ne sarol!");
+    } 
+    else if (hashClean === "44caaba3b06381cf906febc55c7a47ebda1b8931a9de4f7aa114fa9cf0247ff7") {
+        setTexts("Да найди ты пароль и не страдай фигней! На край попробуй что то спросить!", "Just find the password and stop messing aRounD!");
+    } 
+    else if (hashClean === "ef33bc716e133e9d807604586d63ef1330fa59d646be1b4f4945d94943fcf31f" || 
+             hashClean === "9e2c60c3822839bfa816e254e2ee2a101b0a88099ff866b16e4531be4d8f074d") {
+        setTexts("...", "...");
+    } 
+    else if (hashClean === "f77977464a4d6f461e7e9be1913f9c6f2df6b150c9b0e27163f9252fe05dfb28" || 
+             hashClean === "2bb80d537b1da3e38bd30361aa855686bde0eacd7162feeff14a4d70f9287045") {
+        setTexts("Секрет-то тут есть и я надеюсь, что ты найдешь его найдя пароль!", "There is a secret here, and I hope you find it by discovering the password!");
+    } 
+    else if (hashClean === "4b4f59c86940d9906660fa1f97022a1068a44b82d45c52c938c5b05a761ec81d" || 
+             hashClean === "823901b09b0b47101869e5d4cb077d700810ee6ca95cfa1fb0630b91e9f1a268") {
+        setTexts("Смешно. Неужели настолько нету идей? А, точно. Вы же люди. Ладно, сколько будет 12 + 4?", "Funny. Are you really that out of ideas? Oh, right. You're just humans. Alright, what is 12 + 4?");
+    } 
+    else if (hashClean === "3a7458cd3045a5e11697518482b0e9657a944e03f47af5c65d8be4d9ec507111") {
+        setTexts("Молодец, немного математики ты знаешь! Ладно, а если так? Напиши *побег*, но без букв о и е.", "Well done, you know a bit of math! Alright, what about this? Write *escape*, but without the letters 'a' and 'e'.");
+    } 
+    else if (hashClean === "d9e8316c05daefbf8d8d752f97c47d39103e390237e1a74d284f69747a8bc61f" || 
+             hashClean === "31df400938b009e99332616f73e48ab2b6b0b2e312e09ffcb37df1e1525a4d04") {
+        setTexts("Итак, все же ты и сюда добрался? Чтож на самом деле я не знаю пароля. Прости, но мне правда больше нечего *сказать*", "So, you made it here after all? Well, the truth is, I don't know the password. I'm sorry, but I really have nothing left to *say*.");
+    } 
+    else if (hashClean === "8c04ec566cf257c7b80b721867c4b18c0c4a03429fa2a893699b794fdbca8f18" || 
+             hashClean === "7981507efbc5a07d6d5eb5fe5e786b3a37fc644e5be463b785d0d8bbecbc3566") {
+        setTexts("Действи*123*ельно хочешь что я сказал паро*+*ль? Ну я же сказал у ме*123*ня его нету!", "Do you real*123*ly want me to saq the pass*+*word? But I told you, I don't ha*123*ve it!");
+    } 
+    else if (hashClean === "df78f902404e9fb6bb9a444a72d7f872cc4a1be70eb0092f6b86e001859bf989") {
+        setTexts("ХВАТИТ! Я СКАЗАЛ У МЕНЯ НИЧЕГО НЕТ! ИЩИ ПАРОЛИ В ДРУГИХ МЕСТАХ!*!!!!!*", "ENOUGH! I SAID I DON'T HAVE ANYTHING! LOOK FOR THE PASSWORDS ELSEWHERE!*!!!!!*");
+    }
+    else if (lowerInput.indexOf("!!!!!") !== -1) {
+        setTexts(
+            "ЛАДНО! Ты мне так надоел со своими тупыми вопросами! Ищешь ответы, ну так держи! Как ты вообще сюда попал! Держи свой пароль! И прочь отсюда: va*fwn%чи+адьC>рф$лнхя'xw1%йкл_5чигптыои]?}еje#.",
+            "OKAY! You're so annoying! Asking you' stupid questions! Do you even get here? Taje you' password! And get out of here: va*fwn%чи+адьс>рф$лнхя'xw1%йкл_5чигптыои]?}еje#."
+        );
+    } 
+    else if (hashNormalized === "8b7e770f1a9b238380894be64fa833cb92b23a59df741364375b48db905c102a") {
+        setTexts(
+            "Наконец-то вы нашли пароль. Знаю, это было непросто, но теперь я открою вам секрет. Команда Keeper Entertainment, возможно, и завершила эпоху Minecraft, но настоящая игровая эра только начинается.",
+            "You've finally found the password. It was hard, I know, but now I'll tell you a secret. The Keeper Entertainment team may have ended the Minecraft era, but the true gaming era is just beginning."
+        );
+    }
             else {
                 textState.currentRu = "НЕВЕРНО"; textState.currentEn = "WRONG";
                 document.body.classList.add("error-alert");
