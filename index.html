@@ -87,15 +87,18 @@
     </div>
     <script>
         function b64(str) {
-            return decodeURIComponent(atob(str).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
+            var binary = atob(str);
+            var bytes = new Uint8Array(binary.length);
+            for (var i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return new TextDecoder('utf-8').decode(bytes);
         }
         var targetDate = new Date(2027, 1, 22, 15, 30, 00).getTime();
         var alertTimeout = null; var currentScreen = "game"; var currentLang = "ru";
-        var textState = { currentRu: b64("0JLRQNC10LTQuNGC0LUg0J/QsNGA0L7Qu9GMINC6"), currentEn: b64("RW50ZXIgUGFzc3dvcmQ=") };
+        var textState = { currentRu: b64("0JLQtdC00LjRgtC1INCf0LDRgNC+0LvRjA=="), currentEn: b64("RW50ZXIgUGFzc3dvcmQ=") };
         var interfaceUi = {
-            ru: { btn: b64("0JLRktCe0JQ="), placeholder: b64("0JLQsNGIINC+0YLQstC10YIuLi4="), menu: b64("0KDRg9GB0YHQutC40Lk=") },
+            ru: { btn: b64("0JLQktCe0JQ="), placeholder: b64("0JLQsNGIINC+0YLQstC10YIuLi4="), menu: b64("0KDRg9GB0YHQutC40Lk=") },
             en: { btn: b64("RU5URVI="), placeholder: b64("WW91ciBhbnN3ZXIuLi4="), menu: b64("RW5nbGlzaA==") }
         };
         async function sha256(message) {
@@ -143,7 +146,7 @@
             var matched = true;
             if (hashClean === "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8" || 
                 hashClean === "92706fb6b3ff1c849e7747b0a7dbf261907cb5383f98299292d3f74676579fa0") {
-                setTexts(b64("0KLQsNC60LjRhSDQs9C70YPQv9GL0YUg0LzRiyDQtdGJ0LUg0L3QtSDQstGB0YLRgNC10YfQsNC70LguINCi0Ysg0L/RgNC00LLQtNCwINC00YPQvNCw0LXRiNGB0YwsIGNodG8gZXRvdCDRgdC10LrRgNC10YIg0LzQvtC20L3QviDRg9C30L3QsNGC0YwsINCy0YHQtdCz0L4gbGlzaCcgbmFwaXNhdiAq0J/QsNGA0L7Qu9GMKj8="), b64("V2UndmUgbmV2ZXIgbWV0IHN1Y2ggc3R1cGlkIHBlb3BsZS4gRG8geW91IHJlYWxseSB0aGluayB0aGlzIHNlY3JldCBjYW4gYmUgZm91bmQgb3V0IGp1c3QgYnkgdHlwaW5nICpQYXNzd29yZCo/"));
+                setTexts(b64("0KLQsNC60LjRhSDQs9C70YPQv9GL0YUg0LzRiyDQtdGJ0LUg0L3QtSDQstGB0YLRgNC10YfQsNC70LguINCi0Ysg0L/RgNC00LLQtNCwINC00YPQvNCw0LXRiNGB0YwsY2h0byBldG9kIHNla3JldCBtb3pobm8gdXpuYXRzLCB2c2VnbyBsaXNoJyBuYXBpc2F2ICpQYXJvbCcqPw=="), b64("V2UndmUgbmV2ZXIgbWV0IHN1Y2ggc3R1cGlkIHBlb3BsZS4gRG8geW91IHJlYWxseSB0aGluayB0aGlzIHNlY3JldCBjYW4gYmUgZm91bmQgb3V0IGp1c3QgYnkgdHlwaW5nICpQYXNzd29yZCo/"));
             } 
             else if (hashClean === "519f96b9967656910903828943ef19ec0ca0fec2965688567117df85493b82fb" || 
                      hashClean === "ef333eb53b8f108d3ff2cb6d953d607412f864fc8fae3230c171e54911075aa3") {
@@ -216,7 +219,7 @@
                 updateDisplay();
                 alertTimeout = setTimeout(function() {
                     document.body.classList.remove("error-alert");
-                    textState.currentRu = b64("0JLRNC10LTQuNGC0LUg0J/QsNGA0L7Qu9GMINC6"); textState.currentEn = b64("RW50ZXIgUGFzc3dvcmQ=");
+                    textState.currentRu = b64("0JLQtdC00LjRgtC1INCf0LDRgNC+0LvRjA=="); textState.currentEn = b64("RW50ZXIgUGFzc3dvcmQ=");
                     updateDisplay();
                 }, 5000);
             }
