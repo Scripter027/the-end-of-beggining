@@ -7,22 +7,26 @@
 <style>
 @import url('https://googleapis.com');
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #000; color: #0f0; font-family: 'Share+Tech+Mono', monospace; height: 100vh; height: calc(var(--vh, 1vh) * 100); overflow: hidden; position: relative; }
+body { background: #000; color: #0f0; font-family: 'Share+Tech+Mono', monospace; height: 100vh; height: calc(var(--vh, 1vh) * 100); overflow: hidden; position: relative; transition: background 0.1s ease, color 0.1s ease; }
 body::after { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 999; background-size: 100% 4px, 6px 100%; pointer-events: none; }
 .glare { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,30,0,0.15) 0%, rgba(0,0,0,0) 80%); pointer-events: none; z-index: 998; }
 #boot-screen { position: absolute; width: 100%; height: 100%; background: #000; padding: 15px; overflow: hidden; z-index: 10; font-size: 13px; line-height: 1.4; white-space: pre-wrap; word-break: break-all; }
-#main-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: space-between; padding: 15px; position: relative; transition: background 0.1s ease; }
+#main-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: space-between; padding: 15px; position: relative; }
+body.wrong-state { background: #f00 !important; color: #fff !important; }
+body.wrong-state .input-panel, body.wrong-state #timer-container, body.wrong-state #lang-toggle { border-color: #fff !important; color: #fff !important; background: transparent !important; }
+body.wrong-state .input-panel input { color: #fff !important; }
+body.wrong-state .input-panel button { background: #fff !important; color: #000 !important; }
+body.wrong-state #terminal-output { color: #fff !important; }
 .correct-flash { animation: flash-green 0.4s ease-out; }
-.wrong-flash { animation: flash-red 0.5s ease-out; }
 @keyframes flash-green { 0% { background: #4f4; color: #000; } 10% { background: #4f4; } 100% { background: #000; } }
-@keyframes flash-red { 0% { background: #f00; color: #fff; } 10% { background: #f00; } 100% { background: #000; } }
 header { display: flex; justify-content: center; align-items: center; position: relative; height: 50px; margin-top: 5px; }
-#timer-container { cursor: pointer; text-align: center; border: 1px solid #0f0; padding: 8px 16px; background: rgba(0,20,0,0.4); text-transform: uppercase; letter-spacing: 1px; font-size: 16px; box-shadow: 0 0 10px rgba(0,255,0,0.2); user-select: none; -webkit-tap-highlight-color: transparent; }
+#timer-container { cursor: pointer; text-align: center; border: 1px solid #0f0; padding: 8px 16px; background: rgba(0,20,0,0.4); text-transform: uppercase; letter-spacing: 1px; font-size: 16px; box-shadow: 0 0 10px rgba(0,255,0,0.2); user-select: none; -webkit-tap-highlight-color: transparent; transition: all 0.1s ease; }
 #timer-container:hover { background: #0f0; color: #000; }
 .center-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; width: 100%; padding: 0 10px; }
-#terminal-output { width: 100%; max-width: 600px; text-align: center; min-height: 50px; font-size: 18px; letter-spacing: 1px; word-break: break-word; display: flex; align-items: center; justify-content: center; }
-.input-panel { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 500px; background: rgba(0,10,0,0.5); border: 1px solid #0f0; padding: 6px 12px; box-shadow: 0 0 15px rgba(0,255,0,0.1); transition: all 0.2s ease; }
-.input-panel input { flex: 1; background: transparent; border: none; outline: none; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 20px; padding: 6px 0; text-transform: uppercase; width: 100%; }
+#terminal-output { width: 100%; max-width: 600px; text-align: center; min-height: 60px; font-size: 18px; letter-spacing: 1px; word-break: break-word; display: flex; align-items: center; justify-content: center; line-height: 1.4; }
+#terminal-output em { font-style: italic; text-decoration: underline; font-weight: bold; }
+.input-panel { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 500px; background: rgba(0,10,0,0.5); border: 1px solid #0f0; padding: 6px 12px; box-shadow: 0 0 15px rgba(0,255,0,0.1); transition: all 0.1s ease; }
+.input-panel input { flex: 1; background: transparent; border: none; outline: none; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 18px; padding: 6px 0; width: 100%; }
 .input-panel button { background: #0f0; color: #000; border: none; font-family: 'Share+Tech+Mono', monospace; font-size: 16px; font-weight: bold; padding: 10px 20px; cursor: pointer; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
 .input-panel button:hover { background: #0a0; }
 footer { display: flex; justify-content: flex-end; align-items: center; padding: 5px 5px; height: 40px; }
@@ -34,18 +38,14 @@ footer { display: flex; justify-content: flex-end; align-items: center; padding:
 #back-btn { margin-top: 40px; border: 1px solid #0f0; background: transparent; color: #0f0; font-family: 'Share+Tech+Mono', monospace; font-size: 16px; padding: 10px 24px; cursor: pointer; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
 #back-btn:hover { background: #0f0; color: #000; }
 @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; text-shadow: 0 0 15px #0f0; } 100% { opacity: 0.7; } }
-.red-ui { color: #f00 !important; border-color: #f00 !important; box-shadow: 0 0 15px rgba(255,0,0,0.2) !important; }
-.red-ui input { color: #f00 !important; }
-.red-ui button { background: #f00 !important; color: #000 !important; }
 @media (max-width: 480px) {
   #boot-screen { font-size: 11px; padding: 10px; }
   #main-screen { padding: 10px; }
   #timer-container { font-size: 14px; padding: 6px 12px; }
-  #terminal-output { font-size: 16px; min-height: 60px; }
+  #terminal-output { font-size: 15px; min-height: 70px; }
   .input-panel { flex-direction: column; gap: 12px; padding: 10px; background: rgba(0,15,0,0.7); }
-  .input-panel input { text-align: center; border-bottom: 1px dashed rgba(0,255,0,0.3); padding-bottom: 8px; font-size: 18px; }
+  .input-panel input { text-align: center; border-bottom: 1px dashed rgba(0,255,0,0.3); padding-bottom: 8px; font-size: 16px; }
   .input-panel button { width: 100%; padding: 12px; font-size: 16px; }
-  .red-ui input { border-bottom-color: rgba(255,0,0,0.4); }
   #secret-title { font-size: 18px; letter-spacing: 2px; }
   #secret-timer { font-size: 26px; padding: 12px 15px; max-width: 290px; }
   #back-btn { width: 80%; max-width: 200px; padding: 12px; }
@@ -68,7 +68,7 @@ footer { display: flex; justify-content: flex-end; align-items: center; padding:
   <div class="center-container">
     <div id="terminal-output"></div>
     <div class="input-panel" id="panel-box">
-      <input type="text" id="terminal-input" autocomplete="off" autofocus>
+      <input type="text" id="terminal-input" autocomplete="off" autofocus placeholder="">
       <button id="submit-btn" onclick="processInput()"></button>
     </div>
   </div>
@@ -86,6 +86,8 @@ footer { display: flex; justify-content: flex-end; align-items: center; padding:
 <script>
 const targetDate = new Date('2027-02-22T00:00:00').getTime();
 let currentLang = 'RU';
+let currentStep = 0;
+let isLockout = false;
 
 function resetHeight() {
   document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
@@ -108,35 +110,31 @@ const localization = {
     submit: "ВВОД",
     secretTitle: "Отсчет до момента x",
     back: "Назад",
-    wrong: "НЕПРАВИЛЬНО",
-    init: "Ну. Чего тебе?",
+    wrong: "ВВЕДИТЕ ПАРОЛЬ",
+    init: "ВВЕДИТЕ ПАРОЛЬ",
     empty: "Пустую строку кидаешь? Издеваешься?",
-    era: "Новая Эра Keeper Ent. вот вот начнется.",
-    scolded: [
-      "Мимо. Еще раз подумай.",
-      "Слабо. Очень слабо.",
-      "И это всё, на что ты способен?",
-      "Не угадал. Твоя логика пуста.",
-      "Прекрати перебирать мусор.",
-      "Неверно. Система видит твою растерянность."
-    ]
+    step0_wrong: "Серьезно? Ты жалок. Ладно дам подсказку - 12 + 4.",
+    step1_next: "Молодец! Кстати столько лет подряд ИИ подбирал бы пароль. Скажи слово побег но без о и е (на Английском если че просто же гласных)",
+    step2_next: "ладно на самом деле у меня нет пароля. Прости, но разбирайся <em>сам</em>",
+    step3_next: "я же сказал у ме123+123ня ничего нет! Я чист!",
+    step4_next: "ДОВОЛЬНО! У МЕНЯ НЕТ ПАРОЛЯ! <em>!!!!!</em>",
+    step5_next: "Вот пароль! Подавись им и прочь отсюда: va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje#",
+    era: "Новая Эра Keeper Ent. вот вот начнется."
   },
   EN: {
     submit: "ENTER",
     secretTitle: "Countdown to moment x",
     back: "Back",
-    wrong: "WRONG",
-    init: "Well. What do you want?",
+    wrong: "ENTER PASSWORD",
+    init: "ENTER PASSWORD",
     empty: "An empty string? Are you mocking me?",
-    era: "The New Era of Keeper Ent. is about to begin.",
-    scolded: [
-      "Missed. Think again.",
-      "Weak. Pathetic.",
-      "Is that all you can do?",
-      "Wrong guess. Your logic is empty.",
-      "Stop entering garbage.",
-      "Incorrect. The system sees your confusion."
-    ]
+    step0_wrong: "Seriously? You are pathetic. Fine, I'll give you a hint - 12 + 4.",
+    step1_next: "Well done! By the way, that's exactly how many years in a row an AI would crack a password. Say the word escape but without o and e (in English it's just vowels anyway)",
+    step2_next: "okay, honestly I don't have a password. Sorry, deal with it <em>myself</em>",
+    step3_next: "I told you I ha123+123ve nothing! I am clean!",
+    step4_next: "ENOUGH! I HAVE NO PASSWORD! <em>!!!!!</em>",
+    step5_next: "Here is the password! Choke on it and get out: va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje#",
+    era: "The New Era of Keeper Ent. is about to begin."
   }
 };
 
@@ -153,7 +151,7 @@ function runBootSequence() {
         container.style.display = 'none';
         document.getElementById('main-screen').style.display = 'flex';
         updateUI();
-        document.getElementById('terminal-output').innerText = localization[currentLang].init;
+        document.getElementById('terminal-output').innerHTML = localization[currentLang].init;
         document.getElementById('terminal-input').focus();
       }, 500);
     }
@@ -180,10 +178,18 @@ function updateTimers() {
 }
 
 function toggleLang() {
+  if(isLockout) return;
   currentLang = currentLang === 'RU' ? 'EN' : 'RU';
   document.getElementById('lang-toggle').innerText = currentLang === 'RU' ? 'EN' : 'RU';
   updateUI();
-  document.getElementById('terminal-output').innerText = localization[currentLang].init;
+  
+  if (currentStep === 0) document.getElementById('terminal-output').innerHTML = localization[currentLang].init;
+  else if (currentStep === 1) document.getElementById('terminal-output').innerHTML = localization[currentLang].step0_wrong;
+  else if (currentStep === 2) document.getElementById('terminal-output').innerHTML = localization[currentLang].step1_next;
+  else if (currentStep === 3) document.getElementById('terminal-output').innerHTML = localization[currentLang].step2_next;
+  else if (currentStep === 4) document.getElementById('terminal-output').innerHTML = localization[currentLang].step3_next;
+  else if (currentStep === 5) document.getElementById('terminal-output').innerHTML = localization[currentLang].step4_next;
+  else if (currentStep === 6) document.getElementById('terminal-output').innerHTML = localization[currentLang].step5_next;
 }
 
 function updateUI() {
@@ -193,6 +199,7 @@ function updateUI() {
 }
 
 function openSecret() {
+  if(isLockout) return;
   document.getElementById('main-screen').style.display = 'none';
   document.getElementById('secret-screen').style.display = 'flex';
 }
@@ -203,37 +210,104 @@ function closeSecret() {
   setTimeout(() => { document.getElementById('terminal-input').focus(); }, 50);
 }
 
+function triggerRedLockout() {
+  isLockout = true;
+  document.body.classList.add('wrong-state');
+  const inputEl = document.getElementById('terminal-input');
+  inputEl.disabled = true;
+  
+  setTimeout(() => {
+    document.body.classList.remove('wrong-state');
+    inputEl.disabled = false;
+    inputEl.value = '';
+    document.getElementById('terminal-output').innerHTML = localization[currentLang].wrong;
+    isLockout = false;
+    inputEl.focus();
+  }, 2000);
+}
+
 function processInput() {
+  if (isLockout) return;
+  
   const inputEl = document.getElementById('terminal-input');
   const outputEl = document.getElementById('terminal-output');
   const mainScreen = document.getElementById('main-screen');
-  const panelBox = document.getElementById('panel-box');
-  const rawVal = inputEl.value.trim();
+  const rawVal = inputEl.value.trim().toLowerCase();
   
-  mainScreen.classList.remove('correct-flash', 'wrong-flash');
-  panelBox.classList.remove('red-ui');
-  outputEl.style.color = '#0f0';
+  mainScreen.classList.remove('correct-flash');
   
   if (!rawVal) {
-    outputEl.innerText = localization[currentLang].empty;
+    outputEl.innerHTML = localization[currentLang].empty;
     return;
   }
   
-  const superSecretHash = "KEEPER_404_99_OMEGA_INIT_2027";
-  
-  if (rawVal.toUpperCase() === superSecretHash) {
+  const truePass = "va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje#".toLowerCase();
+
+  if (rawVal === truePass) {
     void mainScreen.offsetWidth;
     mainScreen.classList.add('correct-flash');
-    outputEl.innerText = localization[currentLang].era;
+    outputEl.innerHTML = localization[currentLang].era;
     inputEl.value = '';
-  } else {
-    void mainScreen.offsetWidth;
-    mainScreen.classList.add('wrong-flash');
-    panelBox.classList.add('red-ui');
-    outputEl.style.color = '#f00';
-    const lines = localization[currentLang].scolded;
-    const randomLine = lines[Math.floor(Math.random() * lines.length)];
-    outputEl.innerText = localization[currentLang].wrong + ". " + randomLine;
+    currentStep = 7;
+    return;
+  }
+  
+  if (currentStep === 0) {
+    if (rawVal === "пароль" || rawVal === "password") {
+      outputEl.innerHTML = localization[currentLang].step0_wrong;
+      inputEl.value = '';
+      currentStep = 1;
+    } else {
+      triggerRedLockout();
+    }
+  } 
+  else if (currentStep === 1) {
+    if (rawVal === "16") {
+      outputEl.innerHTML = localization[currentLang].step1_next;
+      inputEl.value = '';
+      currentStep = 2;
+    } else {
+      triggerRedLockout();
+    }
+  } 
+  else if (currentStep === 2) {
+    if (rawVal === "пбг" || rawVal === "scp" || rawVal === "scap" || rawVal === "scpe") {
+      outputEl.innerHTML = localization[currentLang].step2_next;
+      inputEl.value = '';
+      currentStep = 3;
+    } else {
+      triggerRedLockout();
+    }
+  } 
+  else if (currentStep === 3) {
+    if (rawVal === "сам" || rawVal === "myself") {
+      outputEl.innerHTML = localization[currentLang].step3_next;
+      inputEl.value = '';
+      currentStep = 4;
+    } else {
+      triggerRedLockout();
+    }
+  } 
+  else if (currentStep === 4) {
+    if (rawVal === "246") {
+      outputEl.innerHTML = localization[currentLang].step4_next;
+      inputEl.value = '';
+      currentStep = 5;
+    } else {
+      triggerRedLockout();
+    }
+  } 
+  else if (currentStep === 5) {
+    if (rawVal === "!!!!!" || rawVal === "!!!!!") {
+      outputEl.innerHTML = localization[currentLang].step5_next;
+      inputEl.value = '';
+      currentStep = 6;
+    } else {
+      triggerRedLockout();
+    }
+  }
+  else if (currentStep === 6) {
+    triggerRedLockout();
   }
 }
 
