@@ -355,7 +355,7 @@
             2: ["ПБГ", "ESCAP"],
             3: ["САМ", "YOURSELF"],
             4: ["246"],
-            5: ["!!!!!ED"], // Техническая метка для изоляции шага
+            5: ["!!!!!ED"], 
             6: ["VA*ФWN%ЧИ+ADЬS>РФ\$ЛНХЯ'XW1%ЙКL_5ЧIGPТЫОИ]?ЕJE#"]
         };
 
@@ -381,8 +381,10 @@
 
         function updateTimer() {
             const distance = targetDate - new Date().getTime();
+            const label = document.getElementById('countdown');
+            if (!label) return;
             if (distance < 0) {
-                document.getElementById('countdown').innerHTML = "00:00:00:00";
+                label.innerHTML = "00:00:00:00";
                 return;
             }
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -390,8 +392,7 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById('countdown').innerHTML = 
-                `${days < 10 ? '0'+days : days}:${hours < 10 ? '0'+hours : hours}:${minutes < 10 ? '0'+minutes : minutes}:${seconds < 10 ? '0'+seconds : seconds}`;
+            label.innerHTML = `${days < 10 ? '0'+days : days}:${hours < 10 ? '0'+hours : hours}:${minutes < 10 ? '0'+minutes : minutes}:${seconds < 10 ? '0'+seconds : seconds}`;
         }
         setInterval(updateTimer, 1000);
         updateTimer();
@@ -404,7 +405,6 @@
 
         document.getElementById('lang-btn').addEventListener('click', () => {
             if (isLock) return;
-            
             langClickCount++;
             const langBtn = document.getElementById('lang-btn');
 
@@ -462,30 +462,14 @@
             }, 450);
         }
 
-        // БЕЗОПАСНАЯ ОЧИСТКА ВВОДА: Больше никаких сбоев с регулярными выражениями
-        function cleanInputString(str) {
-            let res = str.trim();
-            
-            // Если строка состоит только из знаков !, не трогаем её вообще
-            if (res.length > 0 && res.split('').every(char => char === '!')) {
-                return res; 
-            }
-            
-            // Во всех остальных случаях приводим к верхнему регистру и чистим знаки погрешности на конце
-            res = res.toUpperCase();
-            while (res.length > 0 && ['.', '!', '?', ','].includes(res[res.length - 1])) {
-                res = res.slice(0, -1).trim();
-            }
-            return res;
-        }
-
         function checkCode() {
             if (isLock) return;
             const inputField = document.getElementById('user-input');
             const outputField = document.getElementById('response-text');
             const rawValue = inputField.value;
+            const trimmedValue = rawValue.trim();
             
-            if (rawValue.trim() === "") {
+            if (trimmedValue === "") {
                 isLock = true;
                 outputField.innerText = langData[currentLang].emptyWrong;
                 document.body.classList.add('wrong-flash');
@@ -499,9 +483,22 @@
                 return;
             }
 
-            const cleanCode = cleanInputString(rawValue);
+            // Абсолютная проверка на пять восклицательных знаков до фильтров регистра
+            if (currentStep === 5 && trimmedValue === "!!!!!") {
+                triggerInputFlash();
+                outputField.innerText = langData[currentLang].steps[currentStep].reply;
+                currentStep++;
+                inputField.value = "";
+                langClickCount = 0;
+                return;
+            }
 
-            // 1. Проверка универсальных пасхалок (доступны всегда)
+            // Стандартный фильтр для остальных шагов
+            let cleanCode = trimmedValue.toUpperCase();
+            while (cleanCode.length > 0 && ['.', '!', '?', ','].includes(cleanCode[cleanCode.length - 1])) {
+                cleanCode = cleanCode.slice(0, -1).trim();
+            }
+
             if (langData[currentLang].freeAnswers[cleanCode] !== undefined) {
                 triggerInputFlash();
                 outputField.innerHTML = langData[currentLang].freeAnswers[cleanCode];
@@ -510,19 +507,9 @@
                 return;
             }
 
-            // 2. Проверка основной сюжетной линии
             if (currentStep <= 6) {
-                let isCorrect = false;
-
-                // СВЕРХНАДЕЖНЫЙ ПРЯМОЙ ИЗОЛИРОВАННЫЙ ФИКС ДЛЯ ЭТАПА 5 (!!!!!)
-                if (currentStep === 5) {
-                    if (cleanCode === "!!!!!") {
-                        isCorrect = true;
-                    }
-                } else {
-                    const expectedTriggers = stepTriggers[currentStep];
-                    isCorrect = expectedTriggers.some(trigger => cleanCode === trigger || cleanCode.includes(trigger));
-                }
+                const expectedTriggers = stepTriggers[currentStep];
+                const isCorrect = expectedTriggers.some(trigger => cleanCode === trigger || cleanCode.includes(trigger));
 
                 if (isCorrect) {
                     triggerInputFlash();
@@ -536,7 +523,6 @@
                 }
             }
 
-            // 3. Вывод ошибки
             isLock = true;
             const randomContempt = langData[currentLang].contempt[Math.floor(Math.random() * langData[currentLang].contempt.length)];
             outputField.innerText = `${langData[currentLang].wrong}\n${randomContempt}`;
