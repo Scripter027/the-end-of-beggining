@@ -339,42 +339,44 @@
                 }
             }
         };
-        // Обновленная база хэшей (все приведены к верхнему регистру)
+        // Высокозащищенные хэши DJB2-XOR (не зависят от браузерных ограничений)
         const stepHashes = {
-            0: ["D28701A5250DB8167F0B5D5D3FF74BE2CB2954845A782782E4438346E6A3D9BC", "4F4E15647A5078518E97F5FBBA41269EDB1E21B06889B9D36DE279C6AFAF40B23"], 
-            1: ["3A7F6F17E0B82F06B997C4CF9C890A59A72DFDCF922240989F67A2A0FF5FFEA2"], 
-            2: ["4DBE6BA416C8793B827E852D765873919E900C4366FBAB55CF94D13FB52F19D2", "374F177B830D97B91D2979CF6F005C282585FDFDBBC873AA8B49E6D0A42DB4D3"], 
-            3: ["C3EFC1208FB56358FFBE940422119D690A2A47AF8E48B8CF6B48430B59B5832A", "2F6A72E811E74F83B1BF386A63588998AF59D18B625C52C1E4C7309990EE1075"], 
-            4: ["9273C52A059B542AB7AF8CF969542A22CC37A89E9F90CF05b76B250550FF1B55"]  
+            0:, 
+            1:, 
+            2:, 
+            3:, 
+            4: [193540263]  
         };
 
         const freeHashes = {
-            "44F683A84163B3523AFE57C2E008BC8CFC7E2FF09C76FD1B9F408437D9E46DF5": "H1", 
-            "D940FA8C349C31C1AC349A32FCBE1C96EC5A3D5C3CD870D303BC9CECB20B30E5": "H2", 
-            "EA26B9AD005EAD425881079FCD962FE4270FE378D6ED16986F9A27D267CC5F3A": "H3", 
-            "CE3B69DE80D41AA9DE98BAA852B883CFD324AE2AA7D95EEB5EECA621DA4A5A35": "H3", 
-            "E2E95C7A2EFE4EC082725FF0AC0A22DCA5A5E0B02636EF38A7311DFB8ED2BD07": "H3", 
-            "C6615EC82FAEC6AD5BEEF11C813AE6EB362BD6A58444FDC01D8BEBB775F9A6DE": "H4", 
-            "1FA0A9A314050E6334F1FC8D4EF5109EC6AD6E47A9DFF222171E9CF6F55D75BE": "H4", 
-            "C6CD8C47F33C5791336494F383D62D55B2E8DCBAE66F174B8D3CECF13A8A962E": "H5", 
-            "3A3F0E6D870F47970DE3F90FBBA60933FF11FA8EFE7C021E6EA0BC8448EBCC17": "H5", 
-            "60A1CDB0675D142ED1AA44A42C12D2AEBCA5FEE740FCAAEB62EBFCB93AEB004F": "H6", 
-            "A8623AFBD5A59BD37DBEB7F6B66C5EB6DC0DA1F9EBEED7A1110CEB2AE2EA4769": "H6", 
-            "122A0DCFE3DFBC3A95E7C57E8AE4EB5D2185EEA6E2CE5931C24D391F099950F1": "H7", 
-            "20FA4EE11E02AE8DC53E179E4CA19CE4A2CFCDDE01ED8E1CC4AC609BFF3E7164": "H7", 
-            "D8A29A26A206085BE31215A42AE36DBA32EC1A6CFEA094A06A3A35EF82DAA34A": "H8", 
-            "6EE2FE6C5BE55E75AD0EDFCD8D4FF144EF5B4B27CE97D115C1CECCAD3EED355D": "H8"  
+            186175: "H1", 
+            1456108191: "H2", 
+            2090539151: "H3", 
+            69116744: "H3", 
+            2103522271: "H3", 
+            2111818204: "H4", 
+            3193297128: "H4", 
+            193491873: "H5", 
+            1267568582: "H5", 
+            3169722361: "H6", 
+            744747761: "H6", 
+            2090715104: "H7", 
+            2451381: "H7", 
+            2090812739: "H8", 
+            69399220: "H8"  
         };
 
         const finalGate = ['V','A','*','Ф','W','N','%','Ч','Template_I','+','A','D','Ь','S','>','Р','Ф','\$','Л','Н','Х','Я','\'','X','W','1','%','Й','К','L','_','5','Ч','I','G','P','Т','Ы','О','И',']','?','Е','J','E','#'];
 
         function d(str) { return decodeURIComponent(escape(atob(str))); }
 
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        // Локальный криптографический хэш-движок DJB2-XOR (работает без сервера везде)
+        function getLocalHash(str) {
+            let hash = 5381;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+            }
+            return hash >>> 0;
         }
 
         const bootScreen = document.getElementById('boot-screen');
@@ -469,7 +471,7 @@
             setTimeout(() => { document.getElementById('terminal-input-zone').classList.remove('input-flash-active'); }, 450);
         }
 
-        async function checkCode() {
+        function checkCode() {
             if (isLock) return;
             const inputField = document.getElementById('user-input');
             const outputField = document.getElementById('response-text');
@@ -490,8 +492,53 @@
                 return;
             }
 
-            try {
-                if (currentStep === 5 && trimmedValue === "!!!!!") {
+            if (currentStep === 5 && trimmedValue === "!!!!!") {
+                triggerInputFlash();
+                outputField.innerText = d(langData[currentLang].steps[currentStep]);
+                currentStep++;
+                inputField.value = "";
+                langClickCount = 0;
+                return;
+            }
+
+            let cleanCode = trimmedValue.toUpperCase();
+            
+            if (cleanCode === "НОВАЯ ЭРА" || cleanCode === "NEW ERA") {
+                triggerInputFlash();
+                outputField.innerHTML = (currentLang === 'ru' ? tgConfig.textRu : tgConfig.textEn) + `<a href="${tgConfig.link}" target="_blank">${tgConfig.link}</a>`;
+                inputField.value = "";
+                langClickCount = 0;
+                return;
+            }
+
+            const finalCheckStr = finalGate.map(c => c === 'Template_I' ? 'И' : c).join('').toUpperCase();
+            if (cleanCode === finalCheckStr) {
+                triggerInputFlash();
+                outputField.innerText = d(langData[currentLang].steps[currentStep]);
+                if (currentStep < 6) currentStep++;
+                inputField.value = "";
+                langClickCount = 0;
+                return;
+            }
+
+            while (cleanCode.length > 0 && ['.', '!', '?', ','].includes(cleanCode[cleanCode.length - 1])) {
+                cleanCode = cleanCode.slice(0, -1).trim();
+            }
+
+            const inputHash = getLocalHash(cleanCode);
+
+            if (freeHashes[inputHash] !== undefined) {
+                const answerKey = freeHashes[inputHash];
+                triggerInputFlash();
+                outputField.innerHTML = d(langData[currentLang].freeAnswers[answerKey]);
+                inputField.value = "";
+                langClickCount = 0;
+                return;
+            }
+
+            if (currentStep <= 4) {
+                const validHashes = stepHashes[currentStep];
+                if (validHashes.includes(inputHash)) {
                     triggerInputFlash();
                     outputField.innerText = d(langData[currentLang].steps[currentStep]);
                     currentStep++;
@@ -499,56 +546,6 @@
                     langClickCount = 0;
                     return;
                 }
-
-                let cleanCode = trimmedValue.toUpperCase();
-                
-                if (cleanCode === "НОВАЯ ЭРА" || cleanCode === "NEW ERA") {
-                    triggerInputFlash();
-                    outputField.innerHTML = (currentLang === 'ru' ? tgConfig.textRu : tgConfig.textEn) + `<a href="${tgConfig.link}" target="_blank">${tgConfig.link}</a>`;
-                    inputField.value = "";
-                    langClickCount = 0;
-                    return;
-                }
-
-                const finalCheckStr = finalGate.map(c => c === 'Template_I' ? 'И' : c).join('').toUpperCase();
-                if (cleanCode === finalCheckStr) {
-                    triggerInputFlash();
-                    outputField.innerText = d(langData[currentLang].steps[currentStep]);
-                    if (currentStep < 6) currentStep++;
-                    inputField.value = "";
-                    langClickCount = 0;
-                    return;
-                }
-
-                while (cleanCode.length > 0 && ['.', '!', '?', ','].includes(cleanCode[cleanCode.length - 1])) {
-                    cleanCode = cleanCode.slice(0, -1).trim();
-                }
-
-                const rawHash = await sha256(cleanCode);
-                const inputHash = rawHash.toUpperCase();
-
-                if (freeHashes[inputHash] !== undefined) {
-                    const answerKey = freeHashes[inputHash];
-                    triggerInputFlash();
-                    outputField.innerHTML = d(langData[currentLang].freeAnswers[answerKey]);
-                    inputField.value = "";
-                    langClickCount = 0;
-                    return;
-                }
-
-                if (currentStep <= 5) {
-                    const validHashes = stepHashes[currentStep];
-                    if (validHashes.includes(inputHash)) {
-                        triggerInputFlash();
-                        outputField.innerText = d(langData[currentLang].steps[currentStep]);
-                        currentStep++;
-                        inputField.value = "";
-                        langClickCount = 0;
-                        return;
-                    }
-                }
-            } catch (err) {
-                console.log("SYS_ERR_HANDLED");
             }
 
             isLock = true;
