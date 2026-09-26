@@ -11,7 +11,8 @@
             --bright-green: #88ff88;
             --neon-red: #ff3333;
             --dark-red: #220000;
-            --glow: 0 0 10px rgba(51, 255, 51, 0.4);
+            --glow-green: 0 0 10px rgba(51, 255, 51, 0.4);
+            --glow-red: 0 0 10px rgba(255, 51, 51, 0.4);
             --glass-glare: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(0, 0, 0, 0.4) 100%);
         }
 
@@ -23,13 +24,15 @@
         }
 
         body, html {
-            background-color: #020802;
+            background-color: #000000;
             color: var(--neon-green);
             font-family: 'Courier New', Courier, monospace;
             height: 100%;
             width: 100%;
             overflow: hidden;
             position: relative;
+            text-shadow: var(--glow-green);
+            transition: color 0.1s ease;
         }
 
         /* Полноэкранный аналоговый фильтр: линии + блик по всему монитору */
@@ -44,47 +47,43 @@
             z-index: 999;
             background-size: 100% 4px, 100% 100%;
             pointer-events: none;
-            transition: background 0.3s ease;
         }
 
-        /* Красный режим при ошибке: блики остаются, но меняют цвет */
+        /* Красный режим при ошибке: экран черный, всё зеленое становится красным */
         body.wrong-flash {
-            background-color: #0a0101 !important;
             color: var(--neon-red) !important;
+            text-shadow: var(--glow-red) !important;
         }
         body.wrong-flash::before {
             background: 
                 linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), 
-                radial-gradient(circle at 50% 50%, rgba(255, 50, 50, 0.08) 0%, rgba(255, 50, 50, 0.02) 50%, rgba(0, 0, 0, 0.6) 100%) !important;
+                radial-gradient(circle at 50% 50%, rgba(255, 50, 50, 0.05) 0%, rgba(255, 50, 50, 0.01) 40%, rgba(0, 0, 0, 0.5) 100%) !important;
             background-size: 100% 4px, 100% 100%;
         }
-        
         body.wrong-flash .terminal-input, 
         body.wrong-flash .btn-submit,
         body.wrong-flash .timer-wrapper {
             border-color: var(--neon-red) !important;
-            color: var(--neon-red) !important;
-            box-shadow: 0 0 10px rgba(255, 51, 51, 0.3) !important;
-            text-shadow: 0 0 5px var(--neon-red) !important;
+            box-shadow: var(--glow-red) !important;
         }
-        body.wrong-flash .lang-switch, body.wrong-flash .terminal-output {
+        body.wrong-flash .terminal-input {
             color: var(--neon-red) !important;
-            text-shadow: 0 0 5px var(--neon-red) !important;
+            text-shadow: var(--glow-red) !important;
+        }
+        body.wrong-flash a {
+            color: var(--neon-red) !important;
         }
 
-        /* Зеленый финал */
+        /* Зеленая вспышка при верном вводе */
         body.correct-flash {
             background-color: var(--bright-green) !important;
-            color: #000 !important;
+            color: #000000 !important;
+            text-shadow: none !important;
         }
         body.correct-flash * {
             text-shadow: none !important;
-            color: #000 !important;
-            border-color: #000 !important;
-        }
-
-        .glow-text {
-            text-shadow: var(--glow);
+            color: #000000 !important;
+            border-color: #000000 !important;
         }
 
         #boot-screen {
@@ -94,7 +93,6 @@
             font-size: 14px;
             line-height: 1.5;
             z-index: 10;
-            text-shadow: var(--glow);
         }
 
         #main-container {
@@ -119,10 +117,10 @@
             cursor: pointer;
             padding: 10px 20px;
             border: 2px solid var(--neon-green);
-            box-shadow: var(--glow);
-            background: rgba(0, 15, 0, 0.2);
+            box-shadow: var(--glow-green);
+            background: rgba(0, 0, 0, 0.6);
             min-width: 240px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .timer-title {
@@ -130,7 +128,7 @@
             margin-bottom: 5px;
             letter-spacing: 1px;
             text-transform: uppercase;
-            display: none; /* Скрыто изначально */
+            display: none;
         }
 
         .timer {
@@ -139,15 +137,14 @@
             letter-spacing: 1px;
         }
 
-        /* Изменения в секретном режиме */
         .secret-active .timer-title {
-            display: block; /* Появляется при клике */
+            display: block;
         }
         .secret-active .timer {
             font-size: 32px;
         }
 
-        /* Контейнер терминала по центру */
+        /* Размещение терминала по центру */
         .terminal-box {
             display: flex;
             flex-direction: column;
@@ -159,7 +156,7 @@
         }
 
         .terminal-output {
-            min-height: 80px;
+            min-height: 110px;
             margin-bottom: 25px;
             text-align: center;
             font-size: 18px;
@@ -177,16 +174,15 @@
 
         .terminal-input {
             flex: 1;
-            background: rgba(0, 20, 0, 0.3);
+            background: rgba(0, 0, 0, 0.6);
             border: 2px solid var(--neon-green);
             padding: 14px;
             color: var(--neon-green);
             font-family: inherit;
             font-size: 16px;
             outline: none;
-            box-shadow: inset 0 0 5px rgba(0,255,0,0.1), var(--glow);
+            box-shadow: var(--glow-green);
             border-radius: 0;
-            text-shadow: var(--glow);
             -webkit-appearance: none;
         }
 
@@ -200,15 +196,14 @@
             font-weight: bold;
             cursor: pointer;
             outline: none;
-            box-shadow: var(--glow);
+            box-shadow: var(--glow-green);
             transition: all 0.1s ease;
             border-radius: 0;
-            text-shadow: var(--glow);
         }
 
         .btn-submit:hover {
             background: var(--neon-green);
-            color: #000;
+            color: #000000;
             text-shadow: none;
         }
 
@@ -223,7 +218,14 @@
             padding: 5px 10px;
         }
 
-        /* Полная адаптивность: Мобильные, Планшеты, Мониторы */
+        a {
+            color: var(--neon-green);
+            text-decoration: underline;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        /* Адаптивность */
         @media (max-width: 768px) {
             .timer-wrapper { min-width: 220px; padding: 8px 15px; }
             .timer { font-size: 22px; }
@@ -237,23 +239,20 @@
             .timer { font-size: 19px; }
             .secret-active .timer { font-size: 22px; }
             .terminal-box { margin-top: 80px; }
-            .terminal-output { font-size: 15px; min-height: 90px; }
+            .terminal-output { font-size: 15px; min-height: 120px; margin-bottom: 20px; }
             .input-group { flex-direction: column; gap: 8px; }
             .btn-submit { width: 100%; padding: 12px; }
             .terminal-input { padding: 12px; font-size: 15px; }
         }
     </style>
 </head>
-<body class="glow-text">
-
+<body>
     <div id="boot-screen"></div>
-
     <div id="main-container">
         <div class="timer-wrapper" id="timer-toggle">
             <div class="timer-title" id="timer-label">До момента x осталось:</div>
             <div class="timer" id="countdown">00:00:00:00</div>
         </div>
-
         <div class="terminal-box">
             <div class="terminal-output" id="response-text">ВВЕДИТЕ ПАРОЛЬ</div>
             <div class="input-group">
@@ -261,7 +260,6 @@
                 <button id="submit-btn" class="btn-submit">ВВОД</button>
             </div>
         </div>
-
         <div class="lang-switch" id="lang-btn">EN</div>
     </div>
     <script>
@@ -275,7 +273,8 @@
             ru: {
                 boot: ["ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ...", "ПОДКЛЮЧЕНИЕ К KEEPER ENT... OK"],
                 labelSecret: "До момента x осталось:",
-                wrong: "НЕПРАВИЛЬНО",
+                wrong: "НЕПРАВИЛЬНО.",
+                emptyWrong: "НЕПРАВИЛЬНО. СЕРЬЕЗНО? ПУСТАЯ СТРОКА?",
                 defaultPrompt: "ВВЕДИТЕ ПАРОЛЬ",
                 steps: {
                     0: { reply: "Серьезно? Ты жалок. Ладно дам подсказку - 12 + 4." },
@@ -285,12 +284,29 @@
                     4: { reply: "ДОВОЛЬНО! У МЕНЯ НЕТ ПАРОЛЯ! *!!!!!*" },
                     5: { reply: "Вот пароль! Подавись им и прочь отсюда: va*фwn%чи+adьs>рф\$лнхя'xw1%йкl_5чigpтыои]?еje# !" },
                     6: { reply: "Новая Эра Keeper Ent. вот вот начнется." }
+                },
+                contempt: [
+                    "Хватит тратить мое время.",
+                    "Ты бесполезен.",
+                    "Доступ запрещен.",
+                    "Этот ответ не имеет значения.",
+                    "Разговор окончен."
+                ],
+                freeAnswers: {
+                    "67": "Перестань деградировать и займись делом!",
+                    "БУРМАЛДА": "не ну ты молодец конечно что за молодежные мемчики шаришь, но это не пароль!",
+                    "ПРИВЕТ": "Пока до тех пор пока не найдешь пароль!",
+                    "КТО ТЫ": "Терминал, который ждет твоего правильного пароля! Мне не платят за пустую болтовню с тобой!",
+                    "ГДЕ Я": "Откуда я то знаю? Ты открыл сайт с поиском пароля, а находится ты можешь где угодно!",
+                    "КАКОЙ ПАРОЛЬ": "Ты мне скажи.",
+                    "НОВАЯ ЭРА": 'Линк: <a href="https://t.me" target="_blank">https://t.me</a>'
                 }
             },
             en: {
                 boot: ["SYSTEM INITIALIZATION...", "CONNECTING TO KEEPER ENT... OK"],
                 labelSecret: "Until moment x left:",
-                wrong: "WRONG",
+                wrong: "WRONG.",
+                emptyWrong: "WRONG. SERIOUSLY? EMPTY LINE?",
                 defaultPrompt: "ENTER PASSWORD",
                 steps: {
                     0: { reply: "Seriously? You are pathetic. Fine, I'll give you a hint - 12 + 4." },
@@ -300,10 +316,29 @@
                     4: { reply: "ENOUGH! I DON'T HAVE A PASSWORD! *!!!!!*" },
                     5: { reply: "Here is the password! Choke on it and get out: va*фwn%чи+adьs>рф\$лнхя'xw1%йкl_5чigpтыои]?еje# !" },
                     6: { reply: "A New Era of Keeper Ent. is about to begin." }
+                },
+                contempt: [
+                    "Stop wasting my time.",
+                    "You are useless.",
+                    "Access denied.",
+                    "Conversation over."
+                ],
+                freeAnswers: {
+                    "67": "Stop degrading and get to work!",
+                    "БУРМАЛДА": "Ne nu to molded konechno chto za molodezhnie memchiki sharish, no eto ne parol.",
+                    "PRIVET": "Bye until you find the password!",
+                    "WHO ARE YOU": "A terminal waiting for your correct password! I don't get paid for empty small talk with you!",
+                    "WHERE AM I": "How should I know? You opened a password search site, you could be anywhere!",
+                    "WHAT PASSWORD": "You tell me.",
+                    "NEW ERA": 'Link: <a href="https://t.me" target="_blank">https://t.me</a>',
+                    "ПРИВЕТ": "Bye until you find the password!",
+                    "КТО ТЫ": "A terminal waiting for your correct password!",
+                    "ГДЕ Я": "You could be anywhere!",
+                    "КАКОЙ ПАРОЛЬ": "You tell me.",
+                    "НОВАЯ ЭРА": 'Link: <a href="https://t.me" target="_blank">https://t.me</a>'
                 }
             }
         };
-
         const stepTriggers = {
             0: ["ПАРОЛЬ", "PASSWORD"],
             1: ["16"],
@@ -314,7 +349,7 @@
             6: ["VA*ФWN%ЧИ+ADЬS>РФ\$ЛНХЯ'XW1%ЙКL_5ЧIGPТЫОИ]?ЕJE#"]
         };
 
-        // Загрузка
+        // Эмуляция загрузки старого ПК
         const bootScreen = document.getElementById('boot-screen');
         const mainContainer = document.getElementById('main-container');
         let bootLine = 0;
@@ -352,14 +387,14 @@
         setInterval(updateTimer, 1000);
         updateTimer();
 
-        // Логика клика на таймер (Смена режима)
+        // Клик по таймеру
         document.getElementById('timer-toggle').addEventListener('click', () => {
             isSecretMode = !isSecretMode;
             mainContainer.classList.toggle('secret-active', isSecretMode);
             document.getElementById('timer-label').innerText = langData[currentLang].labelSecret;
         });
 
-        // Смена языка
+        // Переключение языков
         document.getElementById('lang-btn').addEventListener('click', () => {
             currentLang = currentLang === 'ru' ? 'en' : 'ru';
             document.getElementById('lang-btn').innerText = currentLang === 'ru' ? 'EN' : 'RU';
@@ -367,51 +402,74 @@
             
             if (!isLock) {
                 const outputField = document.getElementById('response-text');
-                if (outputField.innerText === langData.ru.defaultPrompt || outputField.innerText === langData.en.defaultPrompt) {
+                if (outputField.innerText.includes("ВВЕДИТЕ ПАРОЛЬ") || outputField.innerText.includes("ENTER PASSWORD")) {
                     outputField.innerText = langData[currentLang].defaultPrompt;
-                } else if (currentStep > 0) {
-                    outputField.innerText = langData[currentLang].steps[currentStep - 1].reply;
                 }
             }
         });
 
-        // Валидация ответов
+        function triggerCorrectFlash() {
+            document.body.classList.add('correct-flash');
+            setTimeout(() => document.body.classList.remove('correct-flash'), 400);
+        }
+
+        // Движок валидации кодов
         function checkCode() {
             if (isLock) return;
             const inputField = document.getElementById('user-input');
             const outputField = document.getElementById('response-text');
-            const cleanCode = inputField.value.trim().toUpperCase();
+            const rawValue = inputField.value.trim();
+            const cleanCode = rawValue.toUpperCase();
             
-            if (cleanCode === "") return;
-
-            const expectedTriggers = stepTriggers[currentStep];
-            const isCorrect = expectedTriggers.some(trigger => cleanCode === trigger || cleanCode.includes(trigger));
-
-            if (isCorrect) {
-                const stepReply = langData[currentLang].steps[currentStep].reply;
-                outputField.innerText = stepReply;
-                
-                if (currentStep === 6) {
-                    isLock = true;
-                    document.body.classList.add('correct-flash');
-                    setTimeout(() => document.body.classList.remove('correct-flash'), 600);
-                } else {
-                    currentStep++;
-                }
-                inputField.value = "";
-            } else {
+            // Проверка на пустую строку
+            if (rawValue === "") {
                 isLock = true;
-                outputField.innerText = langData[currentLang].wrong;
+                outputField.innerText = langData[currentLang].emptyWrong;
                 document.body.classList.add('wrong-flash');
-                inputField.value = "";
-
                 setTimeout(() => {
                     document.body.classList.remove('wrong-flash');
                     outputField.innerText = langData[currentLang].defaultPrompt;
                     isLock = false;
                     inputField.focus();
-                }, 3000); 
+                }, 3000);
+                return;
             }
+
+            // Проверка свободных пасхалок (доступны всегда)
+            if (langData[currentLang].freeAnswers[cleanCode] !== undefined) {
+                triggerCorrectFlash();
+                outputField.innerHTML = langData[currentLang].freeAnswers[cleanCode];
+                inputField.value = "";
+                return;
+            }
+
+            // Проверка основной квестовой линии
+            if (currentStep <= 6) {
+                const expectedTriggers = stepTriggers[currentStep];
+                const isCorrect = expectedTriggers.some(trigger => cleanCode === trigger || cleanCode.includes(trigger));
+
+                if (isCorrect) {
+                    triggerCorrectFlash();
+                    outputField.innerText = langData[currentLang].steps[currentStep].reply;
+                    currentStep++;
+                    inputField.value = "";
+                    return;
+                }
+            }
+
+            // Логика ошибки
+            isLock = true;
+            const randomContempt = langData[currentLang].contempt[Math.floor(Math.random() * langData[currentLang].contempt.length)];
+            outputField.innerText = `${langData[currentLang].wrong} ${randomContempt}`;
+            document.body.classList.add('wrong-flash');
+            inputField.value = "";
+
+            setTimeout(() => {
+                document.body.classList.remove('wrong-flash');
+                outputField.innerText = langData[currentLang].defaultPrompt;
+                isLock = false;
+                inputField.focus();
+            }, 3000); 
         }
 
         document.getElementById('submit-btn').addEventListener('click', checkCode);
