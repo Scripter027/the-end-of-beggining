@@ -67,13 +67,12 @@
         }
         body.wrong-flash a { color: var(--neon-red) !important; }
 
-        /* Локальная зеленая вспышка ТОЛЬКО для табло ввода */
+        /* Изумрудная вспышка СТРОГО для строки ввода и кнопки */
         .input-flash-active .terminal-input,
-        .input-flash-active .btn-submit,
-        .input-flash-active .timer-wrapper {
-            background-color: rgba(51, 255, 51, 0.15) !important;
+        .input-flash-active .btn-submit {
+            background-color: rgba(51, 255, 51, 0.25) !important;
             border-color: var(--bright-green) !important;
-            box-shadow: 0 0 25px rgba(51, 255, 51, 0.8) !important;
+            box-shadow: 0 0 25px rgba(51, 255, 51, 0.9) !important;
             color: var(--bright-green) !important;
         }
 
@@ -208,7 +207,7 @@
             <div class="timer-title" id="timer-label">До момента x осталось:</div>
             <div class="timer" id="countdown">00:00:00:00</div>
         </div>
-        <div class="terminal-box">
+        <div class="terminal-box" id="terminal-input-zone">
             <div class="terminal-output" id="response-text">ВВЕДИТЕ ПАРОЛЬ</div>
             <div class="input-group">
                 <input type="text" id="user-input" class="terminal-input" autofocus autocomplete="off" placeholder="> ">
@@ -283,17 +282,20 @@
                 freeAnswers: {
                     "67": "Stop degrading and get to work!",
                     "БУРМАЛДА": "Ne nu to molded konechno chto za molodezhnie memchiki sharish, no eto ne parol.",
+                    "HELLO": "Bye until you find the password!",
                     "PRIVET": "Bye until you find the password!",
+                    "ПРИВЕТ": "Bye until you find the password!",
                     "WHO ARE YOU": "A terminal waiting for your correct password! I don't get paid for empty small talk with you!",
+                    "КТО ТЫ": "A terminal waiting for your correct password! I don't get paid for empty small talk with you!",
                     "WHERE AM I": "How should I know? You opened a password search site, you could be anywhere!",
+                    "ГДЕ Я": "How should I know? You opened a password search site, you could be anywhere!",
                     "WHAT PASSWORD": "You tell me.",
+                    "КАКОЙ ПАРОЛЬ": "You tell me.",
+                    "URAN": "…",
                     "УРАН": "…",
+                    "HAMAM": "…",
                     "ХАМАМ": "…",
                     "NEW ERA": 'Link: <a href="https://t.me" target="_blank">https://t.me</a>',
-                    "ПРИВЕТ": "Bye until you find the password!",
-                    "КТО ТЫ": "A terminal waiting for your correct password!",
-                    "ГДЕ Я": "You could be anywhere!",
-                    "КАКОЙ ПАРОЛЬ": "You tell me.",
                     "НОВАЯ ЭРА": 'Link: <a href="https://t.me" target="_blank">https://t.me</a>'
                 }
             }
@@ -363,21 +365,21 @@
             }
         });
 
-        // Функция вспышки ТОЛЬКО для табло ввода
+        // Функция точечной вспышки СТРОГО строки ввода и кнопки
         function triggerInputFlash() {
-            document.getElementById('main-container').classList.add('input-flash-active');
+            document.getElementById('terminal-input-zone').classList.add('input-flash-active');
             setTimeout(() => {
-                document.getElementById('main-container').classList.remove('input-flash-active');
-            }, 400);
+                document.getElementById('terminal-input-zone').classList.remove('input-flash-active');
+            }, 450);
         }
 
-        // Фильтрация погрешностей ввода (удаление концевых знаков препинания и пробелов)
+        // Исправленная очистка строк, не ломающая английский ввод и знаки шифра
         function cleanInputString(str) {
             let res = str.trim().toUpperCase();
-            // Цикл удаляет знаки ., !, ?, если они стоят на самом конце строки
+            if (/^!+\$/.test(res)) return res; // Для шифра !!!!!
+            
+            // Удаляем знаки препинания на конце, если это не чистый шифр
             while (res.length > 0 && ['.', '!', '?', ','].includes(res[res.length - 1])) {
-                // Исключение: если игрок вводит шифр из одних восклицательных знаков (!!!!!) - не трогаем его
-                if (/^!+\$/.test(res)) break;
                 res = res.slice(0, -1).trim();
             }
             return res;
@@ -389,7 +391,6 @@
             const outputField = document.getElementById('response-text');
             const rawValue = inputField.value;
             
-            // Проверка на пустую строку до очистки
             if (rawValue.trim() === "") {
                 isLock = true;
                 outputField.innerText = langData[currentLang].emptyWrong;
@@ -404,10 +405,9 @@
                 return;
             }
 
-            // Очищаем от погрешностей (пробелы, концевые знаки)
             const cleanCode = cleanInputString(rawValue);
 
-            // Проверка свободных пасхалок (Уран, Хамам, Бурмалда и т.д.)
+            // 1. Проверка универсальных пасхалок (доступны на любом языке)
             if (langData[currentLang].freeAnswers[cleanCode] !== undefined) {
                 triggerInputFlash();
                 outputField.innerHTML = langData[currentLang].freeAnswers[cleanCode];
@@ -415,7 +415,7 @@
                 return;
             }
 
-            // Проверка основного сюжета
+            // 2. Проверка основной сюжетной линии
             if (currentStep <= 6) {
                 const expectedTriggers = stepTriggers[currentStep];
                 const isCorrect = expectedTriggers.some(trigger => cleanCode === trigger || cleanCode.includes(trigger));
@@ -431,7 +431,7 @@
                 }
             }
 
-            // Ошибка обычного ввода
+            // 3. Вывод ошибки
             isLock = true;
             const randomContempt = langData[currentLang].contempt[Math.floor(Math.random() * langData[currentLang].contempt.length)];
             outputField.innerText = `${langData[currentLang].wrong} ${randomContempt}`;
