@@ -28,7 +28,6 @@ body.correct-flash { animation: flash-green 0.4s ease-out; }
   0% { box-shadow: 0 0 25px rgba(0, 255, 0, 0.8); border-color: #4f4; }
   100% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.1); border-color: #0f0; }
 }
-
 header { display: flex; justify-content: center; align-items: center; position: relative; height: 50px; margin-top: 5px; }
 #timer-container { cursor: pointer; text-align: center; border: 1px solid #0f0; padding: 8px 16px; background: rgba(0,20,0,0.4); text-transform: uppercase; letter-spacing: 1px; font-size: 16px; box-shadow: 0 0 10px rgba(0,255,0,0.2); user-select: none; -webkit-tap-highlight-color: transparent; transition: all 0.1s ease; }
 #timer-container:hover { background: #0f0; color: #000; }
@@ -38,6 +37,7 @@ header { display: flex; justify-content: center; align-items: center; position: 
 #terminal-output a { color: inherit; text-decoration: underline; font-weight: bold; }
 .input-panel { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 500px; background: rgba(0,10,0,0.5); border: 1px solid #0f0; padding: 6px 12px; box-shadow: 0 0 15px rgba(0,255,0,0.1); transition: all 0.1s ease; }
 .input-panel input { flex: 1; background: transparent; border: none; outline: none; color: #0f0; font-family: 'Share Tech Mono', monospace; font-size: 18px; padding: 6px 0; width: 100%; }
+
 .input-panel button { background: #0f0; color: #000; border: none; font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: bold; padding: 10px 20px; cursor: pointer; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
 .input-panel button:hover { background: #0a0; }
 footer { display: flex; justify-content: flex-end; align-items: center; padding: 5px 5px; height: 40px; }
@@ -110,7 +110,6 @@ let currentStep = 0;
 let isLockout = false;
 let customMessageActive = false;
 let currentCustomKey = null;
-let lastDecryptedStepText = { RU: "", EN: "" };
 
 const bootLines = [
   "CORE::INIT -> LAUNCHING TERMINAL SUBSYSTEM",
@@ -122,70 +121,99 @@ const bootLines = [
   "SYSTEM IS READY. DO NOT WASTE MY TIME."
 ];
 
-const UI_DATA = {
-  "RU": { "s": "ВВОД", "st": "Отсчет до момента x", "b": "Назад", "t": "Язык сменен на: Русский" },
-  "EN": { "s": "ENTER", "st": "Countdown to moment x", "b": "Back", "t": "Language changed to: English" }
+const tgWordRu = "новая эра";
+const tgWordEn = "new era";
+const tgLink = 'https://t.me'; 
+
+const encryptedLocalization = {
+  RU: {
+    submit: "0JLQktCe0JQ=", secretTitle: "0J7RgtGB0YfQtdGCINC00L4g0LzQvtC80LXQvdGC0LAgeA==", back: "0J3QsNC30LDQtA==",
+    init: "0JLQktCV0JTQmNCi0JUg0J/QkNGA0J7Qm9Cs", wrongPrefix: "0QldCS0JXQoNCd0J4uIA==",
+    emptyError: "0QldCS0JXQoNCd0J4g0YHQtdGA0YzQtdC30L3QviDQv9GD0YHRgtCw0Y8g0YHRgtGA0L7QutCwPw==",
+    toastText: "0K/Qt9GL0Log0YHQvNC10L3QtdC9INC90LA6INCg0YPRgdGB0LrQuNC5",
+    step0_hint: "0KHQtdGA0YzQtdC30L3QviDispatchINGC0Ysg0LbQsNC70L7Qui4g0JvQsNC00L3QviDQtNCw0Lwg0L/QvtC00YHQutCw0LfQutGDIC0gMTIgKyA0Lg==",
+    step1_next: "0JzQvtC70L7QtNC10YYhINCa0YHRgtCw0YLQuCDRgdGC0L7Qu9GM0LrQviDQu9C10YIg0L/QvtC00YDRj9C0INCY0CYg0L/QvtC00LHQuNGA0LDQu9CRINCx0Ysg0L/QsNGA0L7Qu9GMINCh0LrQsNC20Lgg0YHQu9C+0LLQviDQv9C+0LHQtdCzINC90L4g0LHQtdC3INC+INC4INC1",
+    step2_next: "0LvQsNC00L3QviDQvdCwINGB0LDQvNC+0Lwg0LTQtdC70LUg0YMg0LzQtdC90Y8g0L3QtdGCINC/0LDQYDQvtC70Y8uINCf0YDQvtGB0YLQuCwg0L3QviDRgNCw0LfQsdC40YDQsNC50YHRjyA8ZW0+0YHQscC8PC9lbT4=",
+    step3_next: "0Y8g0LbQtSDRgdC60LDQt9Cw0Lsg0YMg0LzQtTEyMysxMjPQvdGPINC90LjRh9C10LPQviDQvdC10YLRgSDRjyDRh9C40YHRgiE=",
+    step4_next: "0JTQn9CS0J7Qm9Cs0J3QniEg0KMg0JzQld0K8g00VINCf0JDQoNCe00K/ISEIDxlbT4hISEhITwvZW0+",
+    step5_next: "0JLQvtGCINC/0LDQYDQvtC70YwhINCf0L7QtNCw0LLQuNGB0Ywg0LjQvCDQuCDQv9GA0L7RgtGMINC+0YLRgdGO0QtQsTogdmEq0Z3biV9Y0UrYWTRjHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj",
+    era: "0QvtCy0DRRjyDQrdGA0LAgS2VlcGVyIEVudC4g0LLQvtGCINCy0L7RgiDQvdCw0YfQvdC10YLRgdGPLg==",
+    scolded: [
+      "0CcNC40LzQvi4g0JXRidC1INGA0LDQtyDQv9C+0LTRg9C80LDQuS4=", "0KHQu9Cw0LHQvi4g0J7Rh9C10L3RjCDRgdC70LDQsdC+Lg==",
+      "0CYg0Y3RgtC+INCy0YHRkdwsINC90LAg0YfRgtC+INGLRYDRgdC/0L7RgdC+0LHQtdC9Pw==", "0QtSDRg9Cz0LDQtNCw0LsuINCi0LLQvtGPINC70L7Qs9C40LrQsCDQv9GD0YHRgtCwLg==",
+      "0J/Rg1Jl0LrRgNCw0YLQuCDQv9C10YDQtdCx0LgNGA0LDRgtGMINC80YPRgdC+0YAu", "0KHQuNGB0YLQtdC80LAg0LLQuNC00LjRgiDRgtCy0L7RjiDRgNCw0YHRgtC10YDRj9C90L3QvtGB0YLRjC4="
+    ]
+  },
+  EN: {
+    submit: "0VOVEVS", secretTitle: "0gY291bnRkb3duIHRvIG1vbWVudCB4", back: "0FhY2s=",
+    init: "0VOVEVSIFBBU1NXT1JE", wrongPrefix: "0VdST05HLg==",
+    emptyError: "0VdST05HIHNlcmlvdXNseSBhbiBlbXB0eSBzdHJpbmc/",
+    toastText: "0bGFuZ3VhZ2UgY2hhbmdlZCB0bzogRW5nbGlzaA==",
+    step0_hint: "0KxlcmlvdXNseT8gWW91IGFyZSBwYXRoZXRpYy4gRmluZSwgSSdsbCBnaXZlIHlvdSBhIGhpbnQgLSAxMiArIDQu",
+    step1_next: "0V2VsbCBkb25lISBCeSB0aGUgd2F5LCB0aGF0J3MgZXhhY3RseSBob3cgbWFueSB5ZWFycyBpbiBhIHJvdyBhbiBBSSB3b3VsZCBjcmFjayBhIHBhc3N3b3JkLiBTYXkgdGhlIHdvcmQgZXNjYXBlIGJ1dCB3aXRob3V0IG8gYW5kIGU=",
+    step2_next: "0L9rYXksIGhvbmVzdGx5IEkgZG9uJ3QgaGF2ZSBhIHBhc3N3b3JkLiBTb3JyeSwgZGVhbCB3aXRoIGl0IDxlbT5teXNlbGY8L2VtPg==",
+    step3_next: "0bSB0b2xkIHlvdSBJIGhhMTIzKzEyM3ZlIG5vdGhpbmchIEkgYW0gY2xlYW4h",
+    step4_next: "0U5PVUdIISBJIEhBVkUgTk8gUEFTU1dPUkQhIDxlbT4hISEhITwvZW0+",
+    step5_next: "0GVyZSBpcyB0aGUgcGFzc3dvcmQhIENob2tlIG9uIGl0IGFuZCBnZXQgb3V0OiB2YSpmbXclY2krYWTRpropertyHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj",
+    era: "0VGhlIE5ldyBFcmEgb2YgS2VlcGVyIEVudC4gaXMgYWJvdXQgdG8gYmVnaW4u",
+    scolded: [
+      "0MGlzc2VkLiBUaGluayBhZ2Fpbi4=", "0V2Vhay4gUGF0aGV0aWMu", "0bXMgdGhhdCBhbGwgeW91IGNhbiBkbz8=",
+      "0V3JvbmcndSByZWFkeS4gWW91ciBsb2dpYyBpcyBlbXB0eS4=", "0U3RvcCBlbnRlcmluZyBnYXJiYWdlLg==", "0VGhlIHN5c3RlbSBzZWVzIHlvdXIgY29uZnVzaW9uLg=="
+    ]
+  }
 };
 
-const openEggs = {
-  "новая эра": { RU: '<a href="https://t.me/+DgXdw2zvilgwYzdi" target="_blank">https://t.me/+DgXdw2zvilgwYzdi</a>', EN: '<a href="https://t.me/+DgXdw2zvilgwYzdi" target="_blank">https://t.me/+DgXdw2zvilgwYzdi</a>' },
-  "new era": { RU: '<a href="https://t.me/+DgXdw2zvilgwYzdi" target="_blank">https://t.me/+DgXdw2zvilgwYzdi</a>', EN: '<a href="https://t.me/+DgXdw2zvilgwYzdi" target="_blank">https://t.me/+DgXdw2zvilgwYzdi</a>' }
+const secureStepHashes = {
+  0: ["-1250274158", "121650392"], 
+  1: ["1567"], 
+  2: ["80026", "81966", "3523555", "3523671"], 
+  3: ["3113", "113642", "-1024346859"], 
+  4: ["47660601", "51641"], 
+  5: ["66465"], 
+  mega: ["1135964894"] 
 };
 
-function xor(str, key) {
-  let result = '';
+const truePassHash = "-1669460010";
+
+const eggHashes = {
+  "1681": "H1", "1359695627": "H2", "-1055745431": "H3", "99162322": "H4",
+  "1318021469": "H5", "1472504953": "H6", "102554743": "H7", "-1330366819": "H8",
+  "-446340455": "H9", "-1505374824": "H10", "1156828": "H11", "-1480119842": "H12",
+  "1176274": "H13", "99132213": "H14"
+};
+
+const easterEggsDecrypted = {
+  "H1": { RU: "0J/QtdGA0LXRedtGC0LDQvdGMINC00LXQs9GA0LDQtNC40YDQvtCy0LDRgtGMINC4INC30LDQudC80LjRgdGMINC00LXQu9C+0Lwh", EN: "U3RvcCBkZWdyYWRpbmcgeW91cnNlbGYgYW5kIGdldCB0byB3b3JrIQ==" },
+  "H2": { RU: "0L3QtSDQvdGDINGLRYDQvNC+0LvQvtC00LXRhiDQutC+0L3QtdGH0L3QviDRh9GC0L4g0LfQsCDQvNC+0LvQvtC00LXQttC90YvQtSDQvNC10LzRh9C40LrQuCDRiNCw0YDQuNGI0YwsINC90L4g0Y3RgtC+INC90NC1INC/0LDRgNC+0LvRjCE=", EN: "TmUgbnUgdG8gbW9sZGVkIGtvbmVjaG5vIGNodG8gemEgbW9sb2RlemhuaWUgbWVtY2hpa2kgc2hhcmlzaCwgbm8gZXRvIG5lIHBhcm9sLg==" },
+  "H3": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
+  "H4": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
+  "H5": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
+  "H6": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
+  "H7": { RU: "0J7RgtC60YPQstCwINGPINGC0L4g0LfQvdCw0Y4/INCi0Ysg0L7RgtC60YDRi9C7INGB0LDQudGCINGBINC/0L7QuNGB0LrQvtC8INC/0LDRgNC+0LvRjywg0LAg0L3QsNGF0L7QtNC40YLRjNGBNGDRgtGMINC80L7QttC10YjRjCDQs9C00LUg0YPQs9C+0LTQvdC+IQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
+  "H8": { RU: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
+  "H9": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
+  "H10": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
+  "H11": { RU: "4oCm", EN: "4oCm" }, "H12": { RU: "4oCm", EN: "4oCm" }, "H13": { RU: "4oCm", EN: "4oCm" }, "H14": { RU: "4oCm", EN: "4oCm" }
+};
+function getDecryptedText(key, lang, mode) {
+  try {
+    let baseStr = "";
+    if (mode === "sys") baseStr = encryptedLocalization[lang][key];
+    if (mode === "egg") baseStr = easterEggsDecrypted[key][lang];
+    return decodeURIComponent(escape(atob(baseStr)));
+  } catch (e) {
+    return "";
+  }
+}
+
+function getSecureHash(str) {
+  let hash = 0;
   for (let i = 0; i < str.length; i++) {
-    result += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
   }
-  return result;
-}
-
-function hexToTxt(hex) {
-  let str = '';
-  for (let i = 0; i < hex.length; i += 2) {
-    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-  }
-  return str;
-}
-
-const secureVault = {
-  "init": { RU: "03091104111300401d00160f0b1c", EN: "21232821264c3c253723332f262044" },
-  "empty": { RU: "2b2603091104115f0117071017111300401c101c1100064d161110001f0241", EN: "333f232b23434327313f253b2f23244245252b4421294437294420234244" },
-  "prefix": { RU: "2b2603091104115f", EN: "333f232b2343" },
-  "step0": { RU: "360010041d0b171c115112525547434758504245595955140f0c051a4e10170a000d024b4556441b4e54", EN: "3719161d2b2f4c3a53232145452d33303d35275840255d322b27422f4625293d40292f4445332b2f293b2145" },
-  "step1": { RU: "3a0010000a0e1b1241475c40464f5240544558504245595955150f001b0f1a4e0b0e000410410a1102144e0b0b001a1d4111160a0b0d4d1610091309074d0a1b410d4d0a", EN: "331918184422212f414247562f274246532d212239454133274229415840332f2b444533222b2742255d214541295c2b29405d212b232b3d402b2344453d2b2323253b2145" },
-  "step2": { RU: "1b110b1411441c0d401116130302061301131c114e13024c04111a1d131500414e1500095f00030f1d111b1d161d124c13031043", EN: "1b171d1d4411132f232f44203d40131924442129442344332322442b1d442b23443d3d443b33342c443b23273c" },
-  "step3": { RU: "16551b1f5513101c101d1c5513411b101c40401d0a5f011707101711130040525d1c521f5211161c104d", EN: "1d4420332822442129443c33441c2c431b33424424234421294427303d352758403c334421232821264c" },
-  "step4": { RU: "2134262426333c2e554130425c1116130302061301131c114e5959595959", EN: "21342b2b232e2c454133442c43232f442b2344332322442b5c5c5c5c5c" },
-  "step5": { RU: "213437433027372d3721415f171017111300405c14101108031d161a0b5f1013411b4e121c0003114b53444558504245595955434758504245595955140f0c051a41551a021d4c5c16500e5e0d49464e51141c59424911475d404c", EN: "2c23262144213744313f253b2f2324424521442b2344332322442b44213d4421234421232821264c58504245595955434758504245595955140f0c051a412b332b44453b" },
-  "step7": { RU: "21342a170f03125d4810114b301713171311425e4c1303104358504245595955434758504245595955140f0c051a4e10170a000d024b", EN: "302429442a233b4421232821264c3322442f2b232421264c3b2244212344312b44333b442c2323232442" },
-  "egg0": { RU: "3d161111161d0016145f0617051a0701041113004000101c4e0c051110001f41", EN: "373623344422212f442b234421232821264c23232244212344233b442323422f" },
-  "egg1": { RU: "13165f171c5f111e1710111111015f0111031c110300065f1e10111015111a4e16100913161d0a0b0d4d161d1d111f164d171d1713160a114d10174100104111164d13031043", EN: "2a2344202344313f253b2f2324424521232821264c37313b3333314541295c2b29405d212b232b3d402b2344453d2b2323253b2145412323442b2344332322442b1d442b23443d3d443b33342c443b23273c" },
-  "egg2": { RU: "331c18105f031c5f1d11105f1f11105f11101741160c051a4e10170a000d024b", EN: "2633214433244421232821264c23232244212344233b422f" },
-  "egg3": { RU: "391611131c11100241411e121217111a145f13111b1d16111b1d4e11111612111b1d12111d4d3011115f11114e131102071612164d1d111111134d16071011164d1b11110d1c4c", EN: "25443021362b23222d3b4421232821264c23232244212344233b422f412d442023224344212944332322442b44213d4421234421232821264c4437294420234244232344332322442b1d442b23443d3d443b33342c443b23273c" },
-  "egg4": { RU: "321d1a1215165f145f111c4e1211161241394b455644131b1c114e1013411b4e10105f170d1a10021c17111b1d4e41111c1d000302061301131c114e160a0b0d4d131b1c114e101c1211161111114c", EN: "2c23334437222143262c442b2344332322442b44213d4421234421232821264c29415840332f2b444533222b2742255d214541295c2b29405d212b232b3d402b2344453d2b2323253b2145" },
-  "egg5": { RU: "39424c161111161d00", EN: "333333443c2322442129" },
-  "egg6": { RU: "66", EN: "66" },
-  "err0": { RU: "201c101c114d4e41303126443c3f2b234422212f442b234421232821264c", EN: "2923373721264c3322442f2b232421264c3b2244212344312b44" },
-  "err1": { RU: "3e111c11164d4e33353e24443c3f2b234422212f442b234421232821264c", EN: "3321252f403c334421232821264c" },
-  "err2": { RU: "244c4e1c1d1a4e10115f4e111c4e41314d3f3f272a2344202344313f253b2f23244245", EN: "2d3744212328442129443c334421232821264c3c3f" },
-  "err3": { RU: "23115f121e1a171c114d4e31101c1a164d11160a0b0d4d161d1d111f164d", EN: "333f232b23434327313f253b2f23244245252b4421294437294420234244" },
-  "err4": { RU: "3d1b1112111c1d114e13111b1d1611114b1c1d4e101c11101c4c", EN: "373f23344421234421232821264c23232244212344233b442323422f" },
-  "err5": { RU: "36101e1d11141c4e13101d111d4e1d111a1d114e1116101d11161111111a1112114c", EN: "3024294421232821264c3322442f2b232421264c3b2244212344312b44" }
-};
-</script>
-<script>
-async function sha256(message) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function getSecText(vaultKey, decryptKey) {
-  if (!secureVault[vaultKey] || !secureVault[vaultKey][currentLang]) return "";
-  const hex = secureVault[vaultKey][currentLang];
-  return xor(hexToTxt(hex), decryptKey);
+  return String(hash);
 }
 
 function runBootSequence() {
@@ -201,8 +229,7 @@ function runBootSequence() {
         container.style.display = 'none';
         document.getElementById('main-screen').style.display = 'flex';
         updateUI();
-        document.getElementById('terminal-output').innerHTML = 
-          getSecText("init", "KPR2027");
+        document.getElementById('terminal-output').innerHTML = getDecryptedText('init', currentLang, 'sys');
         document.getElementById('terminal-input').focus();
       }, 500);
     }
@@ -230,7 +257,7 @@ function updateTimers() {
 
 function showToast() {
   const toast = document.getElementById('lang-toast');
-  toast.innerText = UI_DATA[currentLang].t;
+  toast.innerText = getDecryptedText('toastText', currentLang, 'sys');
   toast.classList.add('show');
   setTimeout(() => { toast.classList.remove('show'); }, 1200);
 }
@@ -238,35 +265,32 @@ function showToast() {
 function toggleLang() {
   if(isLockout) return;
   currentLang = currentLang === 'RU' ? 'EN' : 'RU';
-  document.getElementById('lang-toggle').innerText = 
-    currentLang === 'RU' ? 'EN' : 'RU';
+  document.getElementById('lang-toggle').innerText = currentLang === 'RU' ? 'EN' : 'RU';
   updateUI();
   showToast();
   
   if (customMessageActive && currentCustomKey) {
-    if (openEggs[currentCustomKey]) {
-      document.getElementById('terminal-output').innerHTML = 
-        openEggs[currentCustomKey][currentLang];
+    if (currentCustomKey === "tg_link") {
+      document.getElementById('terminal-output').innerHTML = '<a href="' + tgLink + '" target="_blank">' + tgLink + '</a>';
     } else {
-      document.getElementById('terminal-output').innerHTML = 
-        getSecText(currentCustomKey, currentCustomKey === "init" ? 
-          "KPR2027" : currentCustomKey);
+      document.getElementById('terminal-output').innerHTML = getDecryptedText(currentCustomKey, currentLang, 'egg');
     }
   } else {
-    if (currentStep === 0) {
-      document.getElementById('terminal-output').innerHTML = 
-        getSecText("init", "KPR2027");
-    } else {
-      document.getElementById('terminal-output').innerHTML = 
-        lastDecryptedStepText[currentLang];
-    }
+    if (currentStep === 0) document.getElementById('terminal-output').innerHTML = getDecryptedText('init', currentLang, 'sys');
+    else if (currentStep === 1) document.getElementById('terminal-output').innerHTML = getDecryptedText('step0_hint', currentLang, 'sys');
+    else if (currentStep === 2) document.getElementById('terminal-output').innerHTML = getDecryptedText('step1_next', currentLang, 'sys');
+    else if (currentStep === 3) document.getElementById('terminal-output').innerHTML = getDecryptedText('step2_next', currentLang, 'sys');
+    else if (currentStep === 4) document.getElementById('terminal-output').innerHTML = getDecryptedText('step3_next', currentLang, 'sys');
+    else if (currentStep === 5) document.getElementById('terminal-output').innerHTML = getDecryptedText('step4_next', currentLang, 'sys');
+    else if (currentStep === 6) document.getElementById('terminal-output').innerHTML = getDecryptedText('step5_next', currentLang, 'sys');
+    else if (currentStep === 7) document.getElementById('terminal-output').innerHTML = getDecryptedText('era', currentLang, 'sys');
   }
 }
 
 function updateUI() {
-  document.getElementById('submit-btn').innerText = UI_DATA[currentLang].s;
-  document.getElementById('secret-title').innerText = UI_DATA[currentLang].st;
-  document.getElementById('back-btn').innerText = UI_DATA[currentLang].b;
+  document.getElementById('submit-btn').innerText = getDecryptedText('submit', currentLang, 'sys');
+  document.getElementById('secret-title').innerText = getDecryptedText('secretTitle', currentLang, 'sys');
+  document.getElementById('back-btn').innerText = getDecryptedText('back', currentLang, 'sys');
 }
 
 function openSecret() {
@@ -280,17 +304,25 @@ function closeSecret() {
   document.getElementById('main-screen').style.display = 'flex';
   setTimeout(() => { document.getElementById('terminal-input').focus(); }, 50);
 }
-</script>
-<script>
-function triggerRedLockout() {
+
+function triggerRedLockout(customMsg) {
   isLockout = true;
   document.body.classList.add('wrong-state');
   const inputEl = document.getElementById('terminal-input');
   const outputEl = document.getElementById('terminal-output');
   
-  const randomIdx = Math.floor(Math.random() * 6);
-  outputEl.innerHTML = getSecText("prefix", "KPR2027") + 
-    getSecText("err" + randomIdx, "KPR2027");
+  if (customMsg) {
+    outputEl.innerHTML = customMsg;
+  } else {
+    const list = encryptedLocalization[currentLang].scolded;
+    const randIdx = Math.floor(Math.random() * list.length);
+    try {
+      const rawLine = decodeURIComponent(escape(atob(list[randIdx])));
+      outputEl.innerHTML = getDecryptedText('wrongPrefix', currentLang, 'sys') + rawLine;
+    } catch(e) {
+      outputEl.innerHTML = getDecryptedText('wrongPrefix', currentLang, 'sys');
+    }
+  }
   inputEl.disabled = true;
   
   setTimeout(() => {
@@ -332,81 +364,46 @@ function cleanInput(val) {
   }
   return cleaned;
 }
-
-async function processInput() {
+function processInput() {
   if (isLockout) return;
   const inputEl = document.getElementById('terminal-input');
   let rawVal = inputEl.value;
   
   if (!rawVal.trim()) {
-    isLockout = true;
-    document.body.classList.add('wrong-state');
-    document.getElementById('terminal-output').innerHTML = 
-      getSecText("empty", "KPR2027");
-    inputEl.disabled = true;
-    setTimeout(() => {
-      document.body.classList.remove('wrong-state');
-      inputEl.disabled = false;
-      inputEl.value = '';
-      isLockout = false;
-      inputEl.focus();
-    }, 2000);
+    triggerRedLockout(getDecryptedText('emptyError', currentLang, 'sys'));
     return;
   }
-  
   rawVal = cleanInput(rawVal).toLowerCase();
-  
-  if (openEggs[rawVal]) {
-    triggerGreenSuccess(openEggs[rawVal][currentLang], true, rawVal);
+  if (!rawVal) {
+    triggerRedLockout(getDecryptedText('emptyError', currentLang, 'sys'));
     return;
   }
   
-  const inputHash = await sha256(rawVal);
-  
-  const eggMapping = {
-    "e205ee2a5de471a70c1fd15f1ff41a2926839bc1efb253b3ae4101185aa08323": "egg0",
-    "83d57b282bc7198967df2a6f8745d614d79d67bc8f0477bf25642d99d34fb05a": "egg1",
-    "922e38c98342416f0814981f4a974b2f293ffb21703e3906354898c60f4eb789": "egg2",
-    "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824": "egg2",
-    "4f54bf63d09a0a1f7959045ee3df5b4b1a437e69d76c6691f165932ef9a941ef": "egg3",
-    "27ac0219ca62ba1e9af73e86c0e5a2db39d48b174afdb04a2be25cf4649b1a50": "egg3",
-    "cc82eb750624d7729b16bfca7179047468165b4513ec1317d7bbf72ea5a7b63f": "egg4",
-    "b369ba0027f66a84ed39cb9fc5da909b43354ff0511855e975ca828e833e218b": "egg4",
-    "cf6c1a8e9323bdfdd503cb328e6c7fc737756f6b645b23d537df129013f99e4b": "egg5",
-    "b70e4c6c06a3e6f987f6e2c34bc1f2ef64d7df64be735dd226df7f292d3fbe2e": "egg5",
-    "29ef40632a688863f69906660144f8007a36f78ee9caeef667825d105260fa11": "egg6",
-    "1c5a7df4ef130f140685938d87ef8740c02c67c5f87b8b408544d6db87413669": "egg6",
-    "0db843cd345f7c32e92c2a05cfcb99be0ef424269e8b603816ec5a7a7265be75": "egg6",
-    "7c94fa103ef8f35bbf6c96b7978254b7c126d4ca9ca9c2bfb99eb7d160109033": "egg6"
-  };
-  
-  if (eggMapping[inputHash]) {
-    const key = eggMapping[inputHash];
-    triggerGreenSuccess(getSecText(key, "KPR2027"), true, key);
+  if (rawVal === tgWordRu.toLowerCase() || rawVal === tgWordEn.toLowerCase()) {
+    const linkTag = '<a href="' + tgLink + '" target="_blank">' + tgLink + '</a>';
+    triggerGreenSuccess(linkTag, true, "tg_link");
     return;
   }
   
-  const hashStep0 = "71ec4f23b207db81561f38e68407481ba8d30e017688fa8db340db423719b0aa";
-  const hashStep0_en = "9336ebf25087d91c818ee6e9ec29f8c1dd4e06ffec68564c6aa3c9e3a0b3f713";
-  const hashStep1 = "3a7bd3e2360a33ec6816fa2b741fe3e90b537ed11a4369e46a71ab113175cd77";
-  const hashStep2_ru = "cd76ccbf737750731d1d867da2045239e3cb16e87b7a1ecbe012351cb992e59e";
-  const hashStep2_en1 = "4f2271816e88514930be6f19999037e96b34cf40ff26227447db48062ec7e3e9";
-  const hashStep2_en2 = "b71e847761d4285b1a457053075cb450c266858e390c3757bf0037a3b3a30c5e";
-  const hashStep2_en3 = "4901f41db457017fc7c6a99281e05d04cc63f27f03f75da7e6ff82cf19793139";
-  const hashStep3_ru = "d5ef8d0590a36bc6bc562098020d588494b29bb80f86234bc5b19e2468305c93";
-  const hashStep3_ru2 = "03cf36f32e987c2fb8b2ca5fa5d8a87b1c31828114f0e7eb15be7754d5885cda";
-  const hashStep3_en = "830ea28490a6f4439c65ca6270ebc121e42fa4ea23555234208a05c754d0263f";
-  const hashStep4 = "88b22a0753e8fcda9b3df98f6d63d047b11d9f8e02d6d03d360efbe3662d5119";
-  const hashStep5 = "1b22e17e4f16df16be64811a216f497afcb14660ebbcbf49ee7ba980fa516086";
-  const hashTruePass = "07d9d02cb08d9ca7868bb03b12363e790757a3e7db010ee38a6a68393c6f2df6";
-
-  if (inputHash === hashTruePass) {
-    const txt = getSecText("step7", "KPR2027");
-    triggerGreenSuccess(txt);
+  const currentInputHash = getSecureHash(rawVal);
+  
+  if (eggHashes[currentInputHash]) {
+    const targetEggId = eggHashes[currentInputHash];
+    triggerGreenSuccess(getDecryptedText(targetEggId, currentLang, 'egg'), true, targetEggId);
+    return;
+  }
+  
+  if (currentInputHash === secureStepHashes.mega) {
+    triggerGreenSuccess(getDecryptedText('era', currentLang, 'sys'));
     currentStep = 7;
     customMessageActive = false;
-    lastDecryptedStepText.RU = txt;
-    lastDecryptedStepText.EN = txt;
+    return;
+  }
+
+  if (currentInputHash === truePassHash) {
+    triggerGreenSuccess(getDecryptedText('era', currentLang, 'sys'));
+    currentStep = 7;
+    customMessageActive = false;
     return;
   }
   
@@ -414,59 +411,39 @@ async function processInput() {
   currentCustomKey = null;
   
   if (currentStep === 0) {
-    if (inputHash === hashStep0 || inputHash === hashStep0_en) {
-      const txt = getSecText("step0", "KPR2027");
-      triggerGreenSuccess(txt);
+    if (secureStepHashes[0].includes(currentInputHash)) {
+      triggerGreenSuccess(getDecryptedText('step0_hint', currentLang, 'sys'));
       currentStep = 1;
-      lastDecryptedStepText.RU = txt;
-      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   } 
   else if (currentStep === 1) {
-    if (inputHash === hashStep1) {
-      const txt = getSecText("step1", "KPR2027");
-      triggerGreenSuccess(txt);
+    if (secureStepHashes[1].includes(currentInputHash)) {
+      triggerGreenSuccess(getDecryptedText('step1_next', currentLang, 'sys'));
       currentStep = 2;
-      lastDecryptedStepText.RU = txt;
-      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   } 
   else if (currentStep === 2) {
-    if (inputHash === hashStep2_ru || inputHash === hashStep2_en1 || 
-        inputHash === hashStep2_en2 || inputHash === hashStep2_en3) {
-      const txt = getSecText("step2", "KPR2027");
-      triggerGreenSuccess(txt);
+    if (secureStepHashes[2].includes(currentInputHash)) {
+      triggerGreenSuccess(getDecryptedText('step2_next', currentLang, 'sys'));
       currentStep = 3;
-      lastDecryptedStepText.RU = txt;
-      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
-  } 
+  }
   else if (currentStep === 3) {
-    if (inputHash === hashStep3_ru || inputHash === hashStep3_ru2 || 
-        inputHash === hashStep3_en) {
-      const txt = getSecText("step3", "KPR2027");
-      triggerGreenSuccess(txt);
+    if (secureStepHashes[3].includes(currentInputHash)) {
+      triggerGreenSuccess(getDecryptedText('step3_next', currentLang, 'sys'));
       currentStep = 4;
-      lastDecryptedStepText.RU = txt;
-      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   } 
   else if (currentStep === 4) {
-    if (inputHash === hashStep4) {
-      const txt = getSecText("step4", "KPR2027");
-      triggerGreenSuccess(txt);
+    if (secureStepHashes[4].includes(currentInputHash)) {
+      triggerGreenSuccess(getDecryptedText('step4_next', currentLang, 'sys'));
       currentStep = 5;
-      lastDecryptedStepText.RU = txt;
-      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   } 
   else if (currentStep === 5) {
-    if (inputHash === hashStep5) {
-      const txt = getSecText("step5", "KPR2027");
-      triggerGreenSuccess(txt);
+    if (secureStepHashes[5].includes(currentInputHash)) {
+      triggerGreenSuccess(getDecryptedText('step5_next', currentLang, 'sys'));
       currentStep = 6;
-      lastDecryptedStepText.RU = txt;
-      lastDecryptedStepText.EN = txt;
     } else { triggerRedLockout(); }
   }
   else { triggerRedLockout(); }
