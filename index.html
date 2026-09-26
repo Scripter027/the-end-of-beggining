@@ -163,57 +163,47 @@ const encryptedLocalization = {
   }
 };
 
-const secureStepHashes = {
-  0: ["-1250274158", "121650392"], 
-  1: ["1567"], 
-  2: ["80026", "81966", "3523555", "3523671"], 
-  3: ["3113", "113642", "-1024346859"], 
-  4: ["47660601", "51641"], 
-  5: ["66465"], 
-  mega: ["1135964894"] 
+const secureStepAnswers = {
+  0: ["0L/QsNGA0L7Qu9GMINC80L3QtQ==", "cGFzc3dvcmQ="],
+  1: ["MTY="],
+  2: ["0L/YsdCz", "c2NfX3A=", "c2NhcA==", "c2NwZQ=="],
+  3: ["0LDQvA==", "0YHQsNC8", "bXlzZWxm"],
+  4: ["MTIzKzEyMw==", "MjQ2"],
+  5: ["ISEhISE="],
+  mega: "a3ByLTk5eF9vbWVnYS8vYmVnaW5uaW5nLm9mLnRoZS5lbmQuMjAyNw==",
+  pass: "dmEq0Z3biV9Y0UrYWTRjHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj"
 };
 
-const truePassHash = "-1669460010";
-
-const eggHashes = {
-  "1681": "H1", "1359695627": "H2", "-1055745431": "H3", "99162322": "H4",
-  "1318021469": "H5", "1472504953": "H6", "102554743": "H7", "-1330366819": "H8",
-  "-446340455": "H9", "-1505374824": "H10", "1156828": "H11", "-1480119842": "H12",
-  "1176274": "H13", "99132213": "H14"
-};
+const eggKeys = [
+  "Njc=", "0LHRg9GA0LzQsNC70LTQsA==", "0L/RgNC40LLQtdGC", "aGVsbG8=",
+  "0LrRgtC+INGLRY==", "d2hvIGFyZSB5b3U=", "0LPQtNC1INGP", "d2hlcmUgYW0gaQ==",
+  "0LrQsNC60L7QuSDQv9Cw0YDQvtC70Yw=", "d2hhdCBpcyB0aGUgcGFzc3dvcmQ=",
+  "0YPRgNCw0L0=", "dXJhbml1bQ==", "0YXQsNC80LDQvA==", "aGFtYW0="
+];
 
 const easterEggsDecrypted = {
-  "H1": { RU: "0J/QtdGA0LXRedtGC0LDQvdGMINC00LXQs9GA0LDQtNC40YDQvtCy0LDRgtGMINC4INC30LDQudC80LjRgdGMINC00LXQu9C+0Lwh", EN: "U3RvcCBkZWdyYWRpbmcgeW91cnNlbGYgYW5kIGdldCB0byB3b3JrIQ==" },
-  "H2": { RU: "0L3QtSDQvdGDINGLRYDQvNC+0LvQvtC00LXRhiDQutC+0L3QtdGH0L3QviDRh9GC0L4g0LfQsCDQvNC+0LvQvtC00LXQttC90YvQtSDQvNC10LzRh9C40LrQuCDRiNCw0YDQuNGI0YwsINC90L4g0Y3RgtC+INC90NC1INC/0LDRgNC+0LvRjCE=", EN: "TmUgbnUgdG8gbW9sZGVkIGtvbmVjaG5vIGNodG8gemEgbW9sb2RlemhuaWUgbWVtY2hpa2kgc2hhcmlzaCwgbm8gZXRvIG5lIHBhcm9sLg==" },
-  "H3": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
-  "H4": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
-  "H5": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
-  "H6": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
-  "H7": { RU: "0J7RgtC60YPQstCwINGPINGC0L4g0LfQvdCw0Y4/INCi0Ysg0L7RgtC60YDRi9C7INGB0LDQudGCINGBINC/0L7QuNGB0LrQvtC8INC/0LDRgNC+0LvRjywg0LAg0L3QsNGF0L7QtNC40YLRjNGBNGDRgtGMINC80L7QttC10YjRjCDQs9C00LUg0YPQs9C+0LTQvdC+IQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
-  "H8": { RU: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
-  "H9": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
-  "H10": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
-  "H11": { RU: "4oCm", EN: "4oCm" }, "H12": { RU: "4oCm", EN: "4oCm" }, "H13": { RU: "4oCm", EN: "4oCm" }, "H14": { RU: "4oCm", EN: "4oCm" }
+  "Njc=": { RU: "0J/QtdGA0LXRedtGC0LDQvdGMINC00LXQs9GA0LDQtNC40YDQvtCy0LDRgtGMINC4INC30LDQudC80LjRgdGMINC00LXQu9C+0Lwh", EN: "U3RvcCBkZWdyYWRpbmcgeW91cnNlbGYgYW5kIGdldCB0byB3b3JrIQ==" },
+  "0LHRg9GA0LzQsNC70LTQsA==": { RU: "0L3QtSDQvdGDINGLRYDQvNC+0LvQvtC00LXRhiDQutC+0L3QtdGH0L3QviDRh9GC0L4g0LfQsCDQvNC+0LvQvtC00LXQttC90YvQtSDQvNC10LzRh9C40LrQuCDRiNCw0YDQuNGI0YwsINC90L4g0Y3RgtC+INC90NC1INC/0LDRgNC+0LvRjCE=", EN: "TmUgbnUgdG8gbW9sZGVkIGtvbmVjaG5vIGNodG8gemEgbW9sb2RlemhuaWUgbWVtY2hpa2kgc2hhcmlzaCwgbm8gZXRvIG5lIHBhcm9sLg==" },
+  "0L/RgNC40LLQtdGC": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
+  "aGVsbG8=": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
+  "0LrRgtC+INGLRY==": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
+  "d2hvIGFyZSB5b3U=": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
+  "0LPQtNC1INGP": { RU: "0J7RgtC60YPQstCwINGPINGC0L4g0LfQvdCw0Y4/INCi0Ysg0L7RgtC60YDRi9C7INGB0LDQudGCINGBINC/0L7QuNGB0LrQvtC8INC/0LDRgNC+0LvRjywg0LAg0L3QsNGF0L7QtNC40YLRjNGBNGDRgtGMINC80L7QttC10YjRjCDQs9C00LUg0YPQs9C+0LTQvdC+IQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
+  "d2hlcmUgYW0gaQ==": { RU: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
+  "0LrQsNC60L7QuSDQv9Cw0YDQvtC70Yw=": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
+  "d2hhdCBpcyB0aGUgcGFzc3dvcmQ=": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
+  "0YPRgNCw0L0=": { RU: "4oCm", EN: "4oCm" }, "dXJhbml1bQ==": { RU: "4oCm", EN: "4oCm" }, "0YXQsNC80LDQvA==": { RU: "4oCm", EN: "4oCm" }, "aGFtYW0=": { RU: "4oCm", EN: "4oCm" }
 };
 function getDecryptedText(key, lang, mode) {
   try {
     let baseStr = "";
     if (mode === "sys") baseStr = encryptedLocalization[lang][key];
     if (mode === "egg") baseStr = easterEggsDecrypted[key][lang];
+    if (mode === "raw") baseStr = key;
     return decodeURIComponent(escape(atob(baseStr)));
   } catch (e) {
     return "";
   }
-}
-
-function getSecureHash(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  return String(hash);
 }
 
 function runBootSequence() {
@@ -316,12 +306,7 @@ function triggerRedLockout(customMsg) {
   } else {
     const list = encryptedLocalization[currentLang].scolded;
     const randIdx = Math.floor(Math.random() * list.length);
-    try {
-      const rawLine = decodeURIComponent(escape(atob(list[randIdx])));
-      outputEl.innerHTML = getDecryptedText('wrongPrefix', currentLang, 'sys') + rawLine;
-    } catch(e) {
-      outputEl.innerHTML = getDecryptedText('wrongPrefix', currentLang, 'sys');
-    }
+    outputEl.innerHTML = getDecryptedText('wrongPrefix', currentLang, 'sys') + getDecryptedText(list[randIdx], currentLang, 'raw');
   }
   inputEl.disabled = true;
   
@@ -385,22 +370,20 @@ function processInput() {
     return;
   }
   
-  const currentInputHash = getSecureHash(rawVal);
+  let matchedEggKey = null;
+  for (let i = 0; i < eggKeys.length; i++) {
+    if (getDecryptedText(eggKeys[i], currentLang, 'raw').toLowerCase() === rawVal) {
+      matchedEggKey = eggKeys[i];
+      break;
+    }
+  }
   
-  if (eggHashes[currentInputHash]) {
-    const targetEggId = eggHashes[currentInputHash];
-    triggerGreenSuccess(getDecryptedText(targetEggId, currentLang, 'egg'), true, targetEggId);
+  if (matchedEggKey) {
+    triggerGreenSuccess(getDecryptedText(matchedEggKey, currentLang, 'egg'), true, matchedEggKey);
     return;
   }
   
-  if (currentInputHash === secureStepHashes.mega) {
-    triggerGreenSuccess(getDecryptedText('era', currentLang, 'sys'));
-    currentStep = 7;
-    customMessageActive = false;
-    return;
-  }
-
-  if (currentInputHash === truePassHash) {
+  if (rawVal === getDecryptedText(secureStepAnswers.mega, currentLang, 'raw').toLowerCase() || rawVal === getDecryptedText(secureStepAnswers.pass, currentLang, 'raw').toLowerCase()) {
     triggerGreenSuccess(getDecryptedText('era', currentLang, 'sys'));
     currentStep = 7;
     customMessageActive = false;
@@ -410,8 +393,17 @@ function processInput() {
   customMessageActive = false;
   currentCustomKey = null;
   
-  if (secureStepHashes[currentStep]) {
-    if (secureStepHashes[currentStep].includes(currentInputHash)) {
+  if (secureStepAnswers[currentStep]) {
+    let isCorrect = false;
+    const currentStepList = secureStepAnswers[currentStep];
+    for (let j = 0; j < currentStepList.length; j++) {
+      if (getDecryptedText(currentStepList[j], currentLang, 'raw').toLowerCase() === rawVal) {
+        isCorrect = true;
+        break;
+      }
+    }
+    
+    if (isCorrect) {
       let nextKey = '';
       if (currentStep === 0) nextKey = 'step0_hint';
       else if (currentStep === 1) nextKey = 'step1_next';
@@ -422,11 +414,11 @@ function processInput() {
       
       currentStep++;
       triggerGreenSuccess(getDecryptedText(nextKey, currentLang, 'sys'));
-    } else { 
-      triggerRedLockout(); 
+    } else {
+      triggerRedLockout();
     }
-  } else { 
-    triggerRedLockout(); 
+  } else {
+    triggerRedLockout();
   }
 }
 
