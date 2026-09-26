@@ -2,101 +2,363 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The End of Beginnings</title>
     <style>
-        :root { --bg: #000; --green: #00ff33; --light: #66ff88; --red: #ff0033; --glow: 0 0 10px rgba(0,255,51,0.7); }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', monospace; }
-        body { background: var(--bg); color: var(--green); height: 100vh; overflow: hidden; position: relative; transition: background 0.1s; }
-        body.flash-success { background: var(--light); }
-        body.flash-error { background: var(--red); }
-        #boot-screen { position: absolute; top: 20px; left: 20px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; z-index: 10; }
-        #main-ui { display: none; flex-direction: column; justify-content: space-between; height: 100%; padding: 40px; }
-        .timer-box { text-align: center; cursor: pointer; user-select: none; }
-        #timer-title { font-size: 14px; margin-bottom: 5px; text-transform: uppercase; opacity: 0.7; }
-        #timer { font-size: 32px; font-weight: bold; text-shadow: var(--glow); }
-        .secret-timer #timer { font-size: 64px; }
-        .term-box { align-self: center; text-align: center; max-width: 600px; width: 100%; }
-        #output { min-height: 50px; margin-bottom: 20px; font-size: 18px; text-shadow: var(--glow); }
-        .input-row { display: flex; justify-content: center; gap: 10px; }
-        #input { background: transparent; border: 1px solid var(--green); color: var(--green); padding: 10px; font-size: 18px; width: 70%; outline: none; }
-        #btn { background: transparent; border: 1px solid var(--green); color: var(--green); padding: 10px 20px; font-size: 16px; cursor: pointer; text-transform: uppercase; }
-        #btn:hover { background: var(--green); color: #000; box-shadow: var(--glow); }
-        .langs { position: absolute; bottom: 40px; right: 40px; font-size: 16px; }
-        .lang-btn { cursor: pointer; opacity: 0.5; }
-        .lang-btn.active { opacity: 1; font-weight: bold; text-shadow: var(--glow); }
-        body.flash-error * { color: #000 !important; text-shadow: none !important; border-color: #000 !important; }
-        body.flash-success * { color: #000 !important; text-shadow: none !important; border-color: #000 !important; }
+        :root {
+            --neon-green: #00ff33;
+            --dark-green: #003300;
+            --bright-green: #66ff66;
+            --neon-red: #ff3333;
+            --dark-red: #330000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body, html {
+            background-color: #000;
+            color: var(--neon-green);
+            font-family: 'Courier New', Courier, monospace;
+            height: 100%;
+            overflow: hidden;
+            transition: background-color 0.1s ease;
+        }
+
+        /* Эффекты вспышек */
+        body.wrong-flash {
+            background-color: var(--dark-red) !important;
+            color: var(--neon-red) !important;
+        }
+        body.wrong-flash .terminal-input, 
+        body.wrong-flash .btn-submit {
+            border-color: var(--neon-red) !important;
+            color: var(--neon-red) !important;
+            box-shadow: 0 0 10px var(--neon-red) !important;
+        }
+        body.wrong-flash .timer, body.wrong-flash .lang-switch {
+            color: var(--neon-red) !important;
+        }
+
+        body.correct-flash {
+            background-color: var(--bright-green) !important;
+            color: #000 !important;
+        }
+
+        /* ЭЛТ сканирующие линии */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Бегущие строки загрузки */
+        #boot-screen {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+            max-width: 600px;
+            z-index: 10;
+        }
+
+        /* Главный контейнер */
+        #main-container {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Таймер */
+        .timer-wrapper {
+            position: absolute;
+            top: 5%;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .timer-title {
+            font-size: 14px;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .timer {
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-green);
+            transition: font-size 0.3s ease;
+        }
+
+        /* Секретная тема изменения размеров */
+        .secret-active .timer {
+            font-size: 54px;
+        }
+
+        /* Интерфейс ввода */
+        .terminal-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 50px;
+        }
+
+        .terminal-output {
+            min-height: 60px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+            width: 100%;
+            word-wrap: break-word;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            display: flex;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            padding: 10px 15px;
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 18px;
+            outline: none;
+            box-shadow: 0 0 5px var(--dark-green);
+        }
+
+        .btn-submit {
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 10px 25px;
+            font-family: inherit;
+            font-size: 18px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 0 5px var(--dark-green);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--neon-green);
+            color: #000;
+        }
+
+        /* Переключатель языка */
+        .lang-switch {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .lang-switch:hover {
+            opacity: 1;
+            text-shadow: 0 0 8px var(--neon-green);
+        }
     </style>
 </head>
 <body>
+
     <div id="boot-screen"></div>
-    <div id="main-ui">
-        <div class="timer-box" id="timer-toggle">
-            <div id="timer-title"></div>
-            <div id="timer">00:00:00:00</div>
+
+    <div id="main-container">
+        <div class="timer-wrapper" id="timer-toggle">
+            <div class="timer-title" id="timer-label">До 22 февраля 2027 осталось:</div>
+            <div class="timer" id="countdown">00:00:00:00</div>
         </div>
-        <div class="term-box">
-            <div id="output"></div>
-            <div class="input-row">
-                <input type="text" id="input" autofocus autocomplete="off">
-                <button id="btn">Ввод</button>
+
+        <div class="terminal-box">
+            <div class="terminal-output" id="response-text">SYS_READY: ОЖИДАНИЕ ВВОДА...</div>
+            <div class="input-group">
+                <input type="text" id="user-input" class="terminal-input" autofocus autocomplete="off" placeholder="> ">
+                <button id="submit-btn" class="btn-submit">ВВОД</button>
             </div>
         </div>
-        <div class="langs"><span id="ru" class="lang-btn active">RU</span> / <span id="en" class="lang-btn">EN</span></div>
+
+        <div class="lang-switch" id="lang-btn">EN</div>
     </div>
     <script>
-        const PWD = `va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje#_`;
-        const TARGET = new Date('February 22, 2027 00:00:00').getTime();
-        const LANGS = {
-            ru: { btn: "Ввод", tNorm: "", tSec: "Отсчет до момента x", hi: "Терминал готов к приему директив...", win: "Новая Эра Keeper Ent. вот вот начнется.", eEmpty: "Поговорить захотелось? Мимо.", eWrong: "Мусор. Попробуй еще раз.", eSpam: "Уймись, машина думает быстрее тебя." },
-            en: { btn: "Enter", tNorm: "", tSec: "Countdown to moment x", hi: "Terminal is ready for directives...", win: "A New Era of Keeper Ent. is about to begin.", eEmpty: "Want to chat? Denied.", eWrong: "Garbage. Try again.", eSpam: "Slow down. The machine thinks faster." }
+        // Конфигурация локализации
+        const targetDate = new Date('2027-02-22T00:00:00').getTime();
+        let currentLang = 'ru';
+        let isSecretMode = false;
+        let isLock = false;
+
+        const langData = {
+            ru: {
+                boot: ["ЗАГРУЗКА ЯДРА v4.01...", "ПРОВЕРКА СВЯЗИ С KEEPER ENT... OK", "ИНИЦИАЛИЗАЦИЯ ИНТЕРФЕЙСА... OK", "БЕЗОПАСНОСТЬ: АКТИВНА", "СИСТЕМА ГОТОВА."],
+                labelNormal: "До 22 февраля 2027 осталось:",
+                labelSecret: "Отсчет до момента x",
+                ready: "SYS_READY: ОЖИДАНИЕ ВВОДА...",
+                wrong: "НЕПРАВИЛЬНО.",
+                superAnswer: "Новая Эра Keeper Ent. вот вот начнется.",
+                contempt: [
+                    "Хватит тратить мое время.",
+                    "Ты бесполезен.",
+                    "Доступ запрещен.",
+                    "Этот ответ не имеет значения.",
+                    "Попробуй еще раз, если тебе делать нечего.",
+                    "Разговор окончен.",
+                    "Я не обязан отвечать на этот бред."
+                ]
+            },
+            en: {
+                boot: ["LOADING KERNEL v4.01...", "CHECKING CONNECTION TO KEEPER ENT... OK", "INITIALIZING INTERFACE... OK", "SECURITY: ACTIVE", "SYSTEM READY."],
+                labelNormal: "Until February 22, 2027 left:",
+                labelSecret: "Countdown to moment x",
+                ready: "SYS_READY: AWAITING INPUT...",
+                wrong: "WRONG.",
+                superAnswer: "A New Era of Keeper Ent. is about to begin.",
+                contempt: [
+                    "Stop wasting my time.",
+                    "You are useless.",
+                    "Access denied.",
+                    "This answer does not matter.",
+                    "Try again if you have nothing better to do.",
+                    "Conversation over.",
+                    "I am not structuralized to reply to this nonsense."
+                ]
+            }
         };
-        let curLang = 'ru', isSec = false, lastTime = 0, bIdx = 0;
-        const lines = ["LOADING KEEPER_ENT_CORE...", "CHECKING PROTOCOLS... OK", "CONNECTING TO NODES... SUCCESS", "DECRYPTING ARCHIVE... 100%", "WARNING: UNAUTHORIZED ACCESS", "INITIALIZING INTERFACE...", "READY."];
-        
-        const boot = document.getElementById('boot-screen'), ui = document.getElementById('main-ui'),
-              tEl = document.getElementById('timer'), tTitle = document.getElementById('timer-title'),
-              out = document.getElementById('output'), inp = document.getElementById('input'),
-              btn = document.getElementById('btn'), ruBtn = document.getElementById('ru'), enBtn = document.getElementById('en');
 
-        function printBoot() {
-            if (bIdx < lines.length) { boot.innerHTML += lines[bIdx++] + "\n"; setTimeout(printBoot, Math.random() * 200 + 50); }
-            else { setTimeout(() => { boot.style.display = 'none'; ui.style.display = 'flex'; upLang(curLang); inp.focus(); }, 500); }
+        // Запуск строк при загрузке
+        const bootScreen = document.getElementById('boot-screen');
+        const mainContainer = document.getElementById('main-container');
+        let bootLine = 0;
+
+        function printBootLines() {
+            if (bootLine < langData[currentLang].boot.length) {
+                bootScreen.innerHTML += langData[currentLang].boot[bootLine] + '<br>';
+                bootLine++;
+                setTimeout(printBootLines, 250);
+            } else {
+                setTimeout(() => {
+                    bootScreen.style.display = 'none';
+                    mainContainer.style.display = 'flex';
+                    document.getElementById('user-input').focus();
+                }, 600);
+            }
         }
-        printBoot();
+        printBootLines();
 
-        function upTimer() {
-            const diff = TARGET - Date.now();
-            if (diff < 0) { tEl.innerHTML = "00:00:00:00"; return; }
-            const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
-            tEl.innerHTML = `${String(d).padStart(2,'0')}:${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        // Логика таймера обратного отсчета
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML = "00:00:00:00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const dStr = days < 10 ? '0' + days : days;
+            const hStr = hours < 10 ? '0' + hours : hours;
+            const mStr = minutes < 10 ? '0' + minutes : minutes;
+            const sStr = seconds < 10 ? '0' + seconds : seconds;
+
+            document.getElementById('countdown').innerHTML = `${dStr}:${hStr}:${mStr}:${sStr}`;
         }
-        setInterval(upTimer, 1000); upTimer();
+        setInterval(updateTimer, 1000);
+        updateTimer();
 
+        // Клик по таймеру (Секретный режим)
         document.getElementById('timer-toggle').addEventListener('click', () => {
-            isSec = !isSec; ui.classList.toggle('secret-timer', isSec); upLang(curLang);
+            isSecretMode = !isSecretMode;
+            if (isSecretMode) {
+                mainContainer.classList.add('secret-active');
+                document.getElementById('timer-label').innerText = langData[currentLang].labelSecret;
+            } else {
+                mainContainer.classList.remove('secret-active');
+                document.getElementById('timer-label').innerText = langData[currentLang].labelNormal;
+            }
         });
 
-        function flash(cls, time) { document.body.classList.add(cls); setTimeout(() => document.body.classList.remove(cls), time); }
+        // Переключение Языков
+        document.getElementById('lang-btn').addEventListener('click', () => {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            document.getElementById('lang-btn').innerText = currentLang === 'ru' ? 'EN' : 'RU';
+            
+            // Смена текста на лету
+            if (!isLock) {
+                document.getElementById('response-text').innerText = langData[currentLang].ready;
+            }
+            document.getElementById('timer-label').innerText = isSecretMode ? langData[currentLang].labelSecret : langData[currentLang].labelNormal;
+        });
 
-        function check() {
-            const val = inp.value.trim(), now = Date.now();
-            if (now - lastTime < 800) { out.innerText = LANGS[curLang].eSpam; flash('flash-error', 300); return; }
-            lastTime = now;
-            if (val === "") { out.innerText = LANGS[curLang].eEmpty; flash('flash-error', 300); }
-            else if (val === PWD) { out.innerText = LANGS[curLang].win; flash('flash-success', 1500); inp.disabled = btn.disabled = true; }
-            else { out.innerText = LANGS[curLang].eWrong; flash('flash-error', 300); inp.value = ''; }
+        // Логика проверки кода
+        function checkCode() {
+            if (isLock) return;
+            const inputField = document.getElementById('user-input');
+            const outputField = document.getElementById('response-text');
+            const code = inputField.value.trim().toUpperCase();
+            
+            if (code === "") return;
+
+            // СУПЕР КОД KEEPER ENT.
+            if (code === "E854BBEBB359FB15") {
+                isLock = true;
+                outputField.innerText = langData[currentLang].superAnswer;
+                
+                // Зеленая вспышка
+                document.body.classList.add('correct-flash');
+                setTimeout(() => {
+                    document.body.classList.remove('correct-flash');
+                }, 400);
+                inputField.value = "";
+            } else {
+                // Неверный ответ - Красная вспышка и резкая фраза
+                isLock = true;
+                outputField.innerText = langData[currentLang].wrong;
+                document.body.classList.add('wrong-flash');
+
+                setTimeout(() => {
+                    document.body.classList.remove('wrong-flash');
+                    // Выбор случайного резкого ответа терминала
+                    const replies = langData[currentLang].contempt;
+                    outputField.innerText = replies[Math.floor(Math.random() * replies.length)];
+                    isLock = false;
+                    inputField.focus();
+                }, 1000);
+            }
         }
 
-        btn.addEventListener('click', check);
-        inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
-
-        function upLang(l) {
-            curLang = l; btn.innerText = LANGS[l].btn; tTitle.innerText = isSec ? LANGS[l].tSec : LANGS[l].tNorm;
-            if (out.innerText === "" || out.innerText === LANGS.ru.hi || out.innerText === LANGS.en.hi) out.innerText = LANGS[l].hi;
-        }
-        ruBtn.addEventListener('click', () => { ruBtn.classList.add('active'); enBtn.classList.remove('active'); upLang('ru'); });
-        enBtn.addEventListener('click', () => { enBtn.classList.add('active'); ruBtn.classList.remove('active'); upLang('en'); });
+        // Слушатели событий ввода
+        document.getElementById('submit-btn').addEventListener('click', checkCode);
+        document.getElementById('user-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') checkCode();
+        });
     </script>
 </body>
 </html>
