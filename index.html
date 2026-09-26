@@ -20,7 +20,6 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
         }
 
         body, html {
@@ -463,10 +462,16 @@
             }, 450);
         }
 
+        // ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ФИЛЬТРАЦИЯ СТРОК (БЕЗ БАГОВ)
         function cleanInputString(str) {
             let res = str.trim().toUpperCase();
-            if (/^!+\$/.test(res)) return res; 
             
+            // Если игрок ввел шифр восклицательных знаков - отдаем без обрезания знаков
+            if (res.replace(/!/g, '') === '') {
+                return res; 
+            }
+            
+            // Во всех остальных случаях аккуратно убираем знаки препинания на конце фраз
             while (res.length > 0 && ['.', '!', '?', ','].includes(res[res.length - 1])) {
                 res = res.slice(0, -1).trim();
             }
