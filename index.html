@@ -46,7 +46,6 @@
             pointer-events: none;
         }
 
-        /* Полный красный режим при ошибке (включая кнопку ввода) */
         body.wrong-flash {
             color: var(--neon-red) !important;
             text-shadow: var(--glow-red) !important;
@@ -67,7 +66,6 @@
         }
         body.wrong-flash a { color: var(--neon-red) !important; }
 
-        /* Изумрудная локальная вспышка строки и кнопки */
         .input-flash-active .terminal-input,
         .input-flash-active .btn-submit {
             background-color: rgba(51, 255, 51, 0.25) !important;
@@ -182,7 +180,32 @@
         }
 
         .btn-submit:hover { background: var(--neon-green); color: #000000; text-shadow: none; }
-        .lang-switch { position: absolute; bottom: 20px; right: 20px; font-size: 15px; font-weight: bold; cursor: pointer; opacity: 0.6; padding: 5px 10px; }
+        
+        .lang-switch { 
+            position: absolute; 
+            bottom: 20px; 
+            right: 20px; 
+            font-size: 15px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            opacity: 0.6; 
+            padding: 5px 10px;
+            transition: all 0.1s ease;
+        }
+        
+        .lang-switch.rage-mode {
+            color: var(--neon-red) !important;
+            border: 1px dashed var(--neon-red);
+            box-shadow: var(--glow-red);
+            text-shadow: var(--glow-red);
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
         a { color: var(--neon-green); text-decoration: underline; cursor: pointer; pointer-events: auto; }
 
         @media (max-width: 768px) {
@@ -226,8 +249,8 @@
         let isSecretMode = false;
         let isLock = false;
         let currentStep = 0; 
+        let langClickCount = 0; 
 
-        // Расширенный лог загрузки старого ПК (длительность ~4 секунды)
         const bootLogs = [
             "ROM BIOS v4.01-KEEPER ENTERTAINMENT STAGE 1",
             "COPYRIGHT (C) 1996-2027 KEEPER ENT. ALL RIGHTS RESERVED.",
@@ -253,6 +276,8 @@
                 emptyWrong: "НЕПРАВИЛЬНО. СЕРЬЕЗНО? ПУСТАЯ СТРОКА?",
                 defaultPrompt: "ВВЕДИТЕ ПАРОЛЬ",
                 btnText: "ВВОД",
+                rageSwitch: "СИСТЕМА УДАЛЕНИЯ",
+                rageReply: "ХВАТИТ ИГРАТЬСЯ! ЭТО НЕ ИГРУШКИ!",
                 steps: {
                     0: { reply: "Серьезно? Ты жалок. Ладно дам подсказку - 12 + 4." },
                     1: { reply: "Молодец! Кстати столько лет подряд ИИ подбирал бы пароль. Скажи слово побег но без о и е" },
@@ -287,6 +312,8 @@
                 emptyWrong: "WRONG. SERIOUSLY? EMPTY LINE?",
                 defaultPrompt: "ENTER PASSWORD",
                 btnText: "SUBMIT",
+                rageSwitch: "UNFRIEND SYSTEM",
+                rageReply: "STOP PLAYING AROUND! THIS IS NOT A TOY!",
                 steps: {
                     0: { reply: "Seriously? You are pathetic. Fine, I'll give you a hint - 12 + 4." },
                     1: { reply: "Well done! By the way, that's how many years in a row an AI would brute-force the password. Say the word 'escape' but without vowels" },
@@ -337,7 +364,6 @@
         const mainContainer = document.getElementById('main-container');
         let bootLine = 0;
 
-        // Равномерный вывод логов ровно на 4 секунды (4000мс / 15 строк ≈ 266мс на строку)
         function printBootLines() {
             if (bootLine < bootLogs.length) {
                 bootScreen.innerHTML += bootLogs[bootLine] + '<br>';
@@ -377,33 +403,54 @@
             document.getElementById('timer-label').innerText = langData[currentLang].labelSecret;
         });
 
-        // МГНОВЕННЫЙ СИНХРОННЫЙ ПЕРЕВОД ТЕКСТА НАД СТРОКОЙ ВВОДА И КНОПКИ
         document.getElementById('lang-btn').addEventListener('click', () => {
+            if (isLock) return;
+            
+            langClickCount++;
+            const langBtn = document.getElementById('lang-btn');
+
+            if (langClickCount > 5) {
+                isLock = true;
+                const oldText = document.getElementById('response-text').innerHTML;
+                document.getElementById('response-text').innerText = langData[currentLang].rageReply;
+                document.body.classList.add('wrong-flash');
+                
+                setTimeout(() => {
+                    document.body.classList.remove('wrong-flash');
+                    document.getElementById('response-text').innerHTML = oldText;
+                    langClickCount = 0;
+                    langBtn.classList.remove('rage-mode');
+                    langBtn.innerText = currentLang === 'ru' ? 'EN' : 'RU';
+                    isLock = false;
+                }, 2500);
+                return;
+            }
+
             const oldLang = currentLang;
             currentLang = currentLang === 'ru' ? 'en' : 'ru';
-            document.getElementById('lang-btn').innerText = currentLang === 'ru' ? 'EN' : 'RU';
+            
+            if (langClickCount >= 4) {
+                langBtn.classList.add('rage-mode');
+                langBtn.innerText = langData[currentLang].rageSwitch;
+            } else {
+                langBtn.innerText = currentLang === 'ru' ? 'EN' : 'RU';
+            }
+
             document.getElementById('timer-label').innerText = langData[currentLang].labelSecret;
             document.getElementById('submit-btn').innerText = langData[currentLang].btnText;
             
-            if (!isLock) {
-                const outputField = document.getElementById('response-text');
-                const currentText = outputField.innerHTML;
+            const outputField = document.getElementById('response-text');
+            const currentText = outputField.innerHTML;
 
-                // 1. Если на экране дефолтный промпт
-                if (currentText === langData[oldLang].defaultPrompt) {
-                    outputField.innerText = langData[currentLang].defaultPrompt;
-                } 
-                // 2. Если на экране одна из сюжетных реплик (ищем по индексу шага)
-                else if (currentStep > 0 && currentText === langData[oldLang].steps[currentStep - 1].reply) {
-                    outputField.innerText = langData[currentLang].steps[currentStep - 1].reply;
-                }
-                // 3. Если на экране свободная пасхалка
-                else {
-                    for (const key in langData[oldLang].freeAnswers) {
-                        if (currentText === langData[oldLang].freeAnswers[key]) {
-                            outputField.innerHTML = langData[currentLang].freeAnswers[key];
-                            break;
-                        }
+            if (currentText === langData[oldLang].defaultPrompt) {
+                outputField.innerText = langData[currentLang].defaultPrompt;
+            } else if (currentStep > 0 && currentText === langData[oldLang].steps[currentStep - 1].reply) {
+                outputField.innerText = langData[currentLang].steps[currentStep - 1].reply;
+            } else {
+                for (const key in langData[oldLang].freeAnswers) {
+                    if (currentText === langData[oldLang].freeAnswers[key]) {
+                        outputField.innerHTML = langData[currentLang].freeAnswers[key];
+                        break;
                     }
                 }
             }
@@ -418,7 +465,8 @@
 
         function cleanInputString(str) {
             let res = str.trim().toUpperCase();
-            if (/^!+\$/.test(res)) return res;
+            if (/^!+\$/.test(res)) return res; 
+            
             while (res.length > 0 && ['.', '!', '?', ','].includes(res[res.length - 1])) {
                 res = res.slice(0, -1).trim();
             }
@@ -451,6 +499,7 @@
                 triggerInputFlash();
                 outputField.innerHTML = langData[currentLang].freeAnswers[cleanCode];
                 inputField.value = "";
+                langClickCount = 0;
                 return;
             }
 
@@ -465,6 +514,7 @@
                         currentStep++;
                     }
                     inputField.value = "";
+                    langClickCount = 0;
                     return;
                 }
             }
