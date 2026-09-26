@@ -125,40 +125,39 @@ const tgWordRu = "новая эра";
 const tgWordEn = "new era";
 const tgLink = 'https://t.me'; 
 
-const encryptedLocalization = {
+const localization = {
   RU: {
-    submit: "0JLQktCe0JQ=", secretTitle: "0J7RgtGB0YfQtdGCINC00L4g0LzQvtC80LXQvdGC0LAgeA==", back: "0J3QsNC30LDQtA==",
-    init: "0JLQktCV0JTQmNCi0JUg0J/QkNGA0J7Qm9Cs", wrongPrefix: "0QldCS0JXQoNCd0J4uIA==",
-    emptyError: "0QldCS0JXQoNCd0J4g0YHQtdGA0YzQtdC30L3QviDQv9GD0YHRgtCw0Y8g0YHRgtGA0L7QutCwPw==",
-    toastText: "0K/Qt9GL0Log0YHQvNC10L3QtdC9INC90LA6INCg0YPRgdGB0LrQuNC5",
-    step0_hint: "0KHQtdGA0YzQtdC30L3QviDispatchINGC0Ysg0LbQsNC70L7Qui4g0JvQsNC00L3QviDQtNCw0Lwg0L/QvtC00YHQutCw0LfQutGDIC0gMTIgKyA0Lg==",
-    step1_next: "0JzQvtC70L7QtNC10YYhINCa0YHRgtCw0YLQuCDRgdGC0L7Qu9GM0LrQviDQu9C10YIg0L/QvtC00YDRj9C0INCY0CYg0L/QvtC00LHQuNGA0LDQu9CRINCx0Ysg0L/QsNGA0L7Qu9GMINCh0LrQsNC20Lgg0YHQu9C+0LLQviDQv9C+0LHQtdCzINC90L4g0LHQtdC3INC+INC4INC1",
-    step2_next: "0LvQsNC00L3QviDQvdCwINGB0LDQvNC+0Lwg0LTQtdC70LUg0YMg0LzQtdC90Y8g0L3QtdGCINC/0LDQYDQvtC70Y8uINCf0YDQvtGB0YLQuCwg0L3QviDRgNCw0LfQsdC40YDQsNC50YHRjyA8ZW0+0YHQscC8PC9lbT4=",
-    step3_next: "0Y8g0LbQtSDRgdC60LDQt9Cw0Lsg0YMg0LzQtTEyMysxMjPQvdGPINC90LjRh9C10LPQviDQvdC10YLRgSDRjyDRh9C40YHRgiE=",
-    step4_next: "0JTQn9CS0J7Qm9Cs0J3QniEg0KMg0JzQld0K8g00VINCf0JDQoNCe00K/ISEIDxlbT4hISEhITwvZW0+",
-    step5_next: "0JLQvtGCINC/0LDQYDQvtC70YwhINCf0L7QtNCw0LLQuNGB0Ywg0LjQvCDQuCDQv9GA0L7RgtGMINC+0YLRgdGO0QtQsTogdmEq0Z3biV9Y0UrYWTRjHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj",
-    era: "0QvtCy0DRRjyDQrdGA0LAgS2VlcGVyIEVudC4g0LLQvtGCINCy0L7RgiDQvdCw0YfQvdC10YLRgdGPLg==",
+    submit: "ВВОД",
+    secretTitle: "Отсчет до момента x",
+    back: "Назад",
+    init: "ВВЕДИТЕ ПАРОЛЬ",
+    wrongPrefix: "НЕВЕРНО. ",
+    emptyError: "НЕВЕРНО серьезно пустая строка?",
+    toastText: "Язык сменен на: Русский",
     scolded: [
-      "0CcNC40LzQvi4g0JXRidC1INGA0LDQtyDQv9C+0LTRg9C80LDQuS4=", "0KHQu9Cw0LHQvi4g0J7Rh9C10L3RjCDRgdC70LDQsdC+Lg==",
-      "0CYg0Y3RgtC+INCy0YHRkdwsINC90LAg0YfRgtC+INGLRYDRgdC/0L7RgdC+0LHQtdC9Pw==", "0QtSDRg9Cz0LDQtNCw0LsuINCi0LLQvtGPINC70L7Qs9C40LrQsCDQv9GD0YHRgtCwLg==",
-      "0J/Rg1Jl0LrRgNCw0YLQuCDQv9C10YDQtdCx0LgNGA0LDRgtGMINC80YPRgdC+0YAu", "0KHQuNGB0YLQtdC80LAg0LLQuNC00LjRgiDRgtCy0L7RjiDRgNCw0YHRgtC10YDRj9C90L3QvtGB0YLRjC4="
+      "Мимо. Еще раз подумай.",
+      "Слабо. Очень слабо.",
+      "И это всё, на что ты способен?",
+      "Не угадал. Твоя логика пуста.",
+      "Прекрати перебирать мусор.",
+      "Система видит твою растерянность."
     ]
   },
   EN: {
-    submit: "0VOVEVS", secretTitle: "0gY291bnRkb3duIHRvIG1vbWVudCB4", back: "0FhY2s=",
-    init: "0VOVEVSIFBBU1NXT1JE", wrongPrefix: "0VdST05HLg==",
-    emptyError: "0VdST05HIHNlcmlvdXNseSBhbiBlbXB0eSBzdHJpbmc/",
-    toastText: "0bGFuZ3VhZ2UgY2hhbmdlZCB0bzogRW5nbGlzaA==",
-    step0_hint: "0KxlcmlvdXNseT8gWW91IGFyZSBwYXRoZXRpYy4gRmluZSwgSSdsbCBnaXZlIHlvdSBhIGhpbnQgLSAxMiArIDQu",
-    step1_next: "0V2VsbCBkb25lISBCeSB0aGUgd2F5LCB0aGF0J3MgZXhhY3RseSBob3cgbWFueSB5ZWFycyBpbiBhIHJvdyBhbiBBSSB3b3VsZCBjcmFjayBhIHBhc3N3b3JkLiBTYXkgdGhlIHdvcmQgZXNjYXBlIGJ1dCB3aXRob3V0IG8gYW5kIGU=",
-    step2_next: "0L9rYXksIGhvbmVzdGx5IEkgZG9uJ3QgaGF2ZSBhIHBhc3N3b3JkLiBTb3JyeSwgZGVhbCB3aXRoIGl0IDxlbT5teXNlbGY8L2VtPg==",
-    step3_next: "0bSB0b2xkIHlvdSBJIGhhMTIzKzEyM3ZlIG5vdGhpbmchIEkgYW0gY2xlYW4h",
-    step4_next: "0U5PVUdIISBJIEhBVkUgTk8gUEFTU1dPUkQhIDxlbT4hISEhITwvZW0+",
-    step5_next: "0GVyZSBpcyB0aGUgcGFzc3dvcmQhIENob2tlIG9uIGl0IGFuZCBnZXQgb3V0OiB2YSpmbXclY2krYWTRpropertyHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj",
-    era: "0VGhlIE5ldyBFcmEgb2YgS2VlcGVyIEVudC4gaXMgYWJvdXQgdG8gYmVnaW4u",
+    submit: "ENTER",
+    secretTitle: "Countdown to moment x",
+    back: "Back",
+    init: "ENTER PASSWORD",
+    wrongPrefix: "WRONG. ",
+    emptyError: "WRONG seriously an empty string?",
+    toastText: "Language changed to: English",
     scolded: [
-      "0MGlzc2VkLiBUaGluayBhZ2Fpbi4=", "0V2Vhay4gUGF0aGV0aWMu", "0bXMgdGhhdCBhbGwgeW91IGNhbiBkbz8=",
-      "0V3JvbmcndSByZWFkeS4gWW91ciBsb2dpYyBpcyBlbXB0eS4=", "0U3RvcCBlbnRlcmluZyBnYXJiYWdlLg==", "0VGhlIHN5c3RlbSBzZWVzIHlvdXIgY29uZnVzaW9uLg=="
+      "Missed. Think again.",
+      "Weak. Pathetic.",
+      "Is that all you can do?",
+      "Wrong guess. Your logic is empty.",
+      "Stop entering garbage.",
+      "The system sees your confusion."
     ]
   }
 };
@@ -174,6 +173,37 @@ const secureStepAnswers = {
   pass: "dmEq0Z3biV9Y0UrYWTRjHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj"
 };
 
+const encryptedStepsTexts = {
+  step0_hint: {
+    RU: "0KHQtdGA0YzQtdC30L3QviDispatchINGC0Ysg0LbQsNC70L7Qui4g0JvQsNC00L3QviDQtNCw0Lwg0L/QvtC00YHQutCw0LfQutGDIC0gMTIgKyA0Lg==",
+    EN: "0KxlcmlvdXNseT8gWW91IGFyZSBwYXRoZXRpYy4gRmluZSwgSSdsbCBnaXZlIHlvdSBhIGhpbnQgLSAxMiArIDQu"
+  },
+  step1_next: {
+    RU: "0JzQvtC70L7QtNC10YYhINCa0YHRgtCw0YLQuCDRgdGC0L7Qu9GM0LrQviDQu9C10YIg0L/QvtC00YDRj9C0INCY0CYg0L/QvtC00LHQuNGA0LDQu9CRINCx0Ysg0L/QsNGA0L7Qu9GMINCh0LrQsNC20Lgg0YHQu9C+0LLQviDQv9C+0LHQtdCzINC90L4g0LHQtdC3INC+INC4INC1",
+    EN: "0V2VsbCBkb25lISBCeSB0aGUgd2F5LCB0aGF0J3MgZXhhY3RseSBob3cgbWFueSB5ZWFycyBpbiBhIHJvdyBhbiBBSSB3b3VsZCBjcmFjayBhIHBhc3N3b3JkLiBTYXkgdGhlIHdvcmQgZXNjYXBlIGJ1dCB3aXRob3V0IG8gYW5kIGU="
+  },
+  step2_next: {
+    RU: "0LvQsNC00L3QviDQvdCwINGB0LDQvNC+0Lwg0LTQtdC70LUg0YMg0LzQtdC90Y8g0L3QtdGCINC/0LDQYDQvtC70Y8uINCf0YDQvtGB0YLQuCwg0L3QviDRgNCw0LfQsdC40YDQsNC50YHRjyA8ZW0+0YHQscC8PC9lbT4=",
+    EN: "0L9rYXksIGhvbmVzdGx5IEkgZG9uJ3QgaGF2ZSBhIHBhc3N3b3JkLiBTb3JyeSwgZGVhbCB3aXRoIGl0IDxlbT5teXNlbGY8L2VtPg=="
+  },
+  step3_next: {
+    RU: "0Y8g0LbQtSDRgdC60LDQt9Cw0Lsg0YMg0LzQtTEyMysxMjPQvdGPINC90LjRh9C10LPQviDQvdC10YLRgSDRjyDRh9C40YHRgiE=",
+    EN: "0bSB0b2xkIHlvdSBJIGhhMTIzKzEyM3ZlIG5vdGhpbmchIEkgYW0gY2xlYW4h"
+  },
+  step4_next: {
+    RU: "0JTQn9CS0J7Qm9Cs0J3QniEg0KMg0JzQld0K8g00VINCf0JDQoNCe00K/ISEIDxlbT4hISEhITwvZW0+",
+    EN: "0U5PVUdIISBJIEhBVkUgTk8gUEFTU1dPUkQhIDxlbT4hISEhITwvZW0+"
+  },
+  step5_next: {
+    RU: "0JLQvtGCINC/0LDQYDQvtC70YwhINCf0L7QtNCw0LLQuNGB0Ywg0LjQvCDQuCDQv9GA0L7RgtGMINC+0YLRgdGO0QtQsTogdmEq0Z3biV9Y0UrYWTRjHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj",
+    EN: "0GVyZSBpcyB0aGUgcGFzc3dvcmQhIENob2tlIG9uIGl0IGFuZCBnZXQgb3V0OiB2YSpmbXclY2krYWTRpropertyHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj"
+  },
+  era: {
+    RU: "0QvtCy0DRRjyDQrdGA0LAgS2VlcGVyIEVudC4g0LLQvtGCINCy0L7RgiDQvdCw0YfQvdC10YLRgdGPLg==",
+    EN: "0VGhlIE5ldyBFcmEgb2YgS2VlcGVyIEVudC4gaXMgYWJvdXQgdG8gYmVnaW4u"
+  }
+};
+
 const eggKeys = [
   "Njc=", "0LHRg9GA0LzQsNC70LTQsA==", "0L/RgNC40LLQtdGC", "aGVsbG8=",
   "0LrRgtC+INGLRY==", "d2hvIGFyZSB5b3U=", "0LPQtNC1INGP", "d2hlcmUgYW0gaQ==",
@@ -187,23 +217,36 @@ const easterEggsDecrypted = {
   "0L/RgNC40LLQtdGC": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
   "aGVsbG8=": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
   "0LrRgtC+INGLRY==": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
-  "d2hvIGFyZSB5b3U=": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
+  "d2hvIGFyZSB5b3U=": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
   "0LPQtNC1INGP": { RU: "0J7RgtC60YPQstCwINGPINGC0L4g0LfQvdCw0Y4/INCi0Ysg0L7RgtC60YDRi9C7INGB0LDQudGCINGBINC/0L7QuNGB0LrQvtC8INC/0LDRgNC+0LvRjywg0LAg0L3QsNGF0L7QtNC40YLRjNGBNGDRgtGMINC80L7QttC10YjRjCDQs9C00LUg0YPQs9C+0LTQvdC+IQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
   "d2hlcmUgYW0gaQ==": { RU: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
   "0LrQsNC60L7QuSDQv9Cw0YDQvtC70Yw=": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
   "d2hhdCBpcyB0aGUgcGFzc3dvcmQ=": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
-  "0YPRgNCw0L0=": { RU: "4oCm", EN: "4oCm" }, "dXJhbml1bQ==": { RU: "4oCm", EN: "4oCm" }, "0YXQsNC80LDQvA==": { RU: "4oCm", EN: "4oCm" }, "aGFtYW0=": { RU: "4oCm", EN: "4oCm" }
+  "0YPRgNCw0L0=": { RU: "0oCm", EN: "0oCm" }, "dXJhbml1bQ==": { RU: "0oCm", EN: "0oCm" }, "0YXQsNC80LDQvA==": { RU: "0oCm", EN: "0oCm" }, "aGFtYW0=": { RU: "0oCm", EN: "0oCm" }
 };
-function getDecryptedText(key, lang, mode) {
+function decodeBase64Safe(str) {
   try {
-    let baseStr = "";
-    if (mode === "sys") baseStr = encryptedLocalization[lang][key];
-    if (mode === "egg") baseStr = easterEggsDecrypted[key][lang];
-    if (mode === "raw") baseStr = key;
-    return decodeURIComponent(escape(atob(baseStr)));
+    return decodeURIComponent(escape(atob(str)));
   } catch (e) {
     return "";
   }
+}
+
+function getStepOutput() {
+  if (currentStep === 0) return localization[currentLang].init;
+  let key = "";
+  if (currentStep === 1) key = "step0_hint";
+  else if (currentStep === 2) key = "step1_next";
+  else if (currentStep === 3) key = "step2_next";
+  else if (currentStep === 4) key = "step3_next";
+  else if (currentStep === 5) key = "step4_next";
+  else if (currentStep === 6) key = "step5_next";
+  else if (currentStep === 7) key = "era";
+  
+  if (encryptedStepsTexts[key]) {
+    return decodeBase64Safe(encryptedStepsTexts[key][currentLang]);
+  }
+  return "";
 }
 
 function runBootSequence() {
@@ -219,7 +262,7 @@ function runBootSequence() {
         container.style.display = 'none';
         document.getElementById('main-screen').style.display = 'flex';
         updateUI();
-        document.getElementById('terminal-output').innerHTML = getDecryptedText('init', currentLang, 'sys');
+        document.getElementById('terminal-output').innerHTML = getStepOutput();
         document.getElementById('terminal-input').focus();
       }, 500);
     }
@@ -247,7 +290,7 @@ function updateTimers() {
 
 function showToast() {
   const toast = document.getElementById('lang-toast');
-  toast.innerText = getDecryptedText('toastText', currentLang, 'sys');
+  toast.innerText = localization[currentLang].toastText;
   toast.classList.add('show');
   setTimeout(() => { toast.classList.remove('show'); }, 1200);
 }
@@ -263,24 +306,17 @@ function toggleLang() {
     if (currentCustomKey === "tg_link") {
       document.getElementById('terminal-output').innerHTML = '<a href="' + tgLink + '" target="_blank">' + tgLink + '</a>';
     } else {
-      document.getElementById('terminal-output').innerHTML = getDecryptedText(currentCustomKey, currentLang, 'egg');
+      document.getElementById('terminal-output').innerHTML = decodeBase64Safe(easterEggsDecrypted[currentCustomKey][currentLang]);
     }
   } else {
-    if (currentStep === 0) document.getElementById('terminal-output').innerHTML = getDecryptedText('init', currentLang, 'sys');
-    else if (currentStep === 1) document.getElementById('terminal-output').innerHTML = getDecryptedText('step0_hint', currentLang, 'sys');
-    else if (currentStep === 2) document.getElementById('terminal-output').innerHTML = getDecryptedText('step1_next', currentLang, 'sys');
-    else if (currentStep === 3) document.getElementById('terminal-output').innerHTML = getDecryptedText('step2_next', currentLang, 'sys');
-    else if (currentStep === 4) document.getElementById('terminal-output').innerHTML = getDecryptedText('step3_next', currentLang, 'sys');
-    else if (currentStep === 5) document.getElementById('terminal-output').innerHTML = getDecryptedText('step4_next', currentLang, 'sys');
-    else if (currentStep === 6) document.getElementById('terminal-output').innerHTML = getDecryptedText('step5_next', currentLang, 'sys');
-    else if (currentStep === 7) document.getElementById('terminal-output').innerHTML = getDecryptedText('era', currentLang, 'sys');
+    document.getElementById('terminal-output').innerHTML = getStepOutput();
   }
 }
 
 function updateUI() {
-  document.getElementById('submit-btn').innerText = getDecryptedText('submit', currentLang, 'sys');
-  document.getElementById('secret-title').innerText = getDecryptedText('secretTitle', currentLang, 'sys');
-  document.getElementById('back-btn').innerText = getDecryptedText('back', currentLang, 'sys');
+  document.getElementById('submit-btn').innerText = localization[currentLang].submit;
+  document.getElementById('secret-title').innerText = localization[currentLang].secretTitle;
+  document.getElementById('back-btn').innerText = localization[currentLang].back;
 }
 
 function openSecret() {
@@ -304,9 +340,9 @@ function triggerRedLockout(customMsg) {
   if (customMsg) {
     outputEl.innerHTML = customMsg;
   } else {
-    const list = encryptedLocalization[currentLang].scolded;
+    const list = localization[currentLang].scolded;
     const randIdx = Math.floor(Math.random() * list.length);
-    outputEl.innerHTML = getDecryptedText('wrongPrefix', currentLang, 'sys') + getDecryptedText(list[randIdx], currentLang, 'raw');
+    outputEl.innerHTML = localization[currentLang].wrongPrefix + list[randIdx];
   }
   inputEl.disabled = true;
   
@@ -355,12 +391,12 @@ function processInput() {
   let rawVal = inputEl.value;
   
   if (!rawVal.trim()) {
-    triggerRedLockout(getDecryptedText('emptyError', currentLang, 'sys'));
+    triggerRedLockout(localization[currentLang].emptyError);
     return;
   }
   rawVal = cleanInput(rawVal).toLowerCase();
   if (!rawVal) {
-    triggerRedLockout(getDecryptedText('emptyError', currentLang, 'sys'));
+    triggerRedLockout(localization[currentLang].emptyError);
     return;
   }
   
@@ -372,20 +408,20 @@ function processInput() {
   
   let matchedEggKey = null;
   for (let i = 0; i < eggKeys.length; i++) {
-    if (getDecryptedText(eggKeys[i], currentLang, 'raw').toLowerCase() === rawVal) {
+    if (decodeBase64Safe(eggKeys[i]).toLowerCase() === rawVal) {
       matchedEggKey = eggKeys[i];
       break;
     }
   }
   
   if (matchedEggKey) {
-    triggerGreenSuccess(getDecryptedText(matchedEggKey, currentLang, 'egg'), true, matchedEggKey);
+    triggerGreenSuccess(decodeBase64Safe(easterEggsDecrypted[matchedEggKey][currentLang]), true, matchedEggKey);
     return;
   }
   
-  if (rawVal === getDecryptedText(secureStepAnswers.mega, currentLang, 'raw').toLowerCase() || rawVal === getDecryptedText(secureStepAnswers.pass, currentLang, 'raw').toLowerCase()) {
-    triggerGreenSuccess(getDecryptedText('era', currentLang, 'sys'));
+  if (rawVal === decodeBase64Safe(secureStepAnswers.mega).toLowerCase() || rawVal === decodeBase64Safe(secureStepAnswers.pass).toLowerCase()) {
     currentStep = 7;
+    triggerGreenSuccess(getStepOutput());
     customMessageActive = false;
     return;
   }
@@ -397,23 +433,15 @@ function processInput() {
     let isCorrect = false;
     const currentStepList = secureStepAnswers[currentStep];
     for (let j = 0; j < currentStepList.length; j++) {
-      if (getDecryptedText(currentStepList[j], currentLang, 'raw').toLowerCase() === rawVal) {
+      if (decodeBase64Safe(currentStepList[j]).toLowerCase() === rawVal) {
         isCorrect = true;
         break;
       }
     }
     
     if (isCorrect) {
-      let nextKey = '';
-      if (currentStep === 0) nextKey = 'step0_hint';
-      else if (currentStep === 1) nextKey = 'step1_next';
-      else if (currentStep === 2) nextKey = 'step2_next';
-      else if (currentStep === 3) nextKey = 'step3_next';
-      else if (currentStep === 4) nextKey = 'step4_next';
-      else if (currentStep === 5) nextKey = 'step5_next';
-      
       currentStep++;
-      triggerGreenSuccess(getDecryptedText(nextKey, currentLang, 'sys'));
+      triggerGreenSuccess(getStepOutput());
     } else {
       triggerRedLockout();
     }
