@@ -46,7 +46,7 @@
             pointer-events: none;
         }
 
-        /* Красный режим при ошибке */
+        /* Полный красный режим при ошибке (включая кнопку ввода) */
         body.wrong-flash {
             color: var(--neon-red) !important;
             text-shadow: var(--glow-red) !important;
@@ -60,14 +60,14 @@
         body.wrong-flash .timer-wrapper {
             border-color: var(--neon-red) !important;
             box-shadow: var(--glow-red) !important;
-        }
-        body.wrong-flash .terminal-input {
             color: var(--neon-red) !important;
+        }
+        body.wrong-flash .btn-submit {
             text-shadow: var(--glow-red) !important;
         }
         body.wrong-flash a { color: var(--neon-red) !important; }
 
-        /* Изумрудная вспышка СТРОГО для строки ввода и кнопки */
+        /* Изумрудная локальная вспышка строки и кнопки */
         .input-flash-active .terminal-input,
         .input-flash-active .btn-submit {
             background-color: rgba(51, 255, 51, 0.25) !important;
@@ -80,9 +80,13 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            font-size: 14px;
-            line-height: 1.5;
+            font-size: 13px;
+            line-height: 1.4;
             z-index: 10;
+            font-weight: bold;
+            max-width: 90%;
+            height: 90%;
+            overflow: hidden;
         }
 
         #main-container {
@@ -223,13 +227,32 @@
         let isLock = false;
         let currentStep = 0; 
 
+        // Расширенный лог загрузки старого ПК (длительность ~4 секунды)
+        const bootLogs = [
+            "ROM BIOS v4.01-KEEPER ENTERTAINMENT STAGE 1",
+            "COPYRIGHT (C) 1996-2027 KEEPER ENT. ALL RIGHTS RESERVED.",
+            "---------------------------------------------------------",
+            "CPU: KPR-QUANTUM PRO AT 8.44 GHz",
+            "TESTING RAM: 65536 KB ... OK",
+            "DETECTING HARD DISK DRIVES ... PRIMARY MASTER: KPR-MASSIVE-SSD 2.04TB",
+            "LOAD SECTORS: 0x00FF32 -> 0x77FFA1 ... OK",
+            "INITIALIZING MOUSE AND KEYBOARD BUSSES ... OK",
+            "GRAPHICS CARD: EMULATOR CRT-TUBE-NEON 512MB ... MATCHED",
+            "LOADING KERNEL INTERFACE ... SUCCESS",
+            "CONNECTING SECURE UPLINK CHANNELS...",
+            "ESTABLISHING ROUTING THROUGH KPR-GATEWAY...",
+            "ENCRYPTING SESSION ID ... AES-X-256 ACTIVE",
+            "STATUS: ACCESS GRANTED TO KEEPER MAIN TERMINAL.",
+            "RUNNING SYSTEM..."
+        ];
+
         const langData = {
             ru: {
-                boot: ["ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ...", "ПОДКЛЮЧЕНИЕ К KEEPER ENT... OK"],
                 labelSecret: "До момента x осталось:",
                 wrong: "НЕПРАВИЛЬНО.",
                 emptyWrong: "НЕПРАВИЛЬНО. СЕРЬЕЗНО? ПУСТАЯ СТРОКА?",
                 defaultPrompt: "ВВЕДИТЕ ПАРОЛЬ",
+                btnText: "ВВОД",
                 steps: {
                     0: { reply: "Серьезно? Ты жалок. Ладно дам подсказку - 12 + 4." },
                     1: { reply: "Молодец! Кстати столько лет подряд ИИ подбирал бы пароль. Скажи слово побег но без о и е" },
@@ -259,11 +282,11 @@
                 }
             },
             en: {
-                boot: ["SYSTEM INITIALIZATION...", "CONNECTING TO KEEPER ENT... OK"],
                 labelSecret: "Until moment x left:",
                 wrong: "WRONG.",
                 emptyWrong: "WRONG. SERIOUSLY? EMPTY LINE?",
                 defaultPrompt: "ENTER PASSWORD",
+                btnText: "SUBMIT",
                 steps: {
                     0: { reply: "Seriously? You are pathetic. Fine, I'll give you a hint - 12 + 4." },
                     1: { reply: "Well done! By the way, that's how many years in a row an AI would brute-force the password. Say the word 'escape' but without vowels" },
@@ -314,17 +337,19 @@
         const mainContainer = document.getElementById('main-container');
         let bootLine = 0;
 
+        // Равномерный вывод логов ровно на 4 секунды (4000мс / 15 строк ≈ 266мс на строку)
         function printBootLines() {
-            if (bootLine < langData[currentLang].boot.length) {
-                bootScreen.innerHTML += langData[currentLang].boot[bootLine] + '<br>';
+            if (bootLine < bootLogs.length) {
+                bootScreen.innerHTML += bootLogs[bootLine] + '<br>';
+                bootScreen.scrollTop = bootScreen.scrollHeight;
                 bootLine++;
-                setTimeout(printBootLines, 300);
+                setTimeout(printBootLines, 260);
             } else {
                 setTimeout(() => {
                     bootScreen.style.display = 'none';
                     mainContainer.style.display = 'flex';
                     document.getElementById('user-input').focus();
-                }, 400);
+                }, 300);
             }
         }
         printBootLines();
@@ -352,20 +377,38 @@
             document.getElementById('timer-label').innerText = langData[currentLang].labelSecret;
         });
 
+        // МГНОВЕННЫЙ СИНХРОННЫЙ ПЕРЕВОД ТЕКСТА НАД СТРОКОЙ ВВОДА И КНОПКИ
         document.getElementById('lang-btn').addEventListener('click', () => {
+            const oldLang = currentLang;
             currentLang = currentLang === 'ru' ? 'en' : 'ru';
             document.getElementById('lang-btn').innerText = currentLang === 'ru' ? 'EN' : 'RU';
             document.getElementById('timer-label').innerText = langData[currentLang].labelSecret;
+            document.getElementById('submit-btn').innerText = langData[currentLang].btnText;
             
             if (!isLock) {
                 const outputField = document.getElementById('response-text');
-                if (outputField.innerText.includes("ВВЕДИТЕ ПАРОЛЬ") || outputField.innerText.includes("ENTER PASSWORD")) {
+                const currentText = outputField.innerHTML;
+
+                // 1. Если на экране дефолтный промпт
+                if (currentText === langData[oldLang].defaultPrompt) {
                     outputField.innerText = langData[currentLang].defaultPrompt;
+                } 
+                // 2. Если на экране одна из сюжетных реплик (ищем по индексу шага)
+                else if (currentStep > 0 && currentText === langData[oldLang].steps[currentStep - 1].reply) {
+                    outputField.innerText = langData[currentLang].steps[currentStep - 1].reply;
+                }
+                // 3. Если на экране свободная пасхалка
+                else {
+                    for (const key in langData[oldLang].freeAnswers) {
+                        if (currentText === langData[oldLang].freeAnswers[key]) {
+                            outputField.innerHTML = langData[currentLang].freeAnswers[key];
+                            break;
+                        }
+                    }
                 }
             }
         });
 
-        // Функция точечной вспышки СТРОГО строки ввода и кнопки
         function triggerInputFlash() {
             document.getElementById('terminal-input-zone').classList.add('input-flash-active');
             setTimeout(() => {
@@ -373,12 +416,9 @@
             }, 450);
         }
 
-        // Исправленная очистка строк, не ломающая английский ввод и знаки шифра
         function cleanInputString(str) {
             let res = str.trim().toUpperCase();
-            if (/^!+\$/.test(res)) return res; // Для шифра !!!!!
-            
-            // Удаляем знаки препинания на конце, если это не чистый шифр
+            if (/^!+\$/.test(res)) return res;
             while (res.length > 0 && ['.', '!', '?', ','].includes(res[res.length - 1])) {
                 res = res.slice(0, -1).trim();
             }
@@ -407,7 +447,6 @@
 
             const cleanCode = cleanInputString(rawValue);
 
-            // 1. Проверка универсальных пасхалок (доступны на любом языке)
             if (langData[currentLang].freeAnswers[cleanCode] !== undefined) {
                 triggerInputFlash();
                 outputField.innerHTML = langData[currentLang].freeAnswers[cleanCode];
@@ -415,7 +454,6 @@
                 return;
             }
 
-            // 2. Проверка основной сюжетной линии
             if (currentStep <= 6) {
                 const expectedTriggers = stepTriggers[currentStep];
                 const isCorrect = expectedTriggers.some(trigger => cleanCode === trigger || cleanCode.includes(trigger));
@@ -431,10 +469,9 @@
                 }
             }
 
-            // 3. Вывод ошибки
             isLock = true;
             const randomContempt = langData[currentLang].contempt[Math.floor(Math.random() * langData[currentLang].contempt.length)];
-            outputField.innerText = `${langData[currentLang].wrong} ${randomContempt}`;
+            outputField.innerText = `${langData[currentLang].wrong}\n${randomContempt}`;
             document.body.classList.add('wrong-flash');
             inputField.value = "";
 
