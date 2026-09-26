@@ -365,6 +365,9 @@
             "6EE2FE6C5BE55E75AD0EDFCD8D4FF144EF5B4B27CE97D115C1CECCAD3EED355D": "H8"  
         };
 
+        // Скрытая посимвольная разметка истинного супер-пароля (F12 не поможет)
+        const finalGate = ['V','A','*','Ф','W','N','%','Ч','Template_I','+','A','D','Ь','S','>','Р','Ф','\$','Л','Н','Х','Я','\'','X','W','1','%','Й','К','L','_','5','Ч','I','G','P','Т','Ы','О','И',']','?','Е','J','E','#'];
+
         function d(str) { return decodeURIComponent(escape(atob(str))); }
 
         async function sha256(message) {
@@ -448,7 +451,7 @@
 
             if (currentText === d(langData[oldLang].defaultPrompt)) {
                 outputField.innerText = d(langData[currentLang].defaultPrompt);
-            } else if (currentStep > 0 && currentText === d(langData[oldLang].steps[currentStep - 1])) {
+            } else if (currentStep > 0 && currentStep <= 6 && currentText === d(langData[oldLang].steps[currentStep - 1])) {
                 outputField.innerText = d(langData[currentLang].steps[currentStep - 1]);
             } else if (currentText.includes(tgConfig.link)) {
                 outputField.innerHTML = (currentLang === 'ru' ? tgConfig.textRu : tgConfig.textEn) + `<a href="${tgConfig.link}" target="_blank">${tgConfig.link}</a>`;
@@ -487,60 +490,66 @@
                 return;
             }
 
-            if (currentStep === 5 && trimmedValue === "!!!!!") {
-                triggerInputFlash();
-                outputField.innerText = d(langData[currentLang].steps[currentStep]);
-                currentStep++;
-                inputField.value = "";
-                langClickCount = 0;
-                return;
-            }
-
-            let cleanCode = trimmedValue.toUpperCase();
-            while (cleanCode.length > 0 && ['.', '!', '?', ','].includes(cleanCode[cleanCode.length - 1])) {
-                cleanCode = cleanCode.slice(0, -1).trim();
-            }
-
-            const inputHash = await sha256(cleanCode);
-
-            if (cleanCode === "НОВАЯ ЭРА" || cleanCode === "NEW ERA") {
-                triggerInputFlash();
-                outputField.innerHTML = (currentLang === 'ru' ? tgConfig.textRu : tgConfig.textEn) + `<a href="${tgConfig.link}" target="_blank">${tgConfig.link}</a>`;
-                inputField.value = "";
-                langClickCount = 0;
-                return;
-            }
-
-            const upperHash = inputHash.toUpperCase();
-            if (freeHashes[upperHash] !== undefined) {
-                const answerKey = freeHashes[upperHash];
-                triggerInputFlash();
-                outputField.innerHTML = d(langData[currentLang].freeAnswers[answerKey]);
-                inputField.value = "";
-                langClickCount = 0;
-                return;
-            }
-
-            if (currentStep <= 6) {
-                let isCorrect = false;
-                
-                if (currentStep === 6) {
-                    if (cleanCode === "VA*ФWN%ЧИ+ADЬS>РФ\$ЛНХЯ'XW1%ЙКL_5ЧIGPТЫОИ]?ЕJE#") {
-                        isCorrect = true;
-                    }
-                } else {
-                    const validHashes = stepHashes[currentStep];
-                    isCorrect = validHashes.includes(inputHash);
-                }
-
-                if (isCorrect) {
+            try {
+                if (currentStep === 5 && trimmedValue === "!!!!!") {
                     triggerInputFlash();
                     outputField.innerText = d(langData[currentLang].steps[currentStep]);
-                    if (currentStep < 6) currentStep++;
+                    currentStep++;
                     inputField.value = "";
                     langClickCount = 0;
                     return;
                 }
+
+                let cleanCode = trimmedValue.toUpperCase();
+                
+                if (cleanCode === "НОВАЯ ЭРА" || cleanCode === "NEW ERA") {
+                    triggerInputFlash();
+                    outputField.innerHTML = (currentLang === 'ru' ? tgConfig.textRu : tgConfig.textEn) + `<a href="${tgConfig.link}" target="_blank">${tgConfig.link}</a>`;
+                    inputField.value = "";
+                    langClickCount = 0;
+                    return;
+                }
+
+                while (cleanCode.length > 0 && ['.', '!', '?', ','].includes(cleanCode[cleanCode.length - 1])) {
+                    cleanCode = cleanCode.slice(0, -1).trim();
+                }
+
+                const inputHash = await sha256(cleanCode);
+                const upperHash = inputHash.toUpperCase();
+
+                if (freeHashes[upperHash] !== undefined) {
+                    const answerKey = freeHashes[upperHash];
+                    triggerInputFlash();
+                    outputField.innerHTML = d(langData[currentLang].freeAnswers[answerKey]);
+                    inputField.value = "";
+                    langClickCount = 0;
+                    return;
+                }
+
+                if (currentStep <= 6) {
+                    let isCorrect = false;
+                    
+                    if (currentStep === 6) {
+                        const compiled = finalGate.map(c => c === 'Template_I' ? 'И' : c).join('');
+                        if (cleanCode === compiled) {
+                            isCorrect = true;
+                        }
+                    } else {
+                        const validHashes = stepHashes[currentStep];
+                        isCorrect = validHashes.includes(inputHash);
+                    }
+
+                    if (isCorrect) {
+                        triggerInputFlash();
+                        outputField.innerText = d(langData[currentLang].steps[currentStep]);
+                        if (currentStep < 6) currentStep++;
+                        inputField.value = "";
+                        langClickCount = 0;
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.log("SYS_ERR_HANDLED");
             }
 
             isLock = true;
