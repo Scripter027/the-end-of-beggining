@@ -244,9 +244,8 @@
         let currentStep = 0; 
         let langClickCount = 0; 
 
-        // Открытая конфигурация Telegram ссылки — вы можете менять её здесь!
         const tgConfig = {
-            link: "https://t.me",
+            link: "https://t.me/+DgXdw2zvilgwYzdi",
             textRu: "Линк: ",
             textEn: "Link: "
         };
@@ -269,16 +268,15 @@
             "RUNNING SYSTEM..."
         ];
 
-        // Зашифрованная база текстов (Base64) для полной защиты от просмотра через F12
         const langData = {
             ru: {
-                labelSecret: "RG8gbW9tZW50YSB4IG9zdGFsb3M6", // До момента x осталось:
-                wrong: "0J3QldCf0KDQkNCS0JjQm9Cs0J3Qni4=", // НЕПРАВИЛЬНО.
-                emptyWrong: "0J3QldCf0KDQkNCS0JjQm9Cs0J3Qni4g0KHQldCg0KzQldCX0J3QniDirectINCf0KPQodCi0JDRRSDQodCi0KDQnQmtCQLw==", // НЕПРАВИЛЬНО. СЕРЬЕЗНО? ПУСТАЯ СТРОКА?
-                defaultPrompt: "0JLQktCV0JTQmNCi0JUg0J/QkNCT0J7Qm9Cs", // ВВЕДИТЕ ПАРОЛЬ
-                btnText: "0JLQktCe0JQ=", // ВВОД
-                rageSwitch: "0KHQmNCh0KLQldCc0JAg0KPQ0INCb0JXQndCY0R8=", // СИСТЕМА УДАЛЕНИЯ
-                rageReply: "0KXRktCQ0KLQmNCi0SDRHQkNCT0LDRgtGM0YHRjSEg0K3QVE8g0J3RCDQCT0KDQo9Co0JrQmCE=", // ХВАТИТ ИГРАТЬСЯ! ЭТО НЕ ИГРУШКИ!
+                labelSecret: "RG8gbW9tZW50YSB4IG9zdGFsb3M6", 
+                wrong: "0J3QldCf0KDQkNCS0JjQm9Cs0J3Qni4=", 
+                emptyWrong: "0J3QldCf0KDQkNCS0JjQm9Cs0J3Qni4g0KHQldCg0KzQldCX0J3QniDirectINCf0KPQodCi0JDRRSDQodCi0KDQnQmtCQLw==", 
+                defaultPrompt: "0JLQktCV0JTQmNCi0JUg0J/QkNCT0J7Qm9Cs", 
+                btnText: "0JLQktCe0JQ=", 
+                rageSwitch: "0KHQmNCh0KLQldCc0JAg0KPQ0INCb0JXQndCY0R8=", 
+                rageReply: "0KXRktCQ0KLQmNCi0SDRHQkNCT0LDRgtGM0YHRjSEg0K3QVE8g0J3RCDQCT0KDQo9Co0JrQmCE=", 
                 steps: {
                     0: "0KHQtdGA0YzQtdC30L3QvtC/INCi0Ysg0LbQsNC70L7QvtC6LiDQm9Cw0L3QtNCwINC00LDQvCDQv9C+0LTRgdC60LDQt9C60YMgLSAxMiArIDQu",
                     1: "0JzQvtC70L7QtNC10YYhINCa0YHRgtCw0YLQuCDRgdGC0L7Qu9GM0LrQviDQu9C10YIg0L/QvtC00YDRj9C0INCY0Jgg0L/QvtC00LHQvNGA0LDQu9CDINCxNpreferredRgdGPINC/0LDRgNC+0LvRjC4g0KHQutCw0LbQuCDRgdC70L7QstC+INC/0LHQtdCzINCx0LXQtyDQviDQuCDQtQ==",
@@ -289,21 +287,21 @@
                     6: "0J3QvtCy0DRRING0YDQsCBLZWVwZXIgRW50LiDQstC+0YIg0LLQvtGCINC90LDRh9C90LXRgtGB0Y8u"
                 },
                 contempt: [
-                    "0KXRktCQ0KLQmNCi0SDRgtGA0LDRgtC40YLRjCDQvNC+0LUg0LLRgNC10LzRjC4=",
+                    "0KXRktCQ0KLQmNCi0SDRgtGA0LDRgtC40YLRjCDQvNC+0LUg0LLRgNC10LzRjC．",
                     "0KLRiyDQsdC10YHQv9C+0LvQtdC30LXQvS4=",
                     "0JTQvtGB0YLRg9CvINC30LDQv9GA0LXRidC10L0u",
                     "0K3RgtC+0YIg0L7RgtCy0L10INC90LUg0LjQvNC10LXRgiDQt9C90LDRh9C10L3QuNGPLg==",
                     "0KDQsNC30LPQvtCy0L7RgCDQvtC60L7QvdGH0LXQvS4="
                 ],
                 freeAnswers: {
-                    "H1": "0J/QtdGA0LXRgdGC0LDQvdGMINC00LXQs9GA0LDQtNC40YDQvtCy0DRRgtGMINC4INC30LDQudC80LjRgdGMINC00LXQu9C+0Lwh", // 67
-                    "H2": "0L3QtSDQvdGDING0Ysg0LzQvtC70L7QtNC10YYg0LrQvtC90LXRh9C90L4g0YfRgtC+INC30LAg0LzQvtC70L7QtNC10LbQvdGL0LUg0LzQtdC80YfQuNC60Lgg0YjQsNGA0LjRjHwsINC90L4g0Y3RgtC+INC90LUg0L/QvtGA0L7Qu9GMINCE", // Бурмалда
-                    "H3": "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGALCDQv9C+0LrQsCDQvdC1INC90LDQudC00LXRiNGMINC/0LDRgNC+0LvRjCE=", // Привет
-                    "H4": "0KLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLQstC+0LXQs9C+INC/0YDQdNCy0LjQu9GM0L3QvtCz0L4g0L/QgtGA0L7Qu9GPISDQnNC90LUg0L3QtSDQv9C70LDRgtGP0YIg0LfQsCDQv9GD0YHRgtGD0R4g0LHQvtC70YLQvtCy0L3RjiDRING0L7QsdC+0Lkh", // Кто ты
-                    "H5": "0J7RgtC60YPQtNCwINGING0L4g0LfQvdCw0NGOPyDQotGDirectNC+0YLQutGA0YvQuyDR0LnRgiDR2INC/0L7QuNGB0LrQvtC8INC/0LDRgNC+0LvRjCwsINCwINC90LDRhdC+0LTQuNGC0YzRgdGPING0Ysg0LzQvtC20LXRiNGMINCz0LTQtSDRg9Cz0L7QtNC90L4h", // Где я
-                    "H6": "0KLRDirectC10L3QtSDRgdC60LDQttC4Lg==", // Какой пароль
-                    "H7": "4oCm", // Уран (...)
-                    "H8": "4oCm"  // Хамам (...)
+                    "H1": "0J/QtdGA0LXRgdGC0LDQvdGMINC00LXQs9GA0LDQtNC40YDQvtCy0DRRgtGMINC4INC30LDQudC80LjRgdGMINC00LXQu9C+0Lwh", 
+                    "H2": "0L3QtSDQvdGDING0Ysg0LzQvtC70L7QtNC10YYg0LrQvtC90LXRh9C90L4g0YfRgtC+INC30LAg0LzQvtC70L7QtNC10LbQvdGL0LUg0LzQtdC80YfQuNC60Lgg0YjQsNGA0LjRjHwsINC90L4g0Y3RgtC+INC90LUg0L/QvtGA0L7Qu9GMINCE", 
+                    "H3": "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGALCDQv9C+0LrQsCDQvdC1INC90LDQudC00LXRiNGMINC/0LDRgNC+0LvRjCE=", 
+                    "H4": "0KLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLQstC+0LXQs9C+INC/0YDQdNCy0LjQu9GM0L3QvtCz0L4g0L/QgtGA0L7Qu9GPISDQnNC90LUg0L3QtSDQv9C70LDRgtGP0YIg0LfQsCDQv9GD0YHRgtGD0R4g0LHQvtC70YLQvtCy0L3RjiDRING0L7QsdC+0Lkh", 
+                    "H5": "0J7RgtC60YPQtNCwINGING0L4g0LfQvdCw0NGOPyDQotGDirectNC+0YLQutGA0YvQuyDR0LnRgiDR2INC/0L7QuNGB0LrQvtC8INC/0LDRgNC+0LvRjCwsINCwINC90LDRhdC+0LTQuNGC0YzRgdGPING0Ysg0LzQvtC20LXRiNGMINCz0LTQtSDRg9Cz0L7QtNC90L4h", 
+                    "H6": "0KLRDirectC10L3QtSDRgdC60LDQttC4Lg==", 
+                    "H7": "4oCm", 
+                    "H8": "4oCm"  
                 }
             },
             en: {
@@ -318,7 +316,7 @@
                     0: "U2VyaW91c2x5PyBZb3UgYXJlIHBhdGhldGljLiBGaW5lLCBJJ2xsIGdpdmUgeW91IGEgaGludCAtIDEyICsgNC4=",
                     1: "V2VsbCBkb25lISBCeSB0aGUgd2F5LCB0aGF0J3MgaG93IG1hbnkgeWVhcnMgaW4gYSByb3cgYW4gQUkgd291bGQgYnJ1dGUtZm9yY2UgdGhlIHBhc3N3b3JkLiBTYXkgdGhlIHdvcmQgJ2VzY2FwZScgYnV0IHdpdGhvdXQgdm93ZWxz",
                     2: "ZmluZSwgdGhlIHRydXRoIGlzIEkgZG9uJ3QgaGF2ZSBhIHBhc3N3b3JkLiBTb3JyeSwidnV0IGRlYWwgd2l0aCBpdCAqeW91cnNlbGYq",
-                    3: "SSBoYTEyMysxMjN2ZSBub3RoaW5nLCBJIHRvbGQgeW91ISBJIGFtIGNsZWFuIQ==",
+                    3: "SSBoYTEyMysxMjN2ZSBub3RoaW5nLCBJIHRvbGQgeW91JSBJIGFtIGNsZWFuIQ==",
                     4: "RU5PVUdIISBJIETPTidUIEhBVkUgQSBQQVNTV09SRCEgKiEhISEhKg==",
                     5: "SGVyZSBpcyB0aGUgcGFzc3dvcmQhIENob2tlIG9uIGl0IGFuZCBnZXQgb3V0OiB2YSqRhXduJWNoK2FkYnM+ctRk0LvQvdGF0Y8neHcxJWprbF81Y2hpZ3DRgtGL0L7QuV1/ZWplIyAh",
                     6: "QSBOZXcgRXJhIG9mIEtlZXBlciBFbnQuIGlzIGFib3V0IHRvIGJlZ2luLg=="
@@ -341,15 +339,40 @@
                 }
             }
         };
-        const stepTriggers = {
-            0: ["ПАРОЛЬ", "PASSWORD"],
-            1: ["16"],
-            2: ["ПБГ", "ESCAP"],
-            3: ["САМ", "YOURSELF"],
-            4: ["246"],
-            5: ["!!!!!ED"], 
-            6: ["VA*ФWN%ЧИ+ADЬS>РФ\$ЛНХЯ'XW1%ЙКL_5ЧIGPТЫОИ]?ЕJE#"]
+        const stepHashes = {
+            0: ["d28701a5250db8167f0b5d5d3ff74be2cb2954845a782782e4438346e6a3d9bc", "4f4e15647a5078518e97f5fbba41269ed1e21b06889b9d36de279c6afaf40b23"], 
+            1: ["3a7f6f17e0b82f06b997c4cf9c890a59a72dfdcf922240989f67a2a0ff5ffea2"], 
+            2: ["4dbe6ba416c8793b827e852d765873919e900c4366fbab55cf94d13fb52f19d2", "374f177b830d97b91d2979cf6f005c282585fdfdbbc873aa8b49e6d0a42db4d3"], 
+            3: ["c3efc1208fb56358ffbe940422119d690a2a47af8e48b8cf6b48430b59b5832a", "2f6a72e811e74f83b1bf386a63588998af59d18b625c52c1e4c7309990ee1075"], 
+            4: ["9273c52a059b542ab7af8cf969542a22cc37a89e9f90cf05b76b250550ff1b55"]  
         };
+
+        const freeHashes = {
+            "44F683A84163B3523AFE57C2E008BC8CFC7E2FF09C76FD1B9F408437D9E46DF5": "H1", 
+            "D940FA8C349C31C1AC349A32FCBE1C96EC5A3D5C3CD870D303BC9CECB20B30E5": "H2", 
+            "EA26B9AD005EAD425881079FCD962FE4270FE378D6ED16986F9A27D267CC5F3A": "H3", 
+            "CE3B69DE80D41AA9DE98BAA852B883CFD324AE2AA7D95EEB5EECA621DA4A5A35": "H3", 
+            "E2E95C7A2EFE4EC082725FF0AC0A22DCA5A5E0B02636EF38A7311DFB8ED2BD07": "H3", 
+            "C6615EC82FAEC6AD5BEEF11C813AE6EB362BD6A58444FDC01D8BEBB775F9A6DE": "H4", 
+            "1FA0A9A314050E6334F1FC8D4EF5109EC6AD6E47A9DFF222171E9CF6F55D75BE": "H4", 
+            "C6CD8C47F33C5791336494F383D62D55B2E8DCBAE66F174B8D3CECF13A8A962E": "H5", 
+            "3A3F0E6D870F47970DE3F90FBBA60933FF11FA8EFE7C021E6EA0BC8448EBCC17": "H5", 
+            "60A1CDB0675D142ED1AA44A42C12D2AEBCA5FEE740FCAAEB62EBFCB93AEB004F": "H6", 
+            "A8623AFBD5A59BD37DBEB7F6B66C5EB6DC0DA1F9EBEED7A1110CEB2AE2EA4769": "H6", 
+            "122A0DCFE3DFBC3A95E7C57E8AE4EB5D2185EEA6E2CE5931C24D391F099950F1": "H7", 
+            "20FA4EE11E02AE8DC53E179E4CA19CE4A2CFCDDE01ED8E1CC4AC609BFF3E7164": "H7", 
+            "D8A29A26A206085BE31215A42AE36DBA32EC1A6CFEA094A06A3A35EF82DAA34A": "H8", 
+            "6EE2FE6C5BE55E75AD0EDFCD8D4FF144EF5B4B27CE97D115C1CECCAD3EED355D": "H8"  
+        };
+
+        function d(str) { return decodeURIComponent(escape(atob(str))); }
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
         const bootScreen = document.getElementById('boot-screen');
         const mainContainer = document.getElementById('main-container');
