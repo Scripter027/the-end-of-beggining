@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The End of Beginnings</title>
     <style>
         :root {
@@ -25,11 +25,12 @@
             color: var(--neon-green);
             font-family: 'Courier New', Courier, monospace;
             height: 100%;
+            width: 100%;
             overflow: hidden;
             transition: background-color 0.1s ease;
         }
 
-        /* Эффекты вспышек */
+        /* Эффект красной вспышки при ошибке */
         body.wrong-flash {
             background-color: var(--dark-red) !important;
             color: var(--neon-red) !important;
@@ -44,12 +45,13 @@
             color: var(--neon-red) !important;
         }
 
+        /* Зеленая вспышка при успехе */
         body.correct-flash {
             background-color: var(--bright-green) !important;
             color: #000 !important;
         }
 
-        /* ЭЛТ сканирующие линии */
+        /* Эффект ЭЛТ-монитора */
         body::before {
             content: " ";
             display: block;
@@ -61,18 +63,18 @@
             pointer-events: none;
         }
 
-        /* Бегущие строки загрузки */
+        /* Экраны загрузки */
         #boot-screen {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 15px;
+            left: 15px;
             font-size: 14px;
             line-height: 1.4;
-            max-width: 600px;
+            max-width: 90%;
             z-index: 10;
         }
 
-        /* Главный контейнер */
+        /* Главный контейнер по центру */
         #main-container {
             display: none;
             flex-direction: column;
@@ -84,51 +86,53 @@
             position: relative;
         }
 
-        /* Таймер */
+        /* Таймер сверху по центру */
         .timer-wrapper {
             position: absolute;
             top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
             text-align: center;
             cursor: pointer;
+            width: 90%;
         }
 
         .timer-title {
-            font-size: 14px;
+            font-size: 12px;
             margin-bottom: 5px;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .timer {
-            font-size: 32px;
+            font-size: 26px;
             font-weight: bold;
             text-shadow: 0 0 10px var(--neon-green);
             transition: font-size 0.3s ease;
         }
 
-        /* Секретная тема изменения размеров */
         .secret-active .timer {
-            font-size: 54px;
+            font-size: 40px;
         }
 
-        /* Интерфейс ввода */
+        /* Адаптивный терминал строго по центру */
         .terminal-box {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 500px;
-            margin-top: 50px;
+            max-width: 600px;
+            padding: 10px;
         }
 
         .terminal-output {
-            min-height: 60px;
-            margin-bottom: 20px;
+            min-height: 80px;
+            margin-bottom: 25px;
             text-align: center;
             font-size: 18px;
             width: 100%;
             word-wrap: break-word;
-            text-transform: uppercase;
+            line-height: 1.4;
         }
 
         .input-group {
@@ -141,33 +145,31 @@
             flex: 1;
             background: transparent;
             border: 2px solid var(--neon-green);
-            padding: 10px 15px;
+            padding: 12px;
             color: var(--neon-green);
             font-family: inherit;
-            font-size: 18px;
+            font-size: 16px;
             outline: none;
             box-shadow: 0 0 5px var(--dark-green);
+            border-radius: 0;
+            -webkit-appearance: none;
         }
 
         .btn-submit {
             background: transparent;
             border: 2px solid var(--neon-green);
             color: var(--neon-green);
-            padding: 10px 25px;
+            padding: 12px 20px;
             font-family: inherit;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             outline: none;
             box-shadow: 0 0 5px var(--dark-green);
             transition: all 0.2s ease;
+            border-radius: 0;
         }
 
-        .btn-submit:hover {
-            background: var(--neon-green);
-            color: #000;
-        }
-
-        /* Переключатель языка */
+        /* Переключатель языка снизу справа */
         .lang-switch {
             position: absolute;
             bottom: 20px;
@@ -175,12 +177,16 @@
             font-size: 16px;
             cursor: pointer;
             opacity: 0.7;
-            transition: opacity 0.2s;
+            padding: 5px;
         }
 
-        .lang-switch:hover {
-            opacity: 1;
-            text-shadow: 0 0 8px var(--neon-green);
+        /* Медиа-запросы для телефонов */
+        @media (max-width: 480px) {
+            .timer { font-size: 20px; }
+            .secret-active .timer { font-size: 28px; }
+            .terminal-output { font-size: 15px; min-height: 90px; }
+            .input-group { flex-direction: column; }
+            .btn-submit { width: 100%; }
         }
     </style>
 </head>
@@ -195,7 +201,7 @@
         </div>
 
         <div class="terminal-box">
-            <div class="terminal-output" id="response-text">SYS_READY: ОЖИДАНИЕ ВВОДА...</div>
+            <div class="terminal-output" id="response-text">ВВЕДИТЕ ПАРОЛЬ</div>
             <div class="input-group">
                 <input type="text" id="user-input" class="terminal-input" autofocus autocomplete="off" placeholder="> ">
                 <button id="submit-btn" class="btn-submit">ВВОД</button>
@@ -205,46 +211,45 @@
         <div class="lang-switch" id="lang-btn">EN</div>
     </div>
     <script>
-        // Конфигурация локализации
         const targetDate = new Date('2027-02-22T00:00:00').getTime();
         let currentLang = 'ru';
         let isSecretMode = false;
         let isLock = false;
+        let currentStep = 0; // Этап квеста
 
+        // База текстов под два языка
         const langData = {
             ru: {
-                boot: ["ЗАГРУЗКА ЯДРА v4.01...", "ПРОВЕРКА СВЯЗИ С KEEPER ENT... OK", "ИНИЦИАЛИЗАЦИЯ ИНТЕРФЕЙСА... OK", "БЕЗОПАСНОСТЬ: АКТИВНА", "СИСТЕМА ГОТОВА."],
+                boot: ["ЗАГРУЗКА ЯДРА v4.01...", "ПРОВЕРКА СВЯЗИ С KEEPER ENT... OK", "СИСТЕМА ГОТОВА."],
                 labelNormal: "До 22 февраля 2027 осталось:",
                 labelSecret: "Отсчет до момента x",
-                ready: "SYS_READY: ОЖИДАНИЕ ВВОДА...",
-                wrong: "НЕПРАВИЛЬНО.",
-                superAnswer: "Новая Эра Keeper Ent. вот вот начнется.",
-                contempt: [
-                    "Хватит тратить мое время.",
-                    "Ты бесполезен.",
-                    "Доступ запрещен.",
-                    "Этот ответ не имеет значения.",
-                    "Попробуй еще раз, если тебе делать нечего.",
-                    "Разговор окончен.",
-                    "Я не обязан отвечать на этот бред."
-                ]
+                wrong: "НЕПРАВИЛЬНО",
+                defaultPrompt: "ВВЕДИТЕ ПАРОЛЬ",
+                steps: {
+                    0: { trigger: ["ПАРОЛЬ", "PASSWORD"], reply: "Серьезно? Ты жалок. Ладно дам подсказку - 12 + 4." },
+                    1: { trigger: ["16"], reply: "Молодец! Кстати столько лет подряд ИИ подбирал бы пароль. Скажи слово побег но без о и е" },
+                    2: { trigger: ["ПБГ", "ESCAP"], reply: "ладно на самом деле у меня нет пароля. Прости, но разбирайся *сам*" },
+                    3: { trigger: ["САМ", "YOURSELF"], reply: "я же сказал у ме123+123ня ничего нет! Я чист!" },
+                    4: { trigger: ["246"], reply: "ДОВОЛЬНО! У МЕНЯ НЕТ ПАРОЛЯ! *!!!!!*" },
+                    5: { trigger: ["!!!!!", "!!!!!"], reply: "Вот пароль! Подавись им и прочь отсюда: va*фwn%чи+adьs>рф\$лнхя'xw1%йкl_5чigpтыои]?еje# !" },
+                    6: { trigger: ["VA*ФWN%ЧИ+ADЬS>РФ\$ЛНХЯ'XW1%ЙКL_5ЧIGPТЫОИ]?ЕJE#"], reply: "Новая Эра Keeper Ent. вот вот начнется." }
+                }
             },
             en: {
-                boot: ["LOADING KERNEL v4.01...", "CHECKING CONNECTION TO KEEPER ENT... OK", "INITIALIZING INTERFACE... OK", "SECURITY: ACTIVE", "SYSTEM READY."],
+                boot: ["LOADING KERNEL v4.01...", "CONNECTING KEEPER ENT... OK", "SYSTEM READY."],
                 labelNormal: "Until February 22, 2027 left:",
                 labelSecret: "Countdown to moment x",
-                ready: "SYS_READY: AWAITING INPUT...",
-                wrong: "WRONG.",
-                superAnswer: "A New Era of Keeper Ent. is about to begin.",
-                contempt: [
-                    "Stop wasting my time.",
-                    "You are useless.",
-                    "Access denied.",
-                    "This answer does not matter.",
-                    "Try again if you have nothing better to do.",
-                    "Conversation over.",
-                    "I am not structuralized to reply to this nonsense."
-                ]
+                wrong: "WRONG",
+                defaultPrompt: "ENTER PASSWORD",
+                steps: {
+                    0: { trigger: ["ПАРОЛЬ", "PASSWORD"], reply: "Seriously? You are pathetic. Fine, I'll give you a hint - 12 + 4." },
+                    1: { trigger: ["16"], reply: "Well done! By the way, that's how many years in a row an AI would brute-force the password. Say the word 'escape' but without vowels" },
+                    2: { trigger: ["ПБГ", "ESCAP"], reply: "fine, the truth is I don't have a password. Sorry, but deal with it *yourself*" },
+                    3: { trigger: ["САМ", "YOURSELF"], reply: "I ha123+123ve nothing, I told you! I am clean!" },
+                    4: { trigger: ["246"], reply: "ENOUGH! I DON'T HAVE A PASSWORD! *!!!!!*" },
+                    5: { trigger: ["!!!!!", "!!!!!"], reply: "Here is the password! Choke on it and get out: va*фwn%чи+adьs>рф\$лнхя'xw1%йкl_5чigpтыои]?еje# !" },
+                    6: { trigger: ["VA*ФWN%ЧИ+ADЬS>РФ\$ЛНХЯ'XW1%ЙКL_5ЧIGPТЫОИ]?ЕJE#"], reply: "A New Era of Keeper Ent. is about to begin." }
+                }
             }
         };
 
@@ -257,104 +262,93 @@
             if (bootLine < langData[currentLang].boot.length) {
                 bootScreen.innerHTML += langData[currentLang].boot[bootLine] + '<br>';
                 bootLine++;
-                setTimeout(printBootLines, 250);
+                setTimeout(printBootLines, 200);
             } else {
                 setTimeout(() => {
                     bootScreen.style.display = 'none';
                     mainContainer.style.display = 'flex';
                     document.getElementById('user-input').focus();
-                }, 600);
+                }, 400);
             }
         }
         printBootLines();
 
-        // Логика таймера обратного отсчета
+        // Логика таймера
         function updateTimer() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-
+            const distance = targetDate - new Date().getTime();
             if (distance < 0) {
                 document.getElementById('countdown').innerHTML = "00:00:00:00";
                 return;
             }
-
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            const dStr = days < 10 ? '0' + days : days;
-            const hStr = hours < 10 ? '0' + hours : hours;
-            const mStr = minutes < 10 ? '0' + minutes : minutes;
-            const sStr = seconds < 10 ? '0' + seconds : seconds;
-
-            document.getElementById('countdown').innerHTML = `${dStr}:${hStr}:${mStr}:${sStr}`;
+            document.getElementById('countdown').innerHTML = 
+                `${days < 10 ? '0'+days : days}:${hours < 10 ? '0'+hours : hours}:${minutes < 10 ? '0'+minutes : minutes}:${seconds < 10 ? '0'+seconds : seconds}`;
         }
         setInterval(updateTimer, 1000);
         updateTimer();
 
-        // Клик по таймеру (Секретный режим)
+        // Переключение режимов таймера
         document.getElementById('timer-toggle').addEventListener('click', () => {
             isSecretMode = !isSecretMode;
-            if (isSecretMode) {
-                mainContainer.classList.add('secret-active');
-                document.getElementById('timer-label').innerText = langData[currentLang].labelSecret;
-            } else {
-                mainContainer.classList.remove('secret-active');
-                document.getElementById('timer-label').innerText = langData[currentLang].labelNormal;
-            }
-        });
-
-        // Переключение Языков
-        document.getElementById('lang-btn').addEventListener('click', () => {
-            currentLang = currentLang === 'ru' ? 'en' : 'ru';
-            document.getElementById('lang-btn').innerText = currentLang === 'ru' ? 'EN' : 'RU';
-            
-            // Смена текста на лету
-            if (!isLock) {
-                document.getElementById('response-text').innerText = langData[currentLang].ready;
-            }
+            mainContainer.classList.toggle('secret-active', isSecretMode);
             document.getElementById('timer-label').innerText = isSecretMode ? langData[currentLang].labelSecret : langData[currentLang].labelNormal;
         });
 
-        // Логика проверки кода
+        // Переключение Языков (Текст на экране не сбрасывается)
+        document.getElementById('lang-btn').addEventListener('click', () => {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            document.getElementById('lang-btn').innerText = currentLang === 'ru' ? 'EN' : 'RU';
+            document.getElementById('timer-label').innerText = isSecretMode ? langData[currentLang].labelSecret : langData[currentLang].labelNormal;
+        });
+
+        // Логика проверки цепочки ARG
         function checkCode() {
             if (isLock) return;
             const inputField = document.getElementById('user-input');
             const outputField = document.getElementById('response-text');
-            const code = inputField.value.trim().toUpperCase();
+            const rawValue = inputField.value.trim();
+            const cleanCode = rawValue.toUpperCase();
             
-            if (code === "") return;
+            if (cleanCode === "") return;
 
-            // СУПЕР КОД KEEPER ENT.
-            if (code === "E854BBEBB359FB15") {
-                isLock = true;
-                outputField.innerText = langData[currentLang].superAnswer;
+            const expectedTriggers = langData[currentLang].steps[currentStep].trigger;
+            const isCorrect = expectedTriggers.some(t => cleanCode === t || cleanCode.includes(t));
+
+            if (isCorrect) {
+                // Продвигаемся по сюжету
+                const stepReply = langData[currentLang].steps[currentStep].reply;
+                outputField.innerText = stepReply;
                 
-                // Зеленая вспышка
-                document.body.classList.add('correct-flash');
-                setTimeout(() => {
-                    document.body.classList.remove('correct-flash');
-                }, 400);
+                // Эффект верного ввода (зеленая вспышка)
+                if (currentStep === 6) {
+                    isLock = true; // Финал игры
+                    document.body.classList.add('correct-flash');
+                    setTimeout(() => document.body.classList.remove('correct-flash'), 500);
+                } else {
+                    currentStep++;
+                }
                 inputField.value = "";
             } else {
-                // Неверный ответ - Красная вспышка и резкая фраза
+                // ОШИБКА: экран горит красным несколько секунд, затем возвращается "ВВЕДИТЕ ПАРОЛЬ"
                 isLock = true;
                 outputField.innerText = langData[currentLang].wrong;
                 document.body.classList.add('wrong-flash');
 
                 setTimeout(() => {
                     document.body.classList.remove('wrong-flash');
-                    // Выбор случайного резкого ответа терминала
-                    const replies = langData[currentLang].contempt;
-                    outputField.innerText = replies[Math.floor(Math.random() * replies.length)];
+                    outputField.innerText = langData[currentLang].defaultPrompt;
                     isLock = false;
+                    inputField.value = "";
                     inputField.focus();
-                }, 1000);
+                }, 3000); // 3 секунды на красную вспышку
             }
         }
 
-        // Слушатели событий ввода
+        // Активация кнопками
         document.getElementById('submit-btn').addEventListener('click', checkCode);
         document.getElementById('user-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') checkCode();
