@@ -410,43 +410,24 @@ function processInput() {
   customMessageActive = false;
   currentCustomKey = null;
   
-  if (currentStep === 0) {
-    if (secureStepHashes[0].includes(currentInputHash)) {
-      triggerGreenSuccess(getDecryptedText('step0_hint', currentLang, 'sys'));
-      currentStep = 1;
-    } else { triggerRedLockout(); }
-  } 
-  else if (currentStep === 1) {
-    if (secureStepHashes[1].includes(currentInputHash)) {
-      triggerGreenSuccess(getDecryptedText('step1_next', currentLang, 'sys'));
-      currentStep = 2;
-    } else { triggerRedLockout(); }
-  } 
-  else if (currentStep === 2) {
-    if (secureStepHashes[2].includes(currentInputHash)) {
-      triggerGreenSuccess(getDecryptedText('step2_next', currentLang, 'sys'));
-      currentStep = 3;
-    } else { triggerRedLockout(); }
+  if (secureStepHashes[currentStep]) {
+    if (secureStepHashes[currentStep].includes(currentInputHash)) {
+      let nextKey = '';
+      if (currentStep === 0) nextKey = 'step0_hint';
+      else if (currentStep === 1) nextKey = 'step1_next';
+      else if (currentStep === 2) nextKey = 'step2_next';
+      else if (currentStep === 3) nextKey = 'step3_next';
+      else if (currentStep === 4) nextKey = 'step4_next';
+      else if (currentStep === 5) nextKey = 'step5_next';
+      
+      currentStep++;
+      triggerGreenSuccess(getDecryptedText(nextKey, currentLang, 'sys'));
+    } else { 
+      triggerRedLockout(); 
+    }
+  } else { 
+    triggerRedLockout(); 
   }
-  else if (currentStep === 3) {
-    if (secureStepHashes[3].includes(currentInputHash)) {
-      triggerGreenSuccess(getDecryptedText('step3_next', currentLang, 'sys'));
-      currentStep = 4;
-    } else { triggerRedLockout(); }
-  } 
-  else if (currentStep === 4) {
-    if (secureStepHashes[4].includes(currentInputHash)) {
-      triggerGreenSuccess(getDecryptedText('step4_next', currentLang, 'sys'));
-      currentStep = 5;
-    } else { triggerRedLockout(); }
-  } 
-  else if (currentStep === 5) {
-    if (secureStepHashes[5].includes(currentInputHash)) {
-      triggerGreenSuccess(getDecryptedText('step5_next', currentLang, 'sys'));
-      currentStep = 6;
-    } else { triggerRedLockout(); }
-  }
-  else { triggerRedLockout(); }
 }
 
 document.getElementById('terminal-input').addEventListener('keydown', function(e) {
