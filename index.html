@@ -355,7 +355,7 @@
             2: ["ПБГ", "ESCAP"],
             3: ["САМ", "YOURSELF"],
             4: ["246"],
-            5: ["!!!!!"],
+            5: ["!!!!!ED"], // Техническая метка для изоляции шага
             6: ["VA*ФWN%ЧИ+ADЬS>РФ\$ЛНХЯ'XW1%ЙКL_5ЧIGPТЫОИ]?ЕJE#"]
         };
 
@@ -462,16 +462,17 @@
             }, 450);
         }
 
-        // ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ФИЛЬТРАЦИЯ СТРОК (БЕЗ БАГОВ)
+        // БЕЗОПАСНАЯ ОЧИСТКА ВВОДА: Больше никаких сбоев с регулярными выражениями
         function cleanInputString(str) {
-            let res = str.trim().toUpperCase();
+            let res = str.trim();
             
-            // Если игрок ввел шифр восклицательных знаков - отдаем без обрезания знаков
-            if (res.replace(/!/g, '') === '') {
+            // Если строка состоит только из знаков !, не трогаем её вообще
+            if (res.length > 0 && res.split('').every(char => char === '!')) {
                 return res; 
             }
             
-            // Во всех остальных случаях аккуратно убираем знаки препинания на конце фраз
+            // Во всех остальных случаях приводим к верхнему регистру и чистим знаки погрешности на конце
+            res = res.toUpperCase();
             while (res.length > 0 && ['.', '!', '?', ','].includes(res[res.length - 1])) {
                 res = res.slice(0, -1).trim();
             }
@@ -500,6 +501,7 @@
 
             const cleanCode = cleanInputString(rawValue);
 
+            // 1. Проверка универсальных пасхалок (доступны всегда)
             if (langData[currentLang].freeAnswers[cleanCode] !== undefined) {
                 triggerInputFlash();
                 outputField.innerHTML = langData[currentLang].freeAnswers[cleanCode];
@@ -508,9 +510,19 @@
                 return;
             }
 
+            // 2. Проверка основной сюжетной линии
             if (currentStep <= 6) {
-                const expectedTriggers = stepTriggers[currentStep];
-                const isCorrect = expectedTriggers.some(trigger => cleanCode === trigger || cleanCode.includes(trigger));
+                let isCorrect = false;
+
+                // СВЕРХНАДЕЖНЫЙ ПРЯМОЙ ИЗОЛИРОВАННЫЙ ФИКС ДЛЯ ЭТАПА 5 (!!!!!)
+                if (currentStep === 5) {
+                    if (cleanCode === "!!!!!") {
+                        isCorrect = true;
+                    }
+                } else {
+                    const expectedTriggers = stepTriggers[currentStep];
+                    isCorrect = expectedTriggers.some(trigger => cleanCode === trigger || cleanCode.includes(trigger));
+                }
 
                 if (isCorrect) {
                     triggerInputFlash();
@@ -524,6 +536,7 @@
                 }
             }
 
+            // 3. Вывод ошибки
             isLock = true;
             const randomContempt = langData[currentLang].contempt[Math.floor(Math.random() * langData[currentLang].contempt.length)];
             outputField.innerText = `${langData[currentLang].wrong}\n${randomContempt}`;
