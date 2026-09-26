@@ -1,459 +1,558 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The End of Beginnings</title>
-<style>
-@import url('https://googleapis.com');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The End of Beginnings</title>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #000; color: #0f0; font-family: 'Share Tech Mono', monospace; height: 100vh; height: calc(var(--vh, 1vh) * 100); overflow: hidden; position: relative; transition: background 0.1s ease, color 0.1s ease; }
-body::after { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 999; background-size: 100% 4px, 6px 100%; pointer-events: none; }
-.glare { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,30,0,0.15) 0%, rgba(0,0,0,0) 80%); pointer-events: none; z-index: 998; }
-#boot-screen { position: absolute; width: 100%; height: 100%; background: #000; padding: 15px; overflow: hidden; z-index: 10; font-size: 13px; line-height: 1.4; white-space: pre-wrap; word-break: break-all; }
-#main-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: space-between; padding: 15px; position: relative; }
+        body {
+            background-color: #000000;
+            color: #39FF14;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
 
-body.wrong-state { color: #f00 !important; }
-body.wrong-state #timer-container, body.wrong-state .input-panel, body.wrong-state #lang-toggle { border-color: #f00 !important; color: #f00 !important; box-shadow: 0 0 15px rgba(255,0,0,0.2) !important; }
-body.wrong-state .input-panel input { color: #f00 !important; }
-body.wrong-state .input-panel button { background: #f00 !important; color: #000 !important; }
-body.wrong-state #terminal-output { color: #f00 !important; }
+        .glitch-element {
+            animation: terminal-shake 0.3s infinite alternate;
+        }
 
-body.correct-flash { animation: flash-green 0.4s ease-out; }
-@keyframes flash-green { 0% { background: #4f4; color: #000; } 10% { background: #4f4; } 100% { background: #000; } }
+        @keyframes terminal-shake {
+            0% { transform: translate(0.5px, 0.5px) rotate(0deg); }
+            20% { transform: translate(-0.5px, -0.5px) rotate(0.1deg); }
+            40% { transform: translate(-1px, 0px) rotate(-0.1deg); }
+            60% { transform: translate(1px, 0.5px) rotate(0deg); }
+            80% { transform: translate(-0.5px, 1px) rotate(0.1deg); }
+            100% { transform: translate(0.5px, -0.5px) rotate(-0.1deg); }
+        }
 
-.input-panel.input-success { animation: panel-glow 1s ease-out; }
-@keyframes panel-glow {
-  0% { box-shadow: 0 0 25px rgba(0, 255, 0, 0.8); border-color: #4f4; }
-  100% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.1); border-color: #0f0; }
-}
-header { display: flex; justify-content: center; align-items: center; position: relative; height: 50px; margin-top: 5px; }
-#timer-container { cursor: pointer; text-align: center; border: 1px solid #0f0; padding: 8px 16px; background: rgba(0,20,0,0.4); text-transform: uppercase; letter-spacing: 1px; font-size: 16px; box-shadow: 0 0 10px rgba(0,255,0,0.2); user-select: none; -webkit-tap-highlight-color: transparent; transition: all 0.1s ease; }
-#timer-container:hover { background: #0f0; color: #000; }
-.center-container { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; width: 100%; padding: 0 10px; }
-#terminal-output { width: 100%; max-width: 600px; text-align: center; min-height: 60px; font-size: 18px; letter-spacing: 1px; word-break: break-word; display: flex; align-items: center; justify-content: center; line-height: 1.4; }
-#terminal-output em { font-style: italic; text-decoration: underline; font-weight: bold; }
-#terminal-output a { color: inherit; text-decoration: underline; font-weight: bold; }
-.input-panel { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 500px; background: rgba(0,10,0,0.5); border: 1px solid #0f0; padding: 6px 12px; box-shadow: 0 0 15px rgba(0,255,0,0.1); transition: all 0.1s ease; }
-.input-panel input { flex: 1; background: transparent; border: none; outline: none; color: #0f0; font-family: 'Share Tech Mono', monospace; font-size: 18px; padding: 6px 0; width: 100%; }
+        #flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #a4ff8a;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.1s ease-out;
+        }
 
-.input-panel button { background: #0f0; color: #000; border: none; font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: bold; padding: 10px 20px; cursor: pointer; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
-.input-panel button:hover { background: #0a0; }
-footer { display: flex; justify-content: flex-end; align-items: center; padding: 5px 5px; height: 40px; }
-#lang-toggle { cursor: pointer; border: 1px solid #0f0; padding: 6px 14px; font-size: 14px; background: transparent; color: #0f0; font-family: 'Share Tech Mono', monospace; -webkit-tap-highlight-color: transparent; transition: all 0.1s ease; }
-#lang-toggle:hover { background: #0f0; color: #000; }
-#lang-toast { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid #0f0; background: rgba(0,30,0,0.9); color: #0f0; padding: 15px 30px; font-size: 18px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 0 25px rgba(0,255,0,0.4); pointer-events: none; opacity: 0; transition: opacity 0.2s ease; z-index: 100; text-align: center; }
-#lang-toast.show { opacity: 1; }
-#secret-screen { display: none; height: 100vh; height: calc(var(--vh, 1vh) * 100); flex-direction: column; justify-content: center; align-items: center; background: #000; color: #0f0; padding: 20px; text-align: center; position: relative; }
-#secret-title { font-size: 22px; letter-spacing: 3px; margin-bottom: 25px; text-transform: uppercase; animation: pulse 2s infinite; padding: 0 10px; }
-#secret-timer { font-size: 34px; font-weight: bold; letter-spacing: 2px; border: 2px solid #0f0; padding: 15px 25px; background: rgba(0,15,0,0.3); box-shadow: 0 0 25px rgba(0,255,0,0.3); width: 100%; max-width: 420px; white-space: nowrap; }
-#back-btn { margin-top: 40px; border: 1px solid #0f0; background: transparent; color: #0f0; font-family: 'Share Tech Mono', monospace; font-size: 16px; padding: 10px 24px; cursor: pointer; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
-#back-btn:hover { background: #0f0; color: #000; }
-@keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; text-shadow: 0 0 15px #0f0; } 100% { opacity: 0.7; } }
+        #flash-overlay.flash-active {
+            opacity: 1;
+            transition: none;
+        }
 
-@media (max-width: 480px) {
-  #boot-screen { font-size: 11px; padding: 10px; }
-  #main-screen { padding: 10px; }
-  #timer-container { font-size: 14px; padding: 6px 12px; }
-  #terminal-output { font-size: 15px; min-height: 70px; }
-  .input-panel { flex-direction: column; gap: 12px; padding: 10px; background: rgba(0,15,0,0.7); }
-  .input-panel input { text-align: center; border-bottom: 1px dashed rgba(0,255,0,0.3); padding-bottom: 8px; font-size: 16px; }
-  .input-panel button { width: 100%; padding: 12px; font-size: 16px; }
-  #lang-toast { font-size: 15px; padding: 12px 20px; width: 85%; }
-  #secret-title { font-size: 18px; letter-spacing: 2px; }
-  #secret-timer { font-size: 26px; padding: 12px 15px; max-width: 290px; }
-  #back-btn { width: 80%; max-width: 200px; padding: 12px; }
-}
-@media (min-width: 481px) and (max-width: 768px) {
-  #timer-container { font-size: 16px; }
-  #secret-timer { font-size: 38px; max-width: 380px; }
-}
-</style>
+        body.error-state {
+            color: #FF0000 !important;
+        }
+
+        body.error-state .status-ok,
+        body.error-state input,
+        body.error-state button,
+        body.error-state .prompt {
+            color: #FF0000 !important;
+            border-color: #FF0000 !important;
+        }
+
+        #terminal-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .boot-sequence {
+            font-size: 14px;
+            line-height: 1.5;
+            text-shadow: 0 0 5px currentColor;
+        }
+        .status-ok {
+            color: #39FF14;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin-top: -20px;
+        }
+        #main-timer {
+            display: inline-block;
+            font-size: 24px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-shadow: 0 0 8px currentColor;
+            padding: 5px 10px;
+        }
+
+        .input-zone {
+            max-width: 700px;
+            width: 100%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .terminal-output {
+            font-size: 18px;
+            min-height: 54px;
+            line-height: 1.4;
+            text-shadow: 0 0 5px currentColor;
+            word-break: break-all;
+        }
+
+        .terminal-output a {
+            color: inherit;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prompt {
+            font-size: 22px;
+            font-weight: bold;
+            text-shadow: 0 0 5px currentColor;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: 1px solid #39FF14;
+            padding: 10px;
+            color: #39FF14;
+            font-size: 18px;
+            outline: none;
+            box-shadow: inset 0 0 5px rgba(57, 255, 20, 0.2), 0 0 5px rgba(57, 255, 20, 0.2);
+        }
+
+        button {
+            background: transparent;
+            border: 1px solid #39FF14;
+            color: #39FF14;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(57, 255, 20, 0.2);
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: rgba(57, 255, 20, 0.1);
+        }
+
+        .language-switcher {
+            text-align: right;
+            font-size: 16px;
+        }
+        .lang-btn {
+            border: none;
+            box-shadow: none;
+            padding: 2px 5px;
+            opacity: 0.5;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+        }
+        .lang-btn:hover {
+            opacity: 0.8;
+        }
+        .lang-btn.active {
+            opacity: 1;
+            text-shadow: 0 0 5px currentColor;
+            font-weight: bold;
+        }
+        .lang-divider {
+            opacity: 0.5;
+        }
+
+        #moment-x-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .moment-x-content {
+            text-align: center;
+        }
+
+        #moment-x-title {
+            font-size: 28px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 8px currentColor;
+        }
+
+        #big-timer {
+            font-size: 64px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px currentColor;
+        }
+
+        #back-to-terminal {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            border: none;
+            box-shadow: none;
+            opacity: 0.1;
+            font-size: 20px;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+        }
+        #back-to-terminal:hover {
+            opacity: 0.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
-<div class="glare"></div>
-<div id="boot-screen"></div>
 
-<div id="main-screen">
-  <header>
-    <div id="timer-container" onclick="openSecret()">00:00:00:00</div>
-  </header>
-  <div class="center-container">
-    <div id="terminal-output"></div>
-    <div class="input-panel" id="panel-box">
-      <input type="text" id="terminal-input" autocomplete="off" autocapitalize="off" autofocus placeholder="">
-      <button id="submit-btn" onclick="processInput()"></button>
-    </div>
-  </div>
-  <div id="lang-toast"></div>
-  <footer>
-    <button id="lang-toggle" onclick="toggleLang()">EN</button>
-  </footer>
-</div>
+    <div id="flash-overlay"></div>
 
-<div id="secret-screen">
-  <div id="secret-title"></div>
-  <div id="secret-timer">00:00:00:00</div>
-  <button id="back-btn" onclick="closeSecret()"></button>
-</div>
-<script>
-function resetHeight() {
-  document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-}
-window.addEventListener('resize', resetHeight);
-resetHeight();
+    <main id="terminal-screen" class="glitch-element">
+        
+        <div class="boot-sequence" id="bootSequence">
+            <div>INITIALIZING KEEPER_ENT_CORE... <span class="status-ok">OK</span></div>
+            <div>CONNECTING TO TERMINAL... <span class="status-ok">OK</span></div>
+            <div>ACCESS RESTRICTED. SYSTEM READY.</div>
+        </div>
 
-const targetDate = new Date('2027-02-22T00:00:00').getTime();
-let currentLang = 'RU';
-let currentStep = 0;
-let isLockout = false;
-let customMessageActive = false;
-let currentCustomKey = null;
+        <div class="timer-container">
+            <div id="main-timer" class="timer-clickable" title="Секретная тема">00:00:00:00</div>
+        </div>
 
-const bootLines = [
-  "CORE::INIT -> LAUNCHING TERMINAL SUBSYSTEM",
-  "LOADING CORE MODULES.......................[OK]",
-  "ESTABLISHING SECURE PROTOCOLS...............[OK]",
-  "DECRYPTING KEEPER NETWORKS..................[OK]",
-  "WARNING: CHANNELS ARE UNSTABLE",
-  "IDENTITY VERIFICATION REJECTED. ANONYMOUS STATUS ASSIGNED.",
-  "SYSTEM IS READY. DO NOT WASTE MY TIME."
-];
+        <div class="input-zone">
+            <div class="terminal-output" id="terminalOutput"></div>
+            <div class="input-row">
+                <span class="prompt">&gt;</span>
+                <input type="text" id="terminalInput" autocomplete="off" autofocus placeholder="Введите пароль...">
+                <button id="submitBtn">ВВОД</button>
+            </div>
+        </div>
 
-const tgWordRu = "новая эра";
-const tgWordEn = "new era";
-const tgLink = 'https://t.me'; 
+        <footer class="language-switcher">
+            <button id="lang-ru" class="lang-btn active">RU</button>
+            <span class="lang-divider">/</span>
+            <button id="lang-en" class="lang-btn">EN</button>
+        </footer>
 
-const localization = {
-  RU: {
-    submit: "ВВОД",
-    secretTitle: "Отсчет до момента x",
-    back: "Назад",
-    init: "ВВЕДИТЕ ПАРОЛЬ",
-    wrongPrefix: "НЕВЕРНО. ",
-    emptyError: "НЕВЕРНО серьезно пустая строка?",
-    toastText: "Язык сменен на: Русский",
-    scolded: [
-      "Мимо. Еще раз подумай.",
-      "Слабо. Очень слабо.",
-      "И это всё, на что ты способен?",
-      "Не угадал. Твоя логика пуста.",
-      "Прекрати перебирать мусор.",
-      "Система видит твою растерянность."
-    ]
-  },
-  EN: {
-    submit: "ENTER",
-    secretTitle: "Countdown to moment x",
-    back: "Back",
-    init: "ENTER PASSWORD",
-    wrongPrefix: "WRONG. ",
-    emptyError: "WRONG seriously an empty string?",
-    toastText: "Language changed to: English",
-    scolded: [
-      "Missed. Think again.",
-      "Weak. Pathetic.",
-      "Is that all you can do?",
-      "Wrong guess. Your logic is empty.",
-      "Stop entering garbage.",
-      "The system sees your confusion."
-    ]
-  }
-};
+    </main>
 
-const secureStepAnswersHashes = {
-  0: ["-1250274158", "121650392"], 
-  1: ["1567"], 
-  2: ["80026", "81966", "3523555", "3523671"], 
-  3: ["3113", "113642", "-1024346859"], 
-  4: ["47660601", "51641"], 
-  5: ["66465"],
-  mega: "1135964894",
-  pass: "-1669460010"
-};
+    <section id="moment-x-screen" class="hidden glitch-element">
+        <div class="moment-x-content">
+            <h1 id="moment-x-title">Отсчет до момента x</h1>
+            <div id="big-timer">00:00:00:00</div>
+        </div>
+        <button id="back-to-terminal" title="Назад">_</button>
+    </section>
+    <script>
+        const TARGET_DATE = new Date("February 22, 2027 00:00:00").getTime();
 
-const eggHashesMap = {
-  "1681": "H1", "1359695627": "H2", "-1055745431": "H3", "99162322": "H4",
-  "1318021469": "H5", "1472504953": "H6", "102554743": "H7", "-1330366819": "H8",
-  "-446340455": "H9", "-1505374824": "H10", "1156828": "H11", "-1480119842": "H12",
-  "1176274": "H13", "99132213": "H14"
-};
+        let currentLanguage = 'ru';
+        let activeResponseKey = null;
 
-const encryptedStepsTexts = {
-  step0_hint: {
-    RU: "0KHQtdGA0YzQtdC30L3QviDispatchINGC0Ysg0LbQsNC70L7Qui4g0JvQsNC00L3QviDQtNCw0Lwg0L/QvtC00YHQutCw0LfQutGDIC0gMTIgKyA0Lg==",
-    EN: "0KxlcmlvdXNseT8gWW91IGFyZSBwYXRoZXRpYy4gRmluZSwgSSdsbCBnaXZlIHlvdSBhIGhpbnQgLSAxMiArIDQu"
-  },
-  step1_next: {
-    RU: "0JzQvtC70L7QtNC10YYhINCa0YHRgtCw0YLQuCDRgdGC0L7Qu9GM0LrQviDQu9C10YIg0L/QvtC00YDRj9C0INCY0CYg0L/QvtC00LHQuNGA0LDQu9CRINCx0Ysg0L/QsNGA0L7Qu9GMINCh0LrQsNC20Lgg0YHQu9C+0LLQviDQv9C+0LHQtdCzINC90L4g0LHQtdC3INC+INC4INC1",
-    EN: "0V2VsbCBkb25lISBCeSB0aGUgd2F5LCB0aGF0J3MgZXhhY3RseSBob3cgbWFueSB5ZWFycyBpbiBhIHJvdyBhbiBBSSB3b3VsZCBjcmFjayBhIHBhc3N3b3JkLiBTYXkgdGhlIHdvcmQgZXNjYXBlIGJ1dCB3aXRob3V0IG8gYW5kIGU="
-  },
-  step2_next: {
-    RU: "0LvQsNC00L3QviDQvdCwINGB0LDQvNC+0Lwg0LTQtdC70LUg0YMg0LzQtdC90Y8g0L3QtdGCINC/0LDQYDQvtC70Y8uINCf0YDQvtGB0YLQuCwg0L3QviDRgNCw0LfQsdC40YDQsNC50YHRjyA8ZW0+0YHQscC8PC9lbT4=",
-    EN: "0L9rYXksIGhvbmVzdGx5IEkgZG9uJ3QgaGF2ZSBhIHBhc3N3b3JkLiBTb3JyeSwgZGVhbCB3aXRoIGl0IDxlbT5teXNlbGY8L2VtPg=="
-  },
-  step3_next: {
-    RU: "0Y8g0LbQtSDRgdC60LDQt9Cw0Lsg0YMg0LzQtTEyMysxMjPQvdGPINC90LjRh9C10LPQviDQvdC10YLRgSDRjyDRh9C40YHRgiE=",
-    EN: "0bSB0b2xkIHlvdSBJIGhhMTIzKzEyM3ZlIG5vdGhpbmchIEkgYW0gY2xlYW4h"
-  },
-  step4_next: {
-    RU: "0JTQn9CS0J7Qm9Cs0J3QniEg0KMg0JzQld0K8g00VINCf0JDQoNCe00K/ISEIDxlbT4hISEhITwvZW0+",
-    EN: "0U5PVUdIISBJIEhBVkUgTk8gUEFTU1dPUkQhIDxlbT4hISEhITwvZW0+"
-  },
-  step5_next: {
-    RU: "0JLQvtGCINC/0LDQYDQvtC70YwhINCf0L7QtNCw0LLQuNGB0Ywg0LjQvCDQuCDQv9GA0L7RgtGMINC+0YLRgdGO0QtQsTogdmEq0Z3biV9Y0UrYWTRjHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj",
-    EN: "0GVyZSBpcyB0aGUgcGFzc3dvcmQhIENob2tlIG9uIGl0IGFuZCBnZXQgb3V0OiB2YSpmbXclY2krYWTRpropertyHM+0YDRhCTRu9C90YXRjyd4dzEl0LmtbF810YfR_WdwdNvQvtC4XT9lamUj"
-  },
-  era: {
-    RU: "0QvtCy0DRRjyDQrdGA0LAgS2VlcGVyIEVudC4g0LLQvtGCINCy0L7RgiDQvdCw0YfQvdC10YLRgdGPLg==",
-    EN: "0VGhlIE5ldyBFcmEgb2YgS2VlcGVyIEVudC4gaXMgYWJvdXQgdG8gYmVnaW4u"
-  }
-};
+        const staticDatabase = {
+            "67": {
+                ru: "Перестань деградировать и займись делом!",
+                en: "Stop degrading and get to work!"
+            },
+            "бурмалда": {
+                ru: "Не, ну ты молодец конечно, что за молодежные мемчики шаришь, но это не пароль!",
+                en: "Ne nu to molded konechno chto za molodezhnie memchiki sharish, no eto ne parol."
+            },
+            "burmalda": {
+                ru: "Не, ну ты молодец конечно, что за молодежные мемчики шаришь, но это не пароль!",
+                en: "Ne nu to molded konechno chto za molodezhnie memchiki sharish, no eto ne parol."
+            },
+            "привет": {
+                ru: "Пока до тех пор, пока не найдешь пароль!",
+                en: "Bye until you find the password!"
+            },
+            "hello": {
+                ru: "Пока до тех пор, пока не найдешь пароль!",
+                en: "Bye until you find the password!"
+            },
+            "hi": {
+                ru: "Пока до тех пор, пока не найдешь пароль!",
+                en: "Bye until you find the password!"
+            },
+            "кто ты": {
+                ru: "Терминал, который ждет твоего правильного пароля! Мне не платят за пустую болтовню с тобой!",
+                en: "A terminal waiting for your correct password! I don't get paid for small talk with you!"
+            },
+            "who are you": {
+                ru: "Терминал, который ждет твоего правильного пароля! Мне не платят за пустую болтовню с тобой!",
+                en: "A terminal waiting for your correct password! I don't get paid for small talk with you!"
+            },
+            "где я": {
+                ru: "Откуда я-то знаю? Ты открыл сайт с поиском пароля, а находиться ты можешь где угодно!",
+                en: "How should I know? You opened a password search site, you could be anywhere!"
+            },
+            "where am I": {
+                ru: "Откуда я-то знаю? Ты открыл сайт с поиском пароля, а находиться ты можешь где угодно!",
+                en: "How should I know? You opened a password search site, you could be anywhere!"
+            },
+            "какой пароль": {
+                ru: "Ты мне скажи.",
+                en: "You tell me."
+            },
+            "what password": {
+                ru: "Ты мне скажи.",
+                en: "You tell me."
+            },
+            "новая эра": {
+                ru: '<a href="https://t.me" target="_blank">https://t.me</a>',
+                en: '<a href="https://t.me" target="_blank">https://t.me</a>'
+            },
+            "new era": {
+                ru: '<a href="https://t.me" target="_blank">https://t.me</a>',
+                en: '<a href="https://t.me" target="_blank">https://t.me</a>'
+            },
+            "уран": { ru: "…", en: "…" },
+            "uranium": { ru: "…", en: "…" },
+            "хамам": { ru: "…", en: "…" },
+            "hamam": { ru: "…", en: "…" },
+            
+            "va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje#": {
+                ru: "Новая Эра Keeper Ent. вот вот начнется.",
+                en: "A New Era of Keeper Ent. is about to begin."
+            }
+        };
 
-const easterEggsEncrypted = {
-  "H1": { RU: "0J/QtdGA0LXRedtGC0LDQvdGMINC00LXQs9GA0LDQtNC40YDQvtCy0LDRgtGMINC4INC30LDQudC80LjRgdGMINC00LXQu9C+0Lwh", EN: "U3RvcCBkZWdyYWRpbmcgeW91cnNlbGYgYW5kIGdldCB0byB3b3JrIQ==" },
-  "H2": { RU: "0L3QtSDQvdGDINGLRYDQvNC+0LvQvtC00LXRhiDQutC+0L3QtdGH0L3QviDRh9GC0L4g0LfQsCDQvNC+0LvQvtC00LXQttC90YvQtSDQvNC10LzRh9C40LrQuCDRiNCw0YDQuNGI0YwsINC90L4g0Y3RgtC+INC90NC1INC/0LDRgNC+0LvRjCE=", EN: "TmUgbnUgdG8gbW9sZGVkIGtvbmVjaG5vIGNodG8gemEgbW9sb2RlemhuaWUgbWVtY2hpa2kgc2hhcmlzaCwgbm8gZXRvIG5lIHBhcm9sLg==" },
-  "H3": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
-  "H4": { RU: "0J/QvtC60LAg0LTQviDRgtC10YUg0L/QvtGAINC/0L7QutCwINC90LUg0L3QsNC50LTQtdGI0Ywg0L/QsNGA0L7Qu9Gcode=", EN: "QnllIHVudGlsIHlvdSBmaW5kIHRoZSBwYXNzd29yZCE=" },
-  "H5": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
-  "H6": { RU: "0XLQtdGA0LzQuNC90LDQuywg0LrQvtGC0L7RgNGL0Lkg0LbQtNC10YIg0YLRvtCz0L4g0L/RgNCw0LIs0LjQu9GM0L3QvtCz0L4g0L/QsNGA0L7Qu9GPLiBN0L3QtSDQvdC1INC/0LvQsNGC0Y/RgiDQt9CwINC/0YPRgdGC0YPRjiDQsdC+0LvRgtC+0LLQvdGOINGBINGC0L7QsdC+0Lkh", EN: "QSB0ZXJtaW5hbCB3YWl0aW5nIGZvciB5b3VyIGNvcnJlY3QgcGFzc3dvcmQhIEkgZG9uJ3QgZG9uJ3QgZ2V0IHBhaWQgZm9yIGVtcHR5IHNtYWxsIHRhbGsgd2l0aCB5b3Uh" },
-  "H7": { RU: "0J7RgtC60YPQstCwINGPINGC0L4g0LfQvdCw0Y4/INCi0Ysg0L7RgtC60YDRi9C7INGB0LDQudGCINGBINC/0L7QuNGB0LrQvtC8INC/0LDRgNC+0LvRjywg0LAg0L3QsNGF0L7QtNC40YLRjNGBNGDRgtGMINC80L7QttC10YjRjCDQs9C00LUg0YPQs9C+0LTQvdC+IQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
-  "H8": { RU: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==", EN: "SG93IHNob3VsZCBJIGtub3c/IFlvdSBvcGVuZWQgYSBwYXNzd29yZCBzZWFyY2ggc2l0ZSwgeW91IGNvdWxkIGJlIGFueXdoZXJlIQ==" },
-  "H9": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
-  "H10": { RU: "0KLRiyDQvNC90LUg0YHQutCw0LbQuC4=", EN: "WW91IHRlbGwgbWUu" },
-  "H11": { RU: "4oCm", EN: "4oCm" }, "H12": { RU: "4oCm", EN: "4oCm" }, "H13": { RU: "4oCm", EN: "4oCm" }, "H14": { RU: "4oCm", EN: "4oCm" }
-};
-function decodeBase64Safe(str) {
-  try {
-    return decodeURIComponent(escape(atob(str)));
-  } catch (e) {
-    return "";
-  }
-}
+        const storySteps = [
+            {
+                inputs: ["пароль пароль", "password password"],
+                responseKey: "step1"
+            },
+            {
+                inputs: ["16"],
+                responseKey: "step2"
+            },
+            {
+                inputs: ["пбг", "scp"],
+                responseKey: "step3"
+            },
+            {
+                inputs: ["сам", "yourself"],
+                responseKey: "step4"
+            },
+            {
+                inputs: ["246"],
+                responseKey: "step5"
+            },
+            {
+                inputs: ["!!!!!"],
+                responseKey: "step6"
+            }
+        ];
 
-function getSecureHash(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  return String(hash);
-}
+        const systemPhrases = {
+            step1: {
+                ru: "Серьезно? Ты жалок. Ладно, дам подсказку: 12 + 4.",
+                en: "Seriously? You are pathetic. Fine, I'll give you a hint: 12 + 4."
+            },
+            step2: {
+                ru: "Молодец! Кстати, столько лет подряд ИИ подбирал бы пароль. Скажи слово побег, но без гласных.",
+                en: "Good job! By the way, that's how many years in a row an AI would take to crack the password. Say the word escape, but with no vowels."
+            },
+            step3: {
+                ru: "Ладно, на самом деле у меня нет пароля. Прости, но разбирайся *сам*.",
+                en: "Okay, honestly, I don't have a password. Sorry, but figure it out *yourself*."
+            },
+            step4: {
+                ru: "Я же сказал, у ме123+123ня ничего нет! Я чист!",
+                en: "I told you, I ha123+123ve nothing! I'm clean!"
+            },
+            step5: {
+                ru: "ДОВОЛЬНО! У МЕНЯ НЕТ ПАРОЛЯ! *!!!!!*",
+                en: "ENOUGH! I DON'T HAVE A PASSWORD! *!!!!!*"
+            },
+            step6: {
+                ru: "Вот пароль! Подавись им и прочь отсюда: va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje# !",
+                en: "Here is the password! Choke on it and get out: va*фwn%чи+adьs>рф$лнхя'xw1%йкl_5чigpтыои]?еje# !"
+            },
+            empty_error: {
+                ru: "НЕВЕРНО. Серьезно, пустая строка?",
+                en: "INCORRECT. Seriously, an empty string?"
+            },
+            default_error: {
+                ru: "НЕВЕРНО. Я здесь не для светских бесед.",
+                en: "INCORRECT. I'm not here for social chats."
+            },
+            placeholder: {
+                ru: "Введите пароль...",
+                en: "Enter password..."
+            },
+            moment_x_title: {
+                ru: "Отсчет до момента x",
+                en: "Countdown to Moment X"
+            }
+        };
 
-function getStepOutput() {
-  if (currentStep === 0) return localization[currentLang].init;
-  let key = "";
-  if (currentStep === 1) key = "step0_hint";
-  else if (currentStep === 2) key = "step1_next";
-  else if (currentStep === 3) key = "step2_next";
-  else if (currentStep === 4) key = "step3_next";
-  else if (currentStep === 5) key = "step4_next";
-  else if (currentStep === 6) key = "step5_next";
-  else if (currentStep === 7) key = "era";
-  
-  if (encryptedStepsTexts[key]) {
-    return decodeBase64Safe(encryptedStepsTexts[key][currentLang]);
-  }
-  return "";
-}
+        let currentStoryProgress = 0;
+        const mainTimer = document.getElementById('main-timer');
+        const bigTimer = document.getElementById('big-timer');
+        const momentXScreen = document.getElementById('moment-x-screen');
+        const terminalScreen = document.getElementById('terminal-screen');
+        const backToTerminal = document.getElementById('back-to-terminal');
+        const momentXTitle = document.getElementById('moment-x-title');
 
-function runBootSequence() {
-  const container = document.getElementById('boot-screen');
-  let lineIdx = 0;
-  function addLine() {
-    if (lineIdx < bootLines.length) {
-      container.innerHTML += bootLines[lineIdx] + "\n";
-      lineIdx++;
-      setTimeout(addLine, Math.random() * 200 + 80);
-    } else {
-      setTimeout(() => {
-        container.style.display = 'none';
-        document.getElementById('main-screen').style.display = 'flex';
-        updateUI();
-        document.getElementById('terminal-output').innerHTML = getStepOutput();
-        document.getElementById('terminal-input').focus();
-      }, 500);
-    }
-  }
-  addLine();
-}
+        const terminalInput = document.getElementById('terminalInput');
+        const terminalOutput = document.getElementById('terminalOutput');
+        const submitBtn = document.getElementById('submitBtn');
+        const flashOverlay = document.getElementById('flash-overlay');
 
-function updateTimers() {
-  const now = new Date().getTime();
-  const diff = targetDate - now;
-  if (diff <= 0) {
-    document.getElementById('timer-container').innerText = "00:00:00:00";
-    document.getElementById('secret-timer').innerText = "00:00:00:00";
-    return;
-  }
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-  const pad = (num) => String(num).padStart(2, '0');
-  const timerStr = pad(days) + ":" + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
-  document.getElementById('timer-container').innerText = timerStr;
-  document.getElementById('secret-timer').innerText = timerStr;
-}
+        const langRuBtn = document.getElementById('lang-ru');
+        const langEnBtn = document.getElementById('lang-en');
 
-function showToast() {
-  const toast = document.getElementById('lang-toast');
-  toast.innerText = localization[currentLang].toastText;
-  toast.classList.add('show');
-  setTimeout(() => { toast.classList.remove('show'); }, 1200);
-}
+        function updateTimers() {
+            const now = new Date().getTime();
+            const distance = TARGET_DATE - now;
 
-function toggleLang() {
-  if(isLockout) return;
-  currentLang = currentLang === 'RU' ? 'EN' : 'RU';
-  document.getElementById('lang-toggle').innerText = currentLang === 'RU' ? 'EN' : 'RU';
-  updateUI();
-  showToast();
-  
-  if (customMessageActive && currentCustomKey) {
-    if (currentCustomKey === "tg_link") {
-      document.getElementById('terminal-output').innerHTML = '<a href="' + tgLink + '" target="_blank">' + tgLink + '</a>';
-    } else {
-      document.getElementById('terminal-output').innerHTML = decodeBase64Safe(easterEggsEncrypted[currentCustomKey][currentLang]);
-    }
-  } else {
-    document.getElementById('terminal-output').innerHTML = getStepOutput();
-  }
-}
+            if (distance < 0) {
+                mainTimer.innerHTML = "00:00:00:00";
+                bigTimer.innerHTML = "00:00:00:00";
+                return;
+            }
 
-// Изменение текста кнопок
-function updateUI() {
-  document.getElementById('submit-btn').innerText = localization[currentLang].submit;
-  document.getElementById('secret-title').innerText = localization[currentLang].secretTitle;
-  document.getElementById('back-btn').innerText = localization[currentLang].back;
-}
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-function openSecret() {
-  if(isLockout) return;
-  document.getElementById('main-screen').style.display = 'none';
-  document.getElementById('secret-screen').style.display = 'flex';
-}
+            const dStr = days.toString().padStart(2, '0');
+            const hStr = hours.toString().padStart(2, '0');
+            const mStr = minutes.toString().padStart(2, '0');
+            const sStr = seconds.toString().padStart(2, '0');
 
-function closeSecret() {
-  document.getElementById('secret-screen').style.display = 'none';
-  document.getElementById('main-screen').style.display = 'flex';
-  setTimeout(() => { document.getElementById('terminal-input').focus(); }, 50);
-}
+            const finalString = `${dStr}:${hStr}:${mStr}:${sStr}`;
+            mainTimer.innerHTML = finalString;
+            bigTimer.innerHTML = finalString;
+        }
+        setInterval(updateTimers, 1000);
+        updateTimers();
 
-function triggerRedLockout(customMsg) {
-  isLockout = true;
-  document.body.classList.add('wrong-state');
-  const inputEl = document.getElementById('terminal-input');
-  const outputEl = document.getElementById('terminal-output');
-  
-  if (customMsg) {
-    outputEl.innerHTML = customMsg;
-  } else {
-    const list = localization[currentLang].scolded;
-    const randIdx = Math.floor(Math.random() * list.length);
-    outputEl.innerHTML = localization[currentLang].wrongPrefix + list[randIdx];
-  }
-  inputEl.disabled = true;
-  
-  setTimeout(() => {
-    document.body.classList.remove('wrong-state');
-    inputEl.disabled = false;
-    inputEl.value = '';
-    isLockout = false;
-    inputEl.focus();
-  }, 2000);
-}
+        mainTimer.addEventListener('click', () => {
+            terminalScreen.classList.add('hidden');
+            momentXScreen.classList.remove('hidden');
+        });
 
-function triggerGreenSuccess(msg, isEgg = false, eggKey = null) {
-  const inputEl = document.getElementById('terminal-input');
-  const outputEl = document.getElementById('terminal-output');
-  const panelEl = document.getElementById('panel-box');
-  
-  document.body.classList.remove('correct-flash');
-  panelEl.classList.remove('input-success');
-  void document.body.offsetWidth;
-  
-  document.body.classList.add('correct-flash');
-  panelEl.classList.add('input-success');
-  
-  outputEl.innerHTML = msg;
-  inputEl.value = '';
-  
-  customMessageActive = isEgg;
-  currentCustomKey = eggKey;
+        backToTerminal.addEventListener('click', () => {
+            momentXScreen.classList.add('hidden');
+            terminalScreen.classList.remove('hidden');
+        });
 
-  setTimeout(() => { document.body.classList.remove('correct-flash'); }, 400);
-  setTimeout(() => { panelEl.classList.remove('input-success'); }, 1000);
-}
+        function handleInput() {
+            const rawValue = terminalInput.value;
+            const value = rawValue.trim().toLowerCase();
+            terminalInput.value = '';
 
-function cleanInput(val) {
-  let cleaned = val.trim();
-  if (cleaned === '!!!!!') return cleaned;
-  while (cleaned.endsWith('.') || cleaned.endsWith('?')) {
-    cleaned = cleaned.slice(0, -1).trim();
-  }
-  return cleaned;
-}
-function processInput() {
-  if (isLockout) return;
-  const inputEl = document.getElementById('terminal-input');
-  let rawVal = inputEl.value;
-  
-  if (!rawVal.trim()) {
-    triggerRedLockout(localization[currentLang].emptyError);
-    return;
-  }
-  rawVal = cleanInput(rawVal).toLowerCase();
-  if (!rawVal) {
-    triggerRedLockout(localization[currentLang].emptyError);
-    return;
-  }
-  
-  if (rawVal === tgWordRu.toLowerCase() || rawVal === tgWordEn.toLowerCase()) {
-    const linkTag = '<a href="' + tgLink + '" target="_blank">' + tgLink + '</a>';
-    triggerGreenSuccess(linkTag, true, "tg_link");
-    return;
-  }
-  
-  const currentInputHash = getSecureHash(rawVal);
-  
-  if (eggHashesMap[currentInputHash]) {
-    const targetEggId = eggHashesMap[currentInputHash];
-    triggerGreenSuccess(decodeBase64Safe(easterEggsEncrypted[targetEggId][currentLang]), true, targetEggId);
-    return;
-  }
-  
-  if (currentInputHash === secureStepAnswersHashes.mega || currentInputHash === secureStepAnswersHashes.pass) {
-    currentStep = 7;
-    triggerGreenSuccess(getStepOutput());
-    customMessageActive = false;
-    return;
-  }
-  
-  customMessageActive = false;
-  currentCustomKey = null;
-  
-  if (secureStepAnswersHashes[currentStep]) {
-    if (secureStepAnswersHashes[currentStep].indexOf(currentInputHash) !== -1) {
-      currentStep++;
-      triggerGreenSuccess(getStepOutput());
-    } else {
-      triggerRedLockout();
-    }
-  } else {
-    triggerRedLockout();
-  }
-}
+            if (rawValue === '') {
+                triggerError('empty_error');
+                return;
+            }
 
-document.getElementById('terminal-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') processInput();
-});
+            if (staticDatabase[value]) {
+                triggerSuccess('static', value);
+                return;
+            }
 
-setInterval(updateTimers, 1000);
-updateTimers();
-window.onload = runBootSequence;
-</script>
+            const currentExpectedStep = storySteps[currentStoryProgress];
+            if (currentExpectedStep && currentExpectedStep.inputs.includes(value)) {
+                triggerSuccess('story', currentExpectedStep.responseKey);
+                currentStoryProgress++;
+                return;
+            }
+
+            triggerError('default_error');
+        }
+
+        function triggerSuccess(type, key) {
+            flashOverlay.classList.add('flash-active');
+            setTimeout(() => {
+                flashOverlay.classList.remove('flash-active');
+            }, 150);
+
+            activeResponseKey = (type === 'story') ? key : null;
+            
+            if (type === 'story') {
+                terminalOutput.innerHTML = systemPhrases[key][currentLanguage];
+            } else {
+                activeResponseKey = `static_${key}`;
+                terminalOutput.innerHTML = staticDatabase[key][currentLanguage];
+            }
+        }
+
+        function triggerError(errorType) {
+            document.body.classList.add('error-state');
+            activeResponseKey = errorType;
+            terminalOutput.innerHTML = systemPhrases[errorType][currentLanguage];
+
+            setTimeout(() => {
+                document.body.classList.remove('error-state');
+            }, 3000);
+        }
+
+        submitBtn.addEventListener('click', handleInput);
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleInput();
+        });
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            if (lang === 'ru') {
+                langRuBtn.classList.add('active');
+                langEnBtn.classList.remove('active');
+                terminalInput.placeholder = systemPhrases.placeholder.ru;
+                momentXTitle.innerHTML = systemPhrases.moment_x_title.ru;
+            } else {
+                langEnBtn.classList.add('active');
+                langRuBtn.classList.remove('active');
+                terminalInput.placeholder = systemPhrases.placeholder.en;
+                momentXTitle.innerHTML = systemPhrases.moment_x_title.en;
+            }
+
+            if (activeResponseKey) {
+                if (activeResponseKey.startsWith('static_')) {
+                    const staticKey = activeResponseKey.replace('static_', '');
+                    terminalOutput.innerHTML = staticDatabase[staticKey][currentLanguage];
+                } else {
+                    terminalOutput.innerHTML = systemPhrases[activeResponseKey][currentLanguage];
+                }
+            }
+        }
+
+        langRuBtn.addEventListener('click', () => setLanguage('ru'));
+        langEnBtn.addEventListener('click', () => setLanguage('en'));
+    </script>
 </body>
 </html>
